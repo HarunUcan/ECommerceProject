@@ -1,3 +1,6 @@
+using ECommerceProject.DataAccessLayer.Concrete;
+using ECommerceProject.EntityLayer.Concrete;
+
 namespace ECommerceProject.PresentationLayer
 {
     public class Program
@@ -8,6 +11,14 @@ namespace ECommerceProject.PresentationLayer
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<Context>();
+            builder.Services.AddIdentity<AppUser, AppRole>(options =>
+            {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireDigit = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+            }).AddEntityFrameworkStores<Context>();
 
             var app = builder.Build();
 
@@ -24,6 +35,7 @@ namespace ECommerceProject.PresentationLayer
 
             app.UseRouting();
 
+            app.UseAuthentication();    
             app.UseAuthorization();
 
             app.MapControllerRoute(

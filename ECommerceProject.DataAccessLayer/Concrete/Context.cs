@@ -18,8 +18,8 @@ namespace ECommerceProject.DataAccessLayer.Concrete
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder)
-                ;
+            base.OnModelCreating(modelBuilder);
+
             /** Alttaki Sale İle İlgili İşlemler Yapılmazsa Migration İşleminde Problem Çıkıyor **/
 
             // AppUser ile Sales arasındaki ilişki için Cascade Delete kaldırılıyor

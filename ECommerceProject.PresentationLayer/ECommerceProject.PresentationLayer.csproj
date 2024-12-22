@@ -18,11 +18,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ECommerceProject.BusinessLayer\ECommerceProject.BusinessLayer.csproj" />
     <ProjectReference Include="..\ECommerceProject.DataAccessLayer\ECommerceProject.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\ECommerceProject.DtoLayer\ECommerceProject.DtoLayer.csproj" />
     <ProjectReference Include="..\ECommerceProject.EntityLayer\ECommerceProject.EntityLayer.csproj" />
   </ItemGroup>
 

@@ -1,0 +1,214 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #ffffff;
+    color: #000000;
+    overflow-x: hidden;
+    /* Yatay kaydırmayı önlemek için */
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #000000;
+    color: #ffffff;
+    flex-wrap: wrap;
+    /* Küçük ekranlarda esnek hale getirmek için */
+}
+
+header .logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+header nav {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    /* Menü elemanlarının daha iyi hizalanması için */
+}
+
+header nav a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.hero {
+    background-color: #f4f4f4;
+    text-align: center;
+    padding: 80px 20px;
+    width: 100%;
+    /* Ekrana tam oturması için */
+    box-sizing: border-box;
+}
+
+.hero h1 {
+    font-size: 48px;
+    color: #000000;
+}
+
+.hero p {
+    font-size: 18px;
+    color: #666666;
+    margin: 20px 0;
+}
+
+.hero .shop-now {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.products {
+    padding: 40px 20px;
+    text-align: center;
+    width: 100%;
+    /* Ekrana tam oturması için */
+    box-sizing: border-box;
+}
+
+.products h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    border: 1px solid #cccccc;
+    padding: 15px;
+    text-align: center;
+}
+
+.product-card img {
+    max-width: 100%;
+    height: auto;
+}
+
+.product-card h3 {
+    margin: 10px 0;
+}
+
+.product-card p {
+    color: #333333;
+}
+
+.product-card button {
+    background-color: #000000;
+    color: #ffffff;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.instagram-feed {
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #f4f4f4;
+    width: 100%;
+    /* Ekrana tam oturması için */
+    box-sizing: border-box;
+}
+
+.instagram-feed h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.feed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.feed-item img {
+    width: 100%;
+    height: auto;
+}
+
+footer {
+    background-color: #000000;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px;
+}
+
+footer .social-icons a {
+    color: #ffffff;
+    margin: 0 10px;
+    text-decoration: none;
+}
+
+/* Mobil Cihazlar İçin (480px ve altı) */
+@media (max-width: 480px) {
+    header {
+        flex-direction: column;
+    }
+
+    header .logo {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    header nav {
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .hero h1 {
+        font-size: 32px;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+
+    .products h2,
+    .instagram-feed h2 {
+        font-size: 24px;
+    }
+
+    .product-grid {
+        grid-template-columns: 1fr;
+        /* Ürünleri tek sütun halinde göster */
+    }
+}
+
+/* Tablet Cihazlar İçin (768px ve altı) */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 36px;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+
+    .products h2,
+    .instagram-feed h2 {
+        font-size: 28px;
+    }
+
+    .product-grid {
+        grid-template-columns: 1fr;
+        /* Ürünleri tek sütun halinde göster */
+    }
+
+    .feed-grid {
+        grid-template-columns: 1fr;
+        /* Instagram fotoğraflarını tek sütun göster */
+    }
+}

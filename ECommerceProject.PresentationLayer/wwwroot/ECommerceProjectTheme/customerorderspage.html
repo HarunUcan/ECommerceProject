@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siparişler</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            background-color: white;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            color: #333;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+            /* Kaydırma çubuğunun genişliği */
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            /* Çubuk arka planı */
+            margin: 16px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            /* Çubuğun kendisi */
+            margin: 14px;
+            border-radius: 8px;
+        }
+
+        .sidebar:hover::-webkit-scrollbar-thumb {
+            background: #555;
+            /* Çubuğa hover yapıldığında */
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            /* Internet Explorer 10+ */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+            /* WebKit */
+        }
+
+        .sidebar a:hover {
+            background-color: rgb(226, 226, 226);
+        }
+
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+    <!-- Üst Menü -->
+    <header
+        class="sticky top-0 flex justify-between items-center mx-auto rounded-none mt-0 px-6 py-6 bg-white text-black w-full shadow-lg">
+        <!-- Menü İkonu -->
+        <div class="menu-icon">
+            <button id="menu-button" class="text-black">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Site Adı -->
+        <a href="">
+            <div class="text-2xl font-bold text-center flex-grow md:text-xl">ECommerce App</div>
+        </a>
+        <!-- Sepet ve Giriş Yap İkonları -->
+        <div class="header-icons flex justify-between items-center gap-6">
+            <!-- Sepet Iconu -->
+            <div class="header-cart">
+                <a href="cartpage.html" class="hover:text-gray-400">
+                    <i class="fa-solid fa-bag-shopping text-black text-xl"></i>
+                    <span
+                        class="absolute flex justify-center items-center w-[15px] h-[15px] bg-red-700 bottom-8 right-14 rounded-full text-white text-xs">3</span>
+                    <!-- Örnek olarak 3 ürün var -->
+                </a>
+            </div>
+
+            <!-- Giriş Yap Iconu -->
+            <a href="#giris" class="hover:text-gray-400">
+                <i class="fa-regular fa-user text-black text-xl"></i> <!-- Giriş yap ikonunu ekledik -->
+            </a>
+        </div>
+    </header>
+    <!-- Mobile Topbar -->
+    <aside
+        class="sticky top-20 z-50 flex justify-between items-center mx-auto sm:hidden rounded-none mt-0 px-6 h-8 bg-white text-black w-full shadow-xl scrollbar-hide text-xs whitespace-nowrap overflow-x-auto gap-8">
+        <div><a href="customerprofilepage.html">Kişisel Bilgiler</a></div>
+        <div class="flex justify-center items-center font-semibold border-b-2 border-red-500 h-full"><a href="">Sipariş
+                Geçmişi</a></div>
+        <div><a href="customeradresspage.html">Adresler</a></div>
+        <div><a href="">Puanlar</a></div>
+        <div><a href="">Bildirimler</a></div>
+        <div><a href="">Destek</a></div>
+        <div class="text-red-500"><a href=""><i class="fa-solid fa-right-from-bracket mr-1 text-red-500"></i>Çıkış</a>
+        </div>
+    </aside>
+    <div class="flex bg-gray-100">
+
+        <!-- Sidebar -->
+        <aside
+            class="sm:flex sm:flex-col h-max w-72 bg-white mt-6 ml-6 gap-4 rounded-3xl py-8 px-6 shadow-md overflow-y-auto hidden">
+            <div class="text-lg">Merhaba, John Doe</div>
+            <div>
+                <a href="customerprofilepage.html"
+                    class="block font-medium text-gray-200 py-2 px-4 rounded-lg text-gray-800 hover:bg-gray-200 transition duration-300">
+                    <i class="fa-solid fa-circle-info mr-2"></i>Kişisel Bilgiler
+                </a>
+            </div>
+            <div class="border-l-4 border-red-500 text-lg">
+                <a href="customerorderspage.html"
+                    class="block font-medium text-gray-200 py-2 px-4 rounded-lg text-gray-800 hover:bg-gray-200 transition duration-300">
+                    <i class="fa-solid fa-receipt mr-2"></i>Sipariş Geçmişi
+                </a>
+            </div>
+            <div>
+                <a href="customeradresspage.html"
+                    class="block font-medium text-gray-200 py-2 px-4 rounded-lg text-gray-800 hover:bg-gray-200 transition duration-300">
+                    <i class="fa-solid fa-location-dot mr-2"></i>Adresler
+                </a>
+            </div>
+            <a href="#settings"
+                class="block font-medium text-gray-200 py-2 px-4 rounded-lg text-gray-800 hover:bg-gray-200 transition duration-300">
+                <i class="fa-solid fa-star mr-2"></i>Puanlar
+            </a>
+            <a href="#settings"
+                class="block font-medium text-gray-200 py-2 px-4 rounded-lg text-gray-800 hover:bg-gray-200 transition duration-300">
+                <i class="fa-solid fa-bell mr-2"></i>Bildirimler
+            </a>
+            <a href="#settings"
+                class="block font-medium text-gray-200 py-2 px-4 rounded-lg text-gray-800 hover:bg-gray-200 transition duration-300">
+                <i class="fa-solid fa-handshake-angle mr-2"></i>Destek
+            </a>
+            <a href="#settings"
+                class="block font-medium text-gray-200 py-2 px-4 rounded-lg text-red-500 hover:bg-red-200 transition duration-300">
+                <i class="fa-solid fa-right-from-bracket mr-2"></i><span class="font-semibold">Çıkış Yap</span>
+            </a>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-grow p-6">
+
+            <!-- Profil Bilgileri -->
+            <!-- <form id="info" class="card w-5/6 mx-auto mb-8" action="/update-profile" method="POST">
+            <h2 class="text-2xl font-semibold mb-4">Kışisel Bilgiler</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="name" class="block text-gray-700 font-medium">Ad Soyad</label>
+                    <input type="text" id="name" name="name" value="Ahmet Yılmaz"
+                        class="w-full border border-gray-300 rounded-lg p-2 mt-2">
+                </div>
+                <div>
+                    <label for="email" class="block text-gray-700 font-medium">E-posta</label>
+                    <input type="email" id="email" name="email" value="ahmet@example.com"
+                        class="w-full border border-gray-300 rounded-lg p-2 mt-2">
+                </div>
+                <div>
+                    <label for="phone" class="block text-gray-700 font-medium">Telefon</label>
+                    <input type="text" id="phone" name="phone" value="+90 555 555 5555"
+                        class="w-full border border-gray-300 rounded-lg p-2 mt-2">
+                </div>
+                <div>
+                    <label for="address" class="block text-gray-700 font-medium">Adres</label>
+                    <textarea id="address" name="address"
+                        class="w-full border border-gray-300 rounded-lg p-2 mt-2">İstanbul, Türkiye</textarea>
+                </div>
+            </div>
+            <button type="submit" class="mt-6 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition">
+                Bilgileri Güncelle
+            </button>
+        </form> -->
+
+            <!-- Sipariş Geçmişi -->
+            <div id="orders" class="card w-5/6 mx-auto mb-8">
+                <h2 class="text-2xl font-semibold mb-4">Sipariş Geçmişi</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3 class="text-lg font-semibold">Sipariş #12345</h3>
+                        <p class="text-gray-600">Tarih: 01/12/2024</p>
+                        <p class="text-gray-600">Toplam: ₺499,99</p>
+                        <button
+                            class="mt-4 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition">Detayları
+                            Gör</button>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-lg font-semibold">Sipariş #67890</h3>
+                        <p class="text-gray-600">Tarih: 15/11/2024</p>
+                        <p class="text-gray-600">Toplam: ₺249,99</p>
+                        <button
+                            class="mt-4 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition">Detayları
+                            Gör</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- <footer class="bg-black text-white text-center py-8 z-50">
+        <p>&copy; 2024 ECommerce App. Tüm Hakları Saklıdır.</p>
+    </footer> -->
+
+</body>
+
+</html>

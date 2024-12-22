@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ürün Detay</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .product-image {
+            border-radius: 12px;
+        }
+
+        .related-product {
+            transition: transform 0.3s ease;
+        }
+
+        .related-product:hover {
+            transform: scale(1.05);
+        }
+
+        .details-container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .price {
+            font-size: 1.75rem;
+            color: #333;
+        }
+
+        .btn-add-to-cart {
+            background-color: black;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-add-to-cart:hover {
+            background-color: gray;
+        }
+
+        .size-option {
+            padding: 10px 20px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .size-option:hover {
+            background-color: #f0f0f0;
+        }
+
+        .size-option.selected {
+            background-color: #007104;
+            color: white;
+        }
+
+        .size-option.disabled {
+            background-color: #e0e0e0;
+            cursor: not-allowed;
+            color: #999;
+        }
+
+        .out-of-stock {
+            color: #999;
+            position: relative;
+        }
+
+        .out-of-stock .fa-times {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            color: red;
+            font-size: 18px;
+            background-color: white;
+            border-radius: 50%;
+            border-color: black;
+            border-width: 1px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+
+        /* .stock-status {
+            font-size: 0.875rem;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .stock-status.in-stock {
+            color: #4CAF50;
+        }
+
+        .stock-status.out-of-stock {
+            color: #F44336;
+        } */
+
+        .stock-quantity {
+            font-size: 0.875rem;
+            color: #555;
+            margin-top: 3px;
+        }
+
+        .quantity-input {
+            display: flex;
+            align-items: center;
+            border: 2px solid #333;
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+
+        .quantity-input input {
+            width: 40px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        #slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+
+        /* Hide default scrollbar for the carousel */
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            /* Internet Explorer 10+ */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+            /* WebKit */
+        }
+
+        @layer base {
+
+            input[type="number"]::-webkit-inner-spin-button,
+            input[type="number"]::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+    <!-- Üst Menü -->
+    <header class="sticky top-0 flex justify-between items-center px-6 py-6 bg-white text-black w-full shadow-md z-10">
+        <!-- Menü İkonu -->
+        <div class="menu-icon">
+            <button id="menu-button" class="text-black">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Site Adı -->
+        <a href="">
+            <div class="text-2xl font-bold text-center flex-grow md:text-xl">ECommerce App</div>
+        </a>
+        <!-- Sepet ve Giriş Yap İkonları -->
+        <div class="header-icons flex justify-between items-center gap-6">
+            <div class="header-cart">
+                <a href="cartpage.html" class="hover:text-gray-400">
+                    <i class="fa-solid fa-bag-shopping text-black text-xl"></i>
+                    <span
+                        class="absolute flex justify-center items-center w-[15px] h-[15px] bg-red-700 bottom-8 right-14 rounded-full text-white text-xs">3</span>
+                </a>
+            </div>
+
+            <a href="#giris" class="hover:text-gray-400">
+                <i class="fa-regular fa-user text-black text-xl"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Ürün Detay Bölümü -->
+    <div class="details-container bg-white p-6 rounded-lg shadow-lg mt-8">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Ürün Resmi -->
+            <div>
+                <img src="urun1.jpg" alt="Ürün Resmi" class="product-image w-full h-auto">
+            </div>
+
+            <!-- Ürün Bilgileri -->
+            <div>
+                <h1 class="text-3xl font-semibold mb-2">Ürün Adı</h1>
+                <p class="text-gray-600 mb-4">Bu ürün hakkında detaylı bir açıklama burada yer alacaktır. Ürünün öne
+                    çıkan özellikleri, materyal bilgisi ve diğer önemli detaylar eklenebilir.</p>
+                <div class="price font-bold mb-4">₺149,99</div>
+
+                <!-- Beden Seçimi -->
+                <label class="block mb-2 text-gray-700 font-medium">Beden Seçimi</label>
+                <div class="flex space-x-4 mb-4">
+                    <button class="size-option" onclick="selectSize(this)">S</button>
+                    <button class="size-option" onclick="selectSize(this)">M</button>
+                    <button class="size-option out-of-stock disabled relative" onclick="selectSize(this)">
+                        L <i class="fa-solid fa-times"></i>
+                    </button>
+                    <button class="size-option" onclick="selectSize(this)">XL</button>
+                </div>
+
+                <!-- Adet Seçimi -->
+                <label class="block mb-2 text-gray-700 font-medium">Adet Seçimi</label>
+                <div class="flex justify-center items-center quantity-input w-28">
+                    <button
+                        class="flex justify-center items-center bg-white w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">-</button>
+                    <input type="number" class="outline-none" value="1" min="1">
+                    <button
+                        class="flex justify-center items-center bg-white w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">+</button>
+                </div>
+
+                <!-- Stok Adedi -->
+                <div class="stock-quantity mb-4">Stok Adedi: 20</div>
+
+                <!-- Sepete Ekle Butonu -->
+                <button class="btn-add-to-cart w-full py-3 rounded-lg text-lg font-semibold">
+                    <i class="fa-solid fa-bag-shopping mr-2"></i> Sepete Ekle
+                </button>
+            </div>
+        </div>
+
+        <!-- Ürün Özellikleri -->
+        <div class="mt-8">
+            <h2 class="text-2xl font-semibold mb-4">Ürün Özellikleri</h2>
+            <ul class="list-disc pl-6 text-gray-600">
+                <li>Malzeme: %100 Pamuk</li>
+                <li>Renk: Beyaz</li>
+                <li>Boyut: S, M, L, XL</li>
+                <li>Yıkama Talimatları: 30°C’de yıkanabilir.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- İlgili Ürünler -->
+    <section class="py-12 px-6 mt-12 bg-gray-200">
+        <h2 class="text-3xl font-semibold text-center mb-4 text-gray-900">İlgili Ürünler</h2>
+        <hr class="w-72 h-px mx-auto mb-12 bg-gray-100 border-0 rounded dark:bg-gray-700">
+
+        <div class="relative max-w-screen-xl mx-auto">
+            <!-- Sol Kaydırma Butonu -->
+            <button id="slideLeft"
+                class="absolute -left-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-2 rounded-full z-10 hover:bg-gray-900">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+
+            <!-- Slider -->
+            <div id="slider" class="flex gap-4 overflow-x-auto py-4 px-2 scrollbar-hide scroll-smooth">
+                <div
+                    class="related-product flex-shrink-0 w-[calc(50%-16px)] sm:w-[calc(33%-16px)] lg:w-[calc(25%-16px)] border border-gray-500 rounded-lg overflow-hidden shadow-md bg-white">
+                    <a href="#urun1">
+                        <div class="relative w-full h-[175px] sm:h-[275px] bg-gray-100 overflow-hidden group">
+                            <img src="urun1.jpg" alt="İlgili Ürün 1"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-90">
+                        </div>
+                    </a>
+                    <div class="p-4 text-center">
+                        <h3 class="text-lg font-semibold mb-1 text-gray-800">İlgili Ürün 1</h3>
+                        <p class="text-gray-700 font-medium mb-3">₺119,99</p>
+                    </div>
+                </div>
+                <!-- Diğer ürünler -->
+                <div
+                    class="related-product flex-shrink-0 w-[calc(50%-16px)] sm:w-[calc(33%-16px)] lg:w-[calc(25%-16px)] border border-gray-500 rounded-lg overflow-hidden shadow-md bg-white">
+                    <a href="#urun2">
+                        <div class="relative w-full h-[175px] sm:h-[275px] bg-gray-100 overflow-hidden group">
+                            <img src="urun2.jpg" alt="İlgili Ürün 2"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-90">
+                        </div>
+                    </a>
+                    <div class="p-4 text-center">
+                        <h3 class="text-lg font-semibold mb-1 text-gray-800">İlgili Ürün 2</h3>
+                        <p class="text-gray-700 font-medium mb-3">₺129,99</p>
+                    </div>
+                </div>
+                <div
+                    class="related-product flex-shrink-0 w-[calc(50%-16px)] sm:w-[calc(33%-16px)] lg:w-[calc(25%-16px)] border border-gray-500 rounded-lg overflow-hidden shadow-md bg-white">
+                    <a href="#urun2">
+                        <div class="relative w-full h-[175px] sm:h-[275px] bg-gray-100 overflow-hidden group">
+                            <img src="urun3.jpg" alt="İlgili Ürün 2"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-90">
+                        </div>
+                    </a>
+                    <div class="p-4 text-center">
+                        <h3 class="text-lg font-semibold mb-1 text-gray-800">İlgili Ürün 2</h3>
+                        <p class="text-gray-700 font-medium mb-3">₺129,99</p>
+                    </div>
+                </div>
+                <div
+                    class="related-product flex-shrink-0 w-[calc(50%-16px)] sm:w-[calc(33%-16px)] lg:w-[calc(25%-16px)] border border-gray-500 rounded-lg overflow-hidden shadow-md bg-white">
+                    <a href="#urun2">
+                        <div class="relative w-full h-[175px] sm:h-[275px] bg-gray-100 overflow-hidden group">
+                            <img src="urun4.jpg" alt="İlgili Ürün 2"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-90">
+                        </div>
+                    </a>
+                    <div class="p-4 text-center">
+                        <h3 class="text-lg font-semibold mb-1 text-gray-800">İlgili Ürün 2</h3>
+                        <p class="text-gray-700 font-medium mb-3">₺129,99</p>
+                    </div>
+                </div>
+                <div
+                    class="related-product flex-shrink-0 w-[calc(50%-16px)] sm:w-[calc(33%-16px)] lg:w-[calc(25%-16px)] border border-gray-500 rounded-lg overflow-hidden shadow-md bg-white">
+                    <a href="#urun2">
+                        <div class="relative w-full h-[175px] sm:h-[275px] bg-gray-100 overflow-hidden group">
+                            <img src="urun13.jpg" alt="İlgili Ürün 2"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-90">
+                        </div>
+                    </a>
+                    <div class="p-4 text-center">
+                        <h3 class="text-lg font-semibold mb-1 text-gray-800">İlgili Ürün 2</h3>
+                        <p class="text-gray-700 font-medium mb-3">₺129,99</p>
+                    </div>
+                </div>
+                <div
+                    class="related-product flex-shrink-0 w-[calc(50%-16px)] sm:w-[calc(33%-16px)] lg:w-[calc(25%-16px)] border border-gray-500 rounded-lg overflow-hidden shadow-md bg-white">
+                    <a href="#urun2">
+                        <div class="relative w-full h-[175px] sm:h-[275px] bg-gray-100 overflow-hidden group">
+                            <img src="urun9.jpg" alt="İlgili Ürün 2"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-90">
+                        </div>
+                    </a>
+                    <div class="p-4 text-center">
+                        <h3 class="text-lg font-semibold mb-1 text-gray-800">İlgili Ürün 2</h3>
+                        <p class="text-gray-700 font-medium mb-3">₺129,99</p>
+                    </div>
+                </div>
+                <div
+                    class="related-product flex-shrink-0 w-[calc(50%-16px)] sm:w-[calc(33%-16px)] lg:w-[calc(25%-16px)] border border-gray-500 rounded-lg overflow-hidden shadow-md bg-white">
+                    <a href="#urun2">
+                        <div class="relative w-full h-[175px] sm:h-[275px] bg-gray-100 overflow-hidden group">
+                            <img src="urun10.jpg" alt="İlgili Ürün 2"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-90">
+                        </div>
+                    </a>
+                    <div class="p-4 text-center">
+                        <h3 class="text-lg font-semibold mb-1 text-gray-800">İlgili Ürün 2</h3>
+                        <p class="text-gray-700 font-medium mb-3">₺129,99</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sağ Kaydırma Butonu -->
+            <button id="slideRight"
+                class="absolute -right-4 top-1/2 transform -translate-y-1/2 bg-gray-700 text-white p-2 rounded-full z-10 hover:bg-gray-900">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+    </section>
+
+
+
+
+
+
+    <!-- Footer -->
+    <footer class="bg-black text-white text-center py-4 mt-12">
+        <p>&copy; 2024 ECommerce App. Tüm Hakları Saklıdır.</p>
+    </footer>
+
+    <script>
+        function selectSize(button) {
+            if (button.classList.contains('disabled')) {
+                return; // Eğer buton disabled ise hiçbir şey yapma
+            }
+
+            // Bütün butonlardan 'selected' sınıfını kaldır
+            const buttons = document.querySelectorAll('.size-option');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+
+            // Seçilen butona 'selected' sınıfı ekle
+            button.classList.add('selected');
+        }
+
+        const slider = document.getElementById('slider');
+        const slideLeft = document.getElementById('slideLeft');
+        const slideRight = document.getElementById('slideRight');
+
+        // Sol kaydırma
+        slideLeft.addEventListener('click', () => {
+            slider.scrollBy({
+                left: -200,
+                behavior: 'smooth'
+            });
+        });
+
+        // Sağ kaydırma
+        slideRight.addEventListener('click', () => {
+            slider.scrollBy({
+                left: 200,
+                behavior: 'smooth'
+            });
+        });
+
+    </script>
+</body>
+
+</html>
+
+<!--
+<section class="py-12 px-6 mt-12 bg-gray-200">
+        <h2 class="text-3xl font-semibold text-center mb-4 text-gray-900">İlgili Ürünler</h2>
+        <hr class="w-72 h-px mx-auto mb-12 bg-gray-100 border-0 rounded dark:bg-gray-700">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-screen-xl mx-auto">
+            <div
+                class="related-product border border-gray-500 rounded-lg overflow-hidden shadow-md bg-white transition-all duration-300">
+                <a href="#urun1">
+                    <div class="relative w-full h-[150px] sm:h-[275px] bg-gray-100 overflow-hidden group">
+                        <img src="urun2.jpg" alt="İlgili Ürün 1"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-90">
+                    </div>
+                </a>
+                <div class="p-4 text-center">
+                    <h3 class="text-lg font-semibold mb-1 text-gray-800">İlgili Ürün 1</h3>
+                    <p class="text-gray-700 font-medium mb-3">₺119,99</p>
+                </div>
+            </div>
+
+            <div
+                class="related-product border border-gray-500 rounded-lg overflow-hidden shadow-md bg-white transition-all duration-300">
+                <a href="#urun2">
+                    <div class="relative w-full h-[150px] sm:h-[275px] bg-gray-100 overflow-hidden group">
+                        <img src="urun3.jpg" alt="İlgili Ürün 2"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-90">
+                    </div>
+                </a>
+                <div class="p-4 text-center">
+                    <h3 class="text-lg font-semibold mb-1 text-gray-800">İlgili Ürün 2</h3>
+                    <p class="text-gray-700 font-medium mb-3">₺129,99</p>
+                </div>
+            </div>
+
+            <div
+                class="related-product border border-gray-500 rounded-lg overflow-hidden shadow-md bg-white transition-all duration-300">
+                <a href="#urun3">
+                    <div class="relative w-full h-[150px] sm:h-[275px] bg-gray-100 overflow-hidden group">
+                        <img src="urun4.jpg" alt="İlgili Ürün 3"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-90">
+                    </div>
+                </a>
+                <div class="p-4 text-center">
+                    <h3 class="text-lg font-semibold mb-1 text-gray-800">İlgili Ürün 3</h3>
+                    <p class="text-gray-700 font-medium mb-3">₺139,99</p>
+                </div>
+            </div>
+
+            <div
+                class="related-product border border-gray-500 rounded-lg overflow-hidden shadow-md bg-white transition-all duration-300">
+                <a href="#urun4">
+                    <div class="relative w-full h-[150px] sm:h-[275px] bg-gray-100 overflow-hidden group">
+                        <img src="urun5.jpg" alt="İlgili Ürün 4"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-90">
+                    </div>
+                </a>
+                <div class="p-4 text-center">
+                    <h3 class="text-lg font-semibold mb-1 text-gray-800">İlgili Ürün 4</h3>
+                    <p class="text-gray-700 font-medium mb-3">₺149,99</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+-->
