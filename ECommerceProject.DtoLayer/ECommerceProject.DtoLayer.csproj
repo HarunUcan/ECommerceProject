@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Dtos\AppRoleDtos\" />
+    <Folder Include="Dtos\AdressDtos\" />
+    <Folder Include="Dtos\CartDtos\" />
+    <Folder Include="Dtos\CartItemDtos\" />
+    <Folder Include="Dtos\CategoryDtos\" />
+    <Folder Include="Dtos\CouponDtos\" />
+    <Folder Include="Dtos\SaleItemDtos\" />
+    <Folder Include="Dtos\SaleDtos\" />
+    <Folder Include="Dtos\ProductVariantDtos\" />
+    <Folder Include="Dtos\ProductImageDtos\" />
+    <Folder Include="Dtos\ProductDtos\" />
+  </ItemGroup>
+
+</Project>
