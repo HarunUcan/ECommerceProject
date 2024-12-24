@@ -1,0 +1,125 @@
+﻿@model AppUserLoginDto
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap / Kayıt Ol</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .pattern-bg {
+            background-color: #DFDBE5;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52' viewBox='0 0 52 52'%3E%3Cpath fill='%239C92AC' fill-opacity='0.17' d='M0 17.83V0h17.83a3 3 0 0 1-5.66 2H5.9A5 5 0 0 1 2 5.9v6.27a3 3 0 0 1-2 5.66zm0 18.34a3 3 0 0 1 2 5.66v6.27A5 5 0 0 1 5.9 52h6.27a3 3 0 0 1 5.66 0H0V36.17zM36.17 52a3 3 0 0 1 5.66 0h6.27a5 5 0 0 1 3.9-3.9v-6.27a3 3 0 0 1 0-5.66V52H36.17zM0 31.93v-9.78a5 5 0 0 1 3.8.72l4.43-4.43a3 3 0 1 1 1.42 1.41L5.2 24.28a5 5 0 0 1 0 5.52l4.44 4.43a3 3 0 1 1-1.42 1.42L3.8 31.2a5 5 0 0 1-3.8.72zm52-14.1a3 3 0 0 1 0-5.66V5.9A5 5 0 0 1 48.1 2h-6.27a3 3 0 0 1-5.66-2H52v17.83zm0 14.1a4.97 4.97 0 0 1-1.72-.72l-4.43 4.44a3 3 0 1 1-1.41-1.42l4.43-4.43a5 5 0 0 1 0-5.52l-4.43-4.43a3 3 0 1 1 1.41-1.41l4.43 4.43c.53-.35 1.12-.6 1.72-.72v9.78zM22.15 0h9.78a5 5 0 0 1-.72 3.8l4.44 4.43a3 3 0 1 1-1.42 1.42L29.8 5.2a5 5 0 0 1-5.52 0l-4.43 4.44a3 3 0 1 1-1.41-1.42l4.43-4.43a5 5 0 0 1-.72-3.8zm0 52c.13-.6.37-1.19.72-1.72l-4.43-4.43a3 3 0 1 1 1.41-1.41l4.43 4.43a5 5 0 0 1 5.52 0l4.43-4.43a3 3 0 1 1 1.42 1.41l-4.44 4.43c.36.53.6 1.12.72 1.72h-9.78zm9.75-24a5 5 0 0 1-3.9 3.9v6.27a3 3 0 1 1-2 0V31.9a5 5 0 0 1-3.9-3.9h-6.27a3 3 0 1 1 0-2h6.27a5 5 0 0 1 3.9-3.9v-6.27a3 3 0 1 1 2 0v6.27a5 5 0 0 1 3.9 3.9h6.27a3 3 0 1 1 0 2H31.9z'%3E%3C/path%3E%3C/svg%3E");
+
+        }
+    </style>
+</head>
+
+<body class="pattern-bg bg-gray-50 min-h-screen flex flex-col items-center">
+    <!-- Üst Menü -->
+    <header class="sticky top-0 flex justify-between items-center px-6 py-6 bg-white text-black w-full shadow-md z-10">
+        <!-- Menü İkonu -->
+        <div class="menu-icon">
+            <button id="menu-button" class="text-black">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Site Adı -->
+        <a href="">
+            <div class="text-2xl font-bold text-center flex-grow md:text-xl">ECommerce App</div>
+        </a>
+        <!-- Sepet ve Giriş Yap İkonları -->
+        <div class="header-icons flex justify-between items-center gap-6">
+            <div class="header-cart">
+                <a href="cartpage.html" class="hover:text-gray-400">
+                    <i class="fa-solid fa-bag-shopping text-black text-xl"></i>
+                    <span
+                        class="absolute flex justify-center items-center w-[15px] h-[15px] bg-red-700 bottom-8 right-14 rounded-full text-white text-xs">3</span>
+                </a>
+            </div>
+
+            <a href="#giris" class="hover:text-gray-400">
+                <i class="fa-regular fa-user text-black text-xl"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Giriş Yap -->
+    <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-lg my-8">
+        <h1 class="text-2xl font-bold text-center mb-6">Giriş Yap</h1>
+
+        <!-- Giriş Yap Formu -->
+        <form method="post" class="space-y-4">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">E-posta Adresi</label>
+                <input type="email" asp-for="Email" id="email" required placeholder="example@example.com"
+                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-black focus:border-black">
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Şifre</label>
+                <input type="password" asp-for="Password" id="password" required placeholder="********"
+                    class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-black focus:border-black">
+            </div>
+            <div class="flex items-center">
+                <label for="rememberMe" class="text-sm text-gray-600">Beni Hatırla</label>
+                <input type="checkbox" asp-for="RememberMe" id="rememberMe" class="ml-1">                        
+            </div>
+            <button type="submit"
+                class="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition duration-300">Giriş
+                Yap</button>
+        </form>
+        <!-- Şifre Unutma -->
+        <div class="text-center mt-4">
+            <a href="#" class="text-sm text-gray-500 hover:underline">Şifrenizi mi unuttunuz?</a>
+        </div>
+        <!-- Veya Ayracı -->
+        <div class="flex items-center justify-between my-6">
+            <hr class="w-full border-gray-300">
+            <span class="px-3 text-sm text-gray-500">veya</span>
+            <hr class="w-full border-gray-300">
+        </div>
+
+        <!-- Kayıt Ol -->
+        <p class="text-sm text-center text-gray-600 mt-4">
+            Hesabınız yok mu? <a href="registerpage.html" class="text-black font-medium hover:underline">Kayıt Ol</a>
+        </p>
+
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white text-center py-6 mt-auto w-full">
+        <p>&copy; 2024 ECommerce App. Tüm Hakları Saklıdır.</p>
+    </footer>
+</body>
+
+</html>

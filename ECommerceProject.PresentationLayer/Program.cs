@@ -1,5 +1,9 @@
+using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.BusinessLayer.Concrete;
 using ECommerceProject.DataAccessLayer.Concrete;
 using ECommerceProject.EntityLayer.Concrete;
+using ECommerceProject.PresentationLayer.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace ECommerceProject.PresentationLayer
 {
@@ -18,7 +22,14 @@ namespace ECommerceProject.PresentationLayer
                 options.Password.RequireDigit = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
-            }).AddEntityFrameworkStores<Context>();
+                options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
+            }).AddEntityFrameworkStores<Context>().AddErrorDescriber<CustomIdentityValidator>().AddDefaultTokenProviders();
+
+            builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromDays(2);
+            });
+            builder.Services.AddTransient<IMailSenderService, MailSenderManager>();
 
             var app = builder.Build();
 

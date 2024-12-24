@@ -28,4 +28,8 @@
     <ProjectReference Include="..\ECommerceProject.EntityLayer\ECommerceProject.EntityLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\EmailTemplates\ConfirmationMail.html" />
+  </ItemGroup>
+
 </Project>

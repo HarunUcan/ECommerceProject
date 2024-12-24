@@ -1,4 +1,5 @@
 ﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.DataAccessLayer.Abstract;
 using ECommerceProject.EntityLayer.Concrete;
 using System;
 using System.Collections.Generic;
@@ -10,36 +11,36 @@ namespace ECommerceProject.BusinessLayer.Concrete
 {
     public class ProductImageManager : IProductImageService
     {
-        private readonly IProductImageService _productImageService;
+        private readonly IProductImageDal _productImageDal;
 
-        public ProductImageManager(IProductImageService productImageService)
+        public ProductImageManager(IProductImageDal productImageDal)
         {
-            _productImageService = productImageService;
+            _productImageDal = productImageDal;
         }
 
         public void TDelete(ProductImage t)
         {
-            _productImageService.TDelete(t);
+            _productImageDal.Delete(t);
         }
 
         public ProductImage TGetById(int id)
         {
-            return _productImageService.TGetById(id);
+            return _productImageDal.GetById(id);
         }
 
         public List<ProductImage> TGetList()
         {
-            return _productImageService.TGetList();
+            return _productImageDal.GetList();
         }
 
         public void TInsert(ProductImage t)
         {
-            _productImageService.TInsert(t);
+            _productImageDal.Insert(t);
         }
 
         public void TUpdate(ProductImage t)
         {
-            _productImageService.TUpdate(t);
+            _productImageDal.Update(t);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.DataAccessLayer.Abstract;
 using ECommerceProject.EntityLayer.Concrete;
 using System;
 using System.Collections.Generic;
@@ -10,36 +11,36 @@ namespace ECommerceProject.BusinessLayer.Concrete
 {
     public class CartItemManager : ICartItemService
     {
-        private readonly ICartItemService _cartItemService;
+        private readonly ICartItemDal _cartItemDal;
 
-        public CartItemManager(ICartItemService cartItemService)
+        public CartItemManager(ICartItemDal cartItemDal)
         {
-            _cartItemService = cartItemService;
+            _cartItemDal = cartItemDal;
         }
 
         public void TDelete(CartItem t)
         {
-            _cartItemService.TDelete(t);
+            _cartItemDal.Delete(t);
         }
 
         public CartItem TGetById(int id)
         {
-            return _cartItemService.TGetById(id);
+            return _cartItemDal.GetById(id);
         }
 
         public List<CartItem> TGetList()
         {
-            return _cartItemService.TGetList();
+            return _cartItemDal.GetList();
         }
 
         public void TInsert(CartItem t)
         {
-            _cartItemService.TInsert(t);
+            _cartItemDal.Insert(t);
         }
 
         public void TUpdate(CartItem t)
         {
-            _cartItemService.TUpdate(t);
+            _cartItemDal.Update(t);
         }
     }
 }

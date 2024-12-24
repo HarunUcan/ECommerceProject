@@ -1,4 +1,5 @@
 ﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.DataAccessLayer.Abstract;
 using ECommerceProject.EntityLayer.Concrete;
 using System;
 using System.Collections.Generic;
@@ -10,36 +11,36 @@ namespace ECommerceProject.BusinessLayer.Concrete
 {
     public class CategoryManager : ICategoryService
     {
-        private readonly ICategoryService _categoryService;
+        private readonly ICategoryDal _categoryDal;
 
-        public CategoryManager(ICategoryService categoryService)
+        public CategoryManager(ICategoryDal categoryDal)
         {
-            _categoryService = categoryService;
+            _categoryDal = categoryDal;
         }
 
         public void TDelete(Category t)
         {
-            _categoryService.TDelete(t);
+            _categoryDal.Delete(t);
         }
 
         public Category TGetById(int id)
         {
-            return _categoryService.TGetById(id);
+            return _categoryDal.GetById(id);
         }
 
         public List<Category> TGetList()
         {
-            return _categoryService.TGetList();
+            return _categoryDal.GetList();
         }
 
         public void TInsert(Category t)
         {
-            _categoryService.TInsert(t);
+            _categoryDal.Insert(t);
         }
 
         public void TUpdate(Category t)
         {
-            _categoryService.TUpdate(t);
+            _categoryDal.Update(t);
         }
     }
 }

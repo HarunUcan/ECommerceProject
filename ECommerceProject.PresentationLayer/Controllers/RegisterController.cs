@@ -1,4 +1,5 @@
-﻿using ECommerceProject.DtoLayer.Dtos.AppUserDtos;
+﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.DtoLayer.Dtos.AppUserDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +9,12 @@ namespace ECommerceProject.PresentationLayer.Controllers
     public class RegisterController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly IMailSenderService _confirmationMailSenderService;
 
-        public RegisterController(UserManager<AppUser> userManager)
+        public RegisterController(UserManager<AppUser> userManager, IMailSenderService confirmationMailSenderService)
         {
             _userManager = userManager;
+            _confirmationMailSenderService = confirmationMailSenderService;
         }
 
         [HttpGet]
@@ -42,8 +45,18 @@ namespace ECommerceProject.PresentationLayer.Controllers
 
                 if (result.Succeeded)
                 {
-                    //return RedirectToAction("Index", "ConfirmMail");
-                    return Content("<h1>Son Bir Adım Kaldı!</h1> <p>Kaydınız başarılı bir şekilde gerçekleşti. Hesabınızı aktifleştirmek için mail adresinize gönderilen linke tıklayınız.</p>", "text/html; charset=utf-8");
+                    var mailConfToken = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
+
+                    var confirmationLink = Url.Action("Index", "ConfirmMail", new
+                    {
+                        userId = appUser.Id,
+                        token = mailConfToken
+                    }, Request.Scheme);
+
+                    var mailBody = PopulateEmailBody(appUser.UserName, confirmationLink);
+                    await _confirmationMailSenderService.SendConfirmationMailAsync(appUser.Email, "Hesabınızı Aktifleştirin", mailBody);
+
+                    return Content($"<h1>Son Bir Adım Kaldı!</h1> <p>Kaydınız başarılı bir şekilde gerçekleşti. Hesabınızı aktifleştirmek için mail adresinize gönderilen linke tıklayınız.</p>", "text/html; charset=utf-8");
                 }
                 else
                 {
@@ -54,6 +67,18 @@ namespace ECommerceProject.PresentationLayer.Controllers
                 }
             }
             return View();
+        }
+
+        private string PopulateEmailBody(string userName, string link)
+        {
+            string body = string.Empty;
+            using (StreamReader reader = new StreamReader("wwwroot/EmailTemplates/ConfirmationMail.html"))
+            {
+                body = reader.ReadToEnd();
+            }
+            //body = body.Replace("{UserName}", userName);
+            body = body.Replace("{ConfirmationLink}", link);
+            return body;
         }
     }
 }
