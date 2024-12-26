@@ -31,6 +31,12 @@ namespace ECommerceProject.PresentationLayer
             });
             builder.Services.AddTransient<IMailSenderService, MailSenderManager>();
 
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Login/Index";
+                options.LogoutPath = "/Login/Logout";
+                options.AccessDeniedPath = "/Login/AccessDenied";
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

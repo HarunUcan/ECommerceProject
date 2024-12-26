@@ -35,7 +35,7 @@ namespace ECommerceProject.PresentationLayer.Controllers
                     {
                         if (!user.EmailConfirmed)
                             return Content("Lütfen mailinizi onaylayınız.");
-                        return Content("Giriş Başarılı");
+                        return RedirectToAction("Index", "CustomerProfile");
                         //return RedirectToAction("Index", "Home");
                     }
                 }

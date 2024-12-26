@@ -10,14 +10,21 @@
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
 
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
         setTimeout(function () {
-            window.location.href = '@Url.Action("Index","Home")';
+            window.location.href = '@Url.Action("Index","Login")';
         }, 2500);
     </script>
 </head>
-<body>
-    <h1>Mail Doğrulama İşlemi Başarılı.</h1>
-    <p>Giriş Sayfasına Yönlendiriliyorsunuz...</p>
+<body class="flex justify-center items-center">
+    <div class="flex gap-2">
+        <div class="w-5 h-5 rounded-full animate-pulse bg-blue-600"></div>
+        <div class="w-5 h-5 rounded-full animate-pulse bg-blue-600"></div>
+        <div class="w-5 h-5 rounded-full animate-pulse bg-blue-600"></div>
+    </div>
+    @* <h1>Mail Doğrulama İşlemi Başarılı.</h1>
+    <p>Giriş Sayfasına Yönlendiriliyorsunuz...</p> *@
 </body>
 </html>
