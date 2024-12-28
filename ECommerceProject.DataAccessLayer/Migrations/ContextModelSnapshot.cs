@@ -24,11 +24,11 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Adress", b =>
                 {
-                    b.Property<int>("AdressId")
+                    b.Property<int?>("AdressId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdressId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("AdressId"));
 
                     b.Property<string>("AdressLine")
                         .IsRequired()
@@ -617,7 +617,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.HasOne("ECommerceProject.EntityLayer.Concrete.Adress", "Adress")
                         .WithMany("Sales")
                         .HasForeignKey("AdressId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ECommerceProject.EntityLayer.Concrete.AppUser", "AppUser")

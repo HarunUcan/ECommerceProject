@@ -144,13 +144,15 @@
     <!-- Mobile Topbar -->
     <aside class="sticky top-20 z-50 flex justify-between items-center mx-auto sm:hidden rounded-none mt-0 px-6 h-8 bg-white text-black w-full shadow-xl scrollbar-hide text-xs whitespace-nowrap overflow-x-auto gap-8">
         <div class="@(ViewData["ActivePage"]?.ToString() == "CustomerProfile" ? "flex justify-center items-center font-semibold border-b-2 border-red-500 h-full" : "")">
-            <a href="customerprofilepage.html">
+            <a href="/CustomerProfile/">
                 Kişisel
                 Bilgiler
             </a>
         </div>
         <div><a href="customerorderspage.html">Sipariş Geçmişi</a></div>
-        <div><a href="customeradresspage.html">Adresler</a></div>
+        <div class="@(ViewData["ActivePage"]?.ToString() == "CustomerAdress" ? "flex justify-center items-center font-semibold border-b-2 border-red-500 h-full" : "")">
+            <a href="/CustomerAdress/">Adresler</a>
+        </div>
         <div><a href="">Puanlar</a></div>
         <div><a href="">Bildirimler</a></div>
         <div><a href="">Destek</a></div>
@@ -165,7 +167,7 @@
         <aside class="sm:flex sm:flex-col h-max w-72 bg-white mt-6 ml-6 gap-4 rounded-3xl py-8 px-6 shadow-md overflow-y-auto hidden">
             <div class="text-lg">Merhaba, @ViewData["CustomerName"]</div>
             <div class="@(ViewData["ActivePage"]?.ToString() == "CustomerProfile" ? "border-l-4 border-red-500 text-lg" : "")">
-                <a href="#settings"
+                <a href="/CustomerProfile/"
                    class="block font-medium text-gray-200 py-2 px-4 rounded-lg text-gray-800 hover:bg-gray-200 transition duration-300">
                     <i class="fa-solid fa-circle-info mr-2"></i>Kişisel Bilgiler
                 </a>
@@ -174,8 +176,8 @@
                class="block font-medium text-gray-200 py-2 px-4 rounded-lg text-gray-800 hover:bg-gray-200 transition duration-300">
                 <i class="fa-solid fa-receipt mr-2"></i>Sipariş Geçmişi
             </a>
-            <div>
-                <a href="customeradresspage.html"
+            <div class="@(ViewData["ActivePage"]?.ToString() == "CustomerAdress" ? "border-l-4 border-red-500 text-lg" : "")">
+                <a href="/CustomerAdress/"
                    class="block font-medium text-gray-200 py-2 px-4 rounded-lg text-gray-800 hover:bg-gray-200 transition duration-300">
                     <i class="fa-solid fa-location-dot mr-2"></i>Adresler
                 </a>

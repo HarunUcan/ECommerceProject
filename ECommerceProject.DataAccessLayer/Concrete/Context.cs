@@ -30,11 +30,11 @@ namespace ECommerceProject.DataAccessLayer.Concrete
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Adress ile Sales arasındaki ilişki için Cascade Delete kaldırılıyor
-            modelBuilder.Entity<Sale>()
-                .HasOne(s => s.Adress)
-                .WithMany(a => a.Sales)
-                .HasForeignKey(s => s.AdressId)
-                .OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<Sale>()
+            //    .HasOne(s => s.Adress)
+            //    .WithMany(a => a.Sales)
+            //    .HasForeignKey(s => s.AdressId)
+            //    .OnDelete(DeleteBehavior.Restrict);
         }
         public DbSet<Adress> Adresses { get; set; }
         public DbSet<Product> Products { get; set; }

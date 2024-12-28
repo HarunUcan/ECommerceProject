@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerceProject.DataAccessLayer.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20241221230315_mig_1")]
+    [Migration("20241228003150_mig_1")]
     partial class mig_1
     {
         /// <inheritdoc />
@@ -119,9 +119,6 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<int?>("MailConfirmCode")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -623,7 +620,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.HasOne("ECommerceProject.EntityLayer.Concrete.Adress", "Adress")
                         .WithMany("Sales")
                         .HasForeignKey("AdressId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ECommerceProject.EntityLayer.Concrete.AppUser", "AppUser")

@@ -9,5 +9,6 @@ namespace ECommerceProject.DataAccessLayer.Abstract
 {
     public interface IAdressDal : IGenericDal<Adress>
     {
+        List<Adress> GetAdressesByUserId(int userId);
     }
 }

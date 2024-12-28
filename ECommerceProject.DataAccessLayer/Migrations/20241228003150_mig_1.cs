@@ -103,7 +103,6 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MailConfirmCode = table.Column<int>(type: "int", nullable: true),
                     CartId = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -357,7 +356,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                         column: x => x.AdressId,
                         principalTable: "Adresses",
                         principalColumn: "AdressId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Sales_AspNetUsers_AppUserId",
                         column: x => x.AppUserId,

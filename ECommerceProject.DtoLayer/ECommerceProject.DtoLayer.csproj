@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="Dtos\AppRoleDtos\" />
-    <Folder Include="Dtos\AdressDtos\" />
     <Folder Include="Dtos\CartDtos\" />
     <Folder Include="Dtos\CartItemDtos\" />
     <Folder Include="Dtos\CategoryDtos\" />

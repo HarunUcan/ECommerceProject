@@ -1,6 +1,8 @@
 using ECommerceProject.BusinessLayer.Abstract;
 using ECommerceProject.BusinessLayer.Concrete;
+using ECommerceProject.DataAccessLayer.Abstract;
 using ECommerceProject.DataAccessLayer.Concrete;
+using ECommerceProject.DataAccessLayer.EntityFramework;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.Models;
 using Microsoft.AspNetCore.Identity;
@@ -29,6 +31,9 @@ namespace ECommerceProject.PresentationLayer
             {
                 options.TokenLifespan = TimeSpan.FromDays(2);
             });
+            builder.Services.AddTransient<IAdressService, AdressManager>();
+            builder.Services.AddTransient<IAdressDal, EfAdressDal>();
+
             builder.Services.AddTransient<IMailSenderService, MailSenderManager>();
 
             builder.Services.ConfigureApplicationCookie(options =>

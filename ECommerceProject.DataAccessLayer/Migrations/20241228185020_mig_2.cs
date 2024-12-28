@@ -5,24 +5,18 @@
 namespace ECommerceProject.DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class RemoveMailConfirmCode : Migration
+    public partial class mig_2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "MailConfirmCode",
-                table: "AspNetUsers");
+
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "MailConfirmCode",
-                table: "AspNetUsers",
-                type: "int",
-                nullable: true);
+
         }
     }
 }

@@ -9,5 +9,6 @@ namespace ECommerceProject.BusinessLayer.Abstract
 {
     public interface IAdressService : IGenericService<Adress>
     {
+        List<Adress> TGetAdressesByUserId(int userId);
     }
 }

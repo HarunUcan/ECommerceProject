@@ -1,6 +1,7 @@
 ﻿using ECommerceProject.BusinessLayer.Abstract;
 using ECommerceProject.DataAccessLayer.Abstract;
 using ECommerceProject.EntityLayer.Concrete;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +12,23 @@ namespace ECommerceProject.BusinessLayer.Concrete
 {
     public class AdressManager : IAdressService
     {
+        private readonly IConfiguration _configuration;
         private readonly IAdressDal _adressDal;
 
-        public AdressManager(IAdressDal adressDal)
+        public AdressManager(IConfiguration configuration,IAdressDal adressDal)
         {
+            _configuration = configuration;
             _adressDal = adressDal;
         }
 
         public void TDelete(Adress t)
         {
             _adressDal.Delete(t);
+        }
+
+        public List<Adress> TGetAdressesByUserId(int userId)
+        {
+            return _adressDal.GetAdressesByUserId(userId);
         }
 
         public Adress TGetById(int id)
