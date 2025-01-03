@@ -3,8 +3,9 @@ using ECommerceProject.EntityLayer.Concrete;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ECommerceProject.PresentationLayer.Controllers
+namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 {
+    [Area("User")]
     public class LoginController : Controller
     {
         private readonly SignInManager<AppUser> _signInManager;

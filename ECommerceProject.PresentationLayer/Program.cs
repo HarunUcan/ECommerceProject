@@ -38,7 +38,7 @@ namespace ECommerceProject.PresentationLayer
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
-                options.LoginPath = "/Login/Index";
+                options.LoginPath = "/User/Login/Index";
                 options.LogoutPath = "/Login/Logout";
                 options.AccessDeniedPath = "/Login/AccessDenied";
             });
@@ -60,6 +60,16 @@ namespace ECommerceProject.PresentationLayer
             app.UseAuthentication();    
             app.UseAuthorization();
 
+            //app.UseEndpoints(endpoints =>
+            //{
+               
+
+            //    endpoints.MapDefaultControllerRoute();
+            //});
+
+            app.MapControllerRoute(
+                   name: "areas",
+                   pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");

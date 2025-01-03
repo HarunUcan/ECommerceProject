@@ -4,8 +4,9 @@ using ECommerceProject.EntityLayer.Concrete;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ECommerceProject.PresentationLayer.Controllers
+namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 {
+    [Area("User")]
     public class RegisterController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
@@ -28,6 +29,16 @@ namespace ECommerceProject.PresentationLayer.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (appUserRegisterDto.Password != appUserRegisterDto.ConfirmPassword)
+                {
+                    ModelState.AddModelError("", "Şifreler uyuşmuyor.");
+                    return View(appUserRegisterDto);
+                }
+                if (!appUserRegisterDto.IsAgreeToUserAgreement)
+                {
+                    ModelState.AddModelError("", "Kullanıcı sözleşmesini kabul etmelisiniz.");
+                    return View(appUserRegisterDto);
+                }
                 Cart cart = new Cart
                 {
                     UpdatedDate = DateTime.Now

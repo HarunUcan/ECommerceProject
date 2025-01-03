@@ -1,11 +1,14 @@
-﻿using ECommerceProject.DtoLayer.Dtos.AppUserDtos;
+﻿using ECommerceProject.DataAccessLayer.Concrete;
+using ECommerceProject.DtoLayer.Dtos.AppUserDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace ECommerceProject.PresentationLayer.Controllers
+namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 {
+    [Area("User")]
     [Authorize]
     public class CustomerProfileController : Controller
     {
@@ -57,5 +60,28 @@ namespace ECommerceProject.PresentationLayer.Controllers
             }
             return View(appUserEditDto);
         }
+
+        /** /
+        [Route("category-list-example")]
+        [HttpGet]
+        public List<string> CategoryListExample(string categoryName)
+        {
+            Context context = new Context();
+            var woman = context.Categories
+                .Include(c => c.SubCategories) // Alt kategorileri dahil et
+                .FirstOrDefault(c => c.Name == categoryName);
+            List<string> categoryList = new List<string>();
+            if (woman != null)
+            {
+                Console.WriteLine($"Category: {woman.Name}");
+                foreach (var subCategory in woman.SubCategories)
+                {
+                    categoryList.Add(subCategory.Name);
+                }
+            }
+            return categoryList;
+        }
+        / **/
+
     }
 }

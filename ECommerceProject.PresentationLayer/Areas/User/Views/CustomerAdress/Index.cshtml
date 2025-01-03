@@ -1,6 +1,6 @@
 ﻿@model UserAdressViewModel
 @{
-    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+    Layout = "~/Areas/User/Views/Shared/_CustomerLayout.cshtml";
     ViewData["Title"] = "Adresler";
     ViewData["ActivePage"] = "CustomerAdress";
 }
@@ -20,7 +20,7 @@
                         <p class="text-sm text-gray-600">@adress.City @adress.District</p>
                     </div>
                     <div class="flex space-x-2">
-                        <a href="/CustomerAdress/Delete/@adress.AdressId"><i class="fa-solid fa-trash-can text-red-500"></i></a>
+                        <a href="/User/CustomerAdress/Delete/@adress.AdressId"><i class="fa-solid fa-trash-can text-red-500"></i></a>
                     </div>
                 </div>
             }
@@ -77,6 +77,31 @@
                     <textarea id="address-line" asp-for="NewAdress.AdressLine" placeholder="Tam adresinizi girin"
                               class="w-full border border-gray-300 p-2 rounded"></textarea>
                 </div>
+                @* <div>
+                    <label for="city1" class="block text-gray-700">İlçe</label>
+                    <select id="city1" class="w-full border border-gray-300 p-2 rounded">
+                        <option value="" disabled selected>Şehir Seçiniz..</option>
+                        <option value="Adana">Adana</option>
+                        <option value="Adıyaman">Adıyaman</option>
+                        <option value="Afyonkarahisar">Afyonkarahisar</option>
+                        <option value="Ağrı">Ağrı</option>
+                        <option value="Aksaray">Aksaray</option>
+                        <option value="Amasya">Amasya</option>
+                        <option value="Ankara">Ankara</option>
+                        <option value="Antalya">Antalya</option>
+                        <option value="Ardahan">Ardahan</option>
+                        <option value="Artvin">Artvin</option>
+                        <option value="Aydın">Aydın</option>
+                        <option value="Balıkesir">Balıkesir</option>
+                        <option value="Bartın">Bartın</option>
+                        <option value="Batman">Batman</option>
+                        <option value="Bayburt">Bayburt</option>
+                        <option value="Bilecik">Bilecik</option>
+                        <option value="Bingöl">Bingöl</option>
+                        <option value="Bitlis">Bitlis</option>
+                        <option value="Bolu">Bolu</option>
+                    </select>
+                </div> *@
             </div>
             <button type="submit"
                     class="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-gray-800">

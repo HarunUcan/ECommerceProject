@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace ECommerceProject.PresentationLayer.Controllers
+namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 {
+    [Area("User")]
     [Authorize]
     public class HomeController : Controller
     {

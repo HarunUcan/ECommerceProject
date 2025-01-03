@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ECommerceProject.PresentationLayer.Controllers
+namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 {
+    [Area("User")]
     [Authorize]
     public class CustomerAdressController : Controller
     {
@@ -55,8 +56,9 @@ namespace ECommerceProject.PresentationLayer.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            if (ModelState.IsValid) {
-                
+            if (ModelState.IsValid)
+            {
+
                 Adress adress = new Adress
                 {
                     Title = userAdressViewModel.NewAdress.Title,
