@@ -1,0 +1,184 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    ViewData["ActivePage"] = "Dashboard";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-semibold text-gray-700 mb-8">Dashboard</h1>
+
+    <!-- Cards Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <!-- Card -->
+        <div class="bg-indigo-500 text-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold">Toplam Ürün</h2>
+            <p class="text-3xl font-bold mt-4">124</p>
+        </div>
+        <!-- Card -->
+        <div class="bg-green-500 text-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold">Yeni Siparişler</h2>
+            <p class="text-3xl font-bold mt-4">45</p>
+        </div>
+        <!-- Card -->
+        <div class="bg-yellow-500 text-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold">Aktif Kullanıcılar</h2>
+            <p class="text-3xl font-bold mt-4">78</p>
+        </div>
+        <!-- Card -->
+        <div class="bg-red-500 text-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold">Destek Talepleri</h2>
+            <p class="text-3xl font-bold mt-4">12</p>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <!-- Line Chart -->
+        <div class="bg-gray-50 p-8 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Satışlar (Aylık)</h2>
+            <canvas id="lineChart"></canvas>
+        </div>
+
+        <!-- Bar Chart -->
+        <div class="bg-gray-50 p-8 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Kategori Bazlı Satış</h2>
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="bg-gray-50 p-8 rounded-lg shadow-md">
+        <h2 class="text-xl font-semibold text-gray-700 mb-6">Son Siparişler</h2>
+        <table class="w-full table-auto border-collapse">
+            <thead>
+                <tr>
+                    <th class="border-b-2 py-4 text-left text-gray-600">Sipariş ID</th>
+                    <th class="border-b-2 py-4 text-left text-gray-600">Müşteri</th>
+                    <th class="border-b-2 py-4 text-left text-gray-600">Tarih</th>
+                    <th class="border-b-2 py-4 text-left text-gray-600">Durum</th>
+                    <th class="border-b-2 py-4 text-left text-gray-600">Toplam</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="border-b py-4">#1001</td>
+                    <td class="border-b py-4">Ali Yılmaz</td>
+                    <td class="border-b py-4">2025-01-12</td>
+                    <td class="border-b py-4 text-green-600">Tamamlandı</td>
+                    <td class="border-b py-4">₺450</td>
+                </tr>
+                <tr>
+                    <td class="border-b py-4">#1002</td>
+                    <td class="border-b py-4">Ayşe Kaya</td>
+                    <td class="border-b py-4">2025-01-11</td>
+                    <td class="border-b py-4 text-yellow-600">Bekliyor</td>
+                    <td class="border-b py-4">₺300</td>
+                </tr>
+                <tr>
+                    <td class="border-b py-4">#1003</td>
+                    <td class="border-b py-4">Mehmet Demir</td>
+                    <td class="border-b py-4">2025-01-10</td>
+                    <td class="border-b py-4 text-red-600">İptal Edildi</td>
+                    <td class="border-b py-4">₺0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Best Sellers Section -->
+    <div class="bg-gray-50 p-8 rounded-lg shadow-md mt-10">
+        <h2 class="text-xl font-semibold text-gray-700 mb-6">En Çok Satan Ürünler</h2>
+        <table class="w-full table-auto border-collapse">
+            <thead>
+                <tr>
+                    <th class="border-b-2 py-4 text-left text-gray-600">Sıra</th>
+                    <th class="border-b-2 py-4 text-left text-gray-600">Ürün Adı</th>
+                    <th class="border-b-2 py-4 text-left text-gray-600">Kategori</th>
+                    <th class="border-b-2 py-4 text-left text-gray-600">Satış Adedi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="border-b py-4 font-bold text-xl text-center">🥇</td>
+                    <td class="border-b py-4">Akıllı Telefon</td>
+                    <td class="border-b py-4">Elektronik</td>
+                    <td class="border-b py-4">120</td>
+                </tr>
+                <tr>
+                    <td class="border-b py-4 font-bold text-xl text-center">🥈</td>
+                    <td class="border-b py-4">Spor Ayakkabı</td>
+                    <td class="border-b py-4">Moda</td>
+                    <td class="border-b py-4">95</td>
+                </tr>
+                <tr>
+                    <td class="border-b py-4 font-bold text-xl text-center">🥉</td>
+                    <td class="border-b py-4">Roman Kitap</td>
+                    <td class="border-b py-4">Kitap</td>
+                    <td class="border-b py-4">80</td>
+                </tr>
+                <tr>
+                    <td class="border-b py-4 font-bold text-xl text-center">4</td>
+                    <td class="border-b py-4">Blender</td>
+                    <td class="border-b py-4">Ev ve Yaşam</td>
+                    <td class="border-b py-4">65</td>
+                </tr>
+                <tr>
+                    <td class="border-b py-4 font-bold text-xl text-center">5</td>
+                    <td class="border-b py-4">Kulaklık</td>
+                    <td class="border-b py-4">Elektronik</td>
+                    <td class="border-b py-4">50</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+    const lineCtx = document.getElementById('lineChart').getContext('2d');
+    new Chart(lineCtx, {
+      type: 'line',
+      data: {
+        labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran'],
+        datasets: [{
+          label: 'Satışlar',
+          data: [150, 200, 180, 220, 300, 250],
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        }]
+      }
+    });
+
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    new Chart(barCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Elektronik', 'Moda', 'Ev ve Yaşam', 'Spor', 'Kitap'],
+        datasets: [{
+          label: 'Satışlar',
+          data: [500, 700, 400, 300, 600],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)'
+          ],
+          borderWidth: 1
+        }]
+      }
+    });
+</script>
+
+

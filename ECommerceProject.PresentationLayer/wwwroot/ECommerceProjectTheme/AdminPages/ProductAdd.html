@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ürün Ekle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script>
+    function previewImage(input, previewId) {
+      const preview = document.getElementById(previewId);
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+          preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function previewMultipleImages(input, containerId) {
+      const container = document.getElementById(containerId);
+      const existingImages = container.querySelectorAll('img');
+      const addButton = container.querySelector('.add-button');
+
+      if (input.files) {
+        Array.from(input.files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const imgContainer = document.createElement('div');
+            imgContainer.classList.add('relative', 'w-20', 'h-20', 'm-2');
+
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.classList.add('w-full', 'h-full', 'object-cover', 'rounded-lg', 'border', 'border-gray-300');
+
+            const deleteIcon = document.createElement('button');
+            deleteIcon.innerHTML = '<i class="fa-solid fa-trash-can text-red-500 text-sm"></i>';
+            deleteIcon.classList.add('absolute', 'top-[-20px]', 'right-[0px]', 'cursor-pointer', 'transform', 'translate-x-1/2', 'translate-y-1/2');
+            deleteIcon.onclick = () => imgContainer.remove();
+
+            imgContainer.appendChild(img);
+            imgContainer.appendChild(deleteIcon);
+            container.insertBefore(imgContainer, addButton);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-gray-100">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-900 text-gray-200">
+      <div class="p-6 text-lg font-bold border-b border-gray-700">Admin Panel</div>
+      <nav class="mt-4">
+        <a href="#" class="block py-3 px-6 hover:bg-gray-700">Dashboard</a>
+        <a href="#" class="block py-3 px-6 hover:bg-gray-700">Ürünler</a>
+        <a href="#" class="block py-3 px-6 hover:bg-gray-700">Siparişler</a>
+        <a href="#" class="block py-3 px-6 hover:bg-gray-700">Kullanıcılar</a>
+        <a href="#" class="block py-3 px-6 hover:bg-gray-700">Ayarlar</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 bg-white p-10">
+      <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-semibold text-gray-700 mb-8">Ürün Ekle</h1>
+
+        <!-- Add Product Form -->
+        <div class="bg-gray-50 p-8 rounded-lg shadow-md">
+          <h2 class="text-xl font-semibold text-gray-700 mb-6">Yeni Ürün Ekle</h2>
+          <form action="#" method="POST" enctype="multipart/form-data">
+            <div class="mb-6">
+              <label for="productName" class="block text-sm font-medium text-gray-600">Ürün Adı</label>
+              <input type="text" id="productName" name="productName" placeholder="Ürün adını girin"
+                class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 text-gray-700 bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="mb-6">
+              <label for="price" class="block text-sm font-medium text-gray-600">Fiyat</label>
+              <input type="number" id="price" name="price" placeholder="Ürün fiyatını girin"
+                class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 text-gray-700 bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div class="mb-6">
+              <label for="description" class="block text-sm font-medium text-gray-600">Ürün Açıklaması</label>
+              <textarea id="description" name="description" rows="4" placeholder="Ürün açıklamasını girin"
+                class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 text-gray-700 bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+            </div>
+
+            <div class="mb-6">
+              <label for="category" class="block text-sm font-medium text-gray-600">Kategori</label>
+              <select id="category" name="category"
+                class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 text-gray-700 bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500">
+                <optgroup label="Elektronik">
+                  <option>Telefon</option>
+                  <option>Bilgisayar</option>
+                </optgroup>
+                <optgroup label="Moda">
+                  <option>Erkek Giyim</option>
+                  <option>Kadın Giyim</option>
+                </optgroup>
+                <optgroup label="Ev ve Yaşam">
+                  <option>Mobilya</option>
+                  <option>Mutfak Eşyaları</option>
+                </optgroup>
+                <optgroup label="Spor">
+                  <option>Futbol</option>
+                  <option>Fitness</option>
+                </optgroup>
+                <optgroup label="Kitap">
+                  <option>Roman</option>
+                  <option>Eğitim</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- Main Product Image -->
+            <div class="mb-6">
+              <label for="mainImage" class="block text-sm font-medium text-gray-600">Ana Ürün Görseli</label>
+              <div
+                class="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 relative">
+                <input type="file" id="mainImage" name="mainImage" accept="image/*"
+                  class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewImage(this, 'mainImagePreview')">
+                <img id="mainImagePreview" class="hidden w-full h-full object-contain rounded-lg">
+                <span class="text-gray-500">Dosya Seç</span>
+              </div>
+            </div>
+
+            <!-- Additional Product Images -->
+            <div class="mb-6">
+              <label for="additionalImages" class="block text-sm font-medium text-gray-600">Ekstra Ürün
+                Görselleri</label>
+              <div id="additionalImagesContainer"
+                class="flex gap-2 flex-wrap border-2 border-dashed border-gray-300 p-4 rounded-lg items-center">
+                <label
+                  class="add-button w-20 h-20 flex items-center justify-center bg-gray-100 text-gray-500 rounded-lg cursor-pointer border border-gray-300 self-center">
+                  <input type="file" id="additionalImages" name="additionalImages" accept="image/*" multiple
+                    class="hidden" onchange="previewMultipleImages(this, 'additionalImagesContainer')">
+                  <span class="text-2xl font-bold">+</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="flex justify-end">
+              <button type="submit"
+                class="px-6 py-2 text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-white">Ekle</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+
+</html>

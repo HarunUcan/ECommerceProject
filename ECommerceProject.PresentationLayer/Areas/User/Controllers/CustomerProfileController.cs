@@ -45,6 +45,10 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByNameAsync(User.Identity.Name);
+                if (user == null)
+                {
+                    return RedirectToAction("Index", "Login");
+                }
                 user.Name = appUserEditDto.Name;
                 user.Surname = appUserEditDto.Surname;
                 user.Email = appUserEditDto.Email;

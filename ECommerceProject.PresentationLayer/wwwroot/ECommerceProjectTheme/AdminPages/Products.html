@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mevcut Ürünler</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function filterProducts() {
+            const input = document.getElementById('search-bar');
+            const filter = input.value.toLowerCase();
+            const tableRows = document.querySelectorAll('tbody tr');
+
+            tableRows.forEach(row => {
+                const productName = row.querySelector('td:nth-child(3)');
+                if (productName) {
+                    const textValue = productName.textContent || productName.innerText;
+                    row.style.display = textValue.toLowerCase().includes(filter) ? '' : 'none';
+                }
+            });
+        }
+    </script>
+</head>
+
+<body class="bg-gray-100">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-900 text-gray-200">
+            <div class="p-6 text-lg font-bold border-b border-gray-700">Admin Panel</div>
+            <nav class="mt-4">
+                <a href="#" class="block py-3 px-6 hover:bg-gray-700">Dashboard</a>
+                <a href="#" class="block py-3 px-6 hover:bg-gray-700">Ürünler</a>
+                <a href="#" class="block py-3 px-6 hover:bg-gray-700">Kategoriler</a>
+                <a href="#" class="block py-3 px-6 hover:bg-gray-700">Siparişler</a>
+                <a href="#" class="block py-3 px-6 hover:bg-gray-700">Kullanıcılar</a>
+                <a href="#" class="block py-3 px-6 hover:bg-gray-700">Ayarlar</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 bg-white p-10">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h1 class="text-3xl font-semibold text-gray-700">Mevcut Ürünler</h1>
+                    <div class="relative">
+                        <input type="text" id="search-bar" onkeyup="filterProducts()" placeholder="Ürün ara..."
+                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                        <svg class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-4.35-4.35m2.44-5.14a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="bg-gray-50 p-8 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-6">Mevcut Ürünler</h2>
+                    <table class="w-full table-auto border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="border-b-2 py-4 text-left text-gray-600">Ürün ID</th>
+                                <th class="border-b-2 py-4 text-left text-gray-600">Ürün Resmi</th>
+                                <th class="border-b-2 py-4 text-left text-gray-600">Ürün Adı</th>
+                                <th class="border-b-2 py-4 text-left text-gray-600">Fiyat</th>
+                                <th class="border-b-2 py-4 text-left text-gray-600">Kategori</th>
+                                <th class="border-b-2 py-4 text-left text-gray-600">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border-b py-4">1</td>
+                                <td class="border-b py-4"><img src="../urun5.jpg" alt="Ürün Resmi"
+                                        class="w-12 h-12 rounded-md"></td>
+                                <td class="border-b py-4">Laptop</td>
+                                <td class="border-b py-4">10,000 TL</td>
+                                <td class="border-b py-4">Elektronik</td>
+                                <td class="border-b py-4">
+                                    <a href="/urun-duzenle/1"
+                                        class="px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow">Düzenle</a>
+                                    <a href="#"
+                                        class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg shadow">Sil</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="border-b py-4">2</td>
+                                <td class="border-b py-4"><img src="../urun11.jpg" alt="Ürün Resmi"
+                                        class="w-12 h-12 rounded-md"></td>
+                                <td class="border-b py-4">Tişört</td>
+                                <td class="border-b py-4">150 TL</td>
+                                <td class="border-b py-4">Moda</td>
+                                <td class="border-b py-4">
+                                    <a href="/urun-duzenle/2"
+                                        class="px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow">Düzenle</a>
+                                    <a href="#"
+                                        class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg shadow">Sil</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
