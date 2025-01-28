@@ -1,0 +1,36 @@
+﻿@model dynamic
+
+@{
+    var category = Model.Category as ECommerceProject.EntityLayer.Concrete.Category;
+    int depth = Model.Depth;
+    int subCategoryToggleCounter = category.CategoryId;
+
+    // Katmana göre renk belirleme
+    var backgroundColors = new[] { "bg-gray-300", "bg-amber-100", "bg-red-100", "bg-blue-100", "bg-green-100" };
+    var backgroundColor = backgroundColors[depth % backgroundColors.Length]; // Derinliğe göre renk seç
+}
+<li>
+    <div class="flex justify-between items-center @backgroundColor p-4 rounded-lg">
+        <span class="font-medium text-gray-800">@category.Name</span>
+        <div class="space-x-2">
+            @if (category.SubCategories?.Any() == true)
+            {
+                <button onclick="toggleSubcategories(@subCategoryToggleCounter)" class="text-sm text-blue-600">
+                    Alt Kategorileri Gör
+                </button>
+            }
+            <button class="text-sm text-yellow-600">Düzenle</button>
+            <button class="text-sm text-red-600">Sil</button>
+        </div>
+    </div>
+
+    @if (category.SubCategories?.Any() == true)
+    {
+        <ul id="subcategories-@subCategoryToggleCounter" class="ml-6 mt-2 hidden space-y-2">
+            @foreach (var subCategory in category.SubCategories)
+            {
+                @await Html.PartialAsync("_RecursiveCategoryList", new { Category = subCategory, Depth = depth + 1 })
+            }
+        </ul>
+    }
+</li>

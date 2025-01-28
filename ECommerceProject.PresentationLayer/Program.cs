@@ -34,6 +34,9 @@ namespace ECommerceProject.PresentationLayer
             builder.Services.AddTransient<IAdressService, AdressManager>();
             builder.Services.AddTransient<IAdressDal, EfAdressDal>();
 
+            builder.Services.AddTransient<ICategoryService, CategoryManager>();
+            builder.Services.AddTransient<ICategoryDal, EfCategoryDal>();
+
             builder.Services.AddTransient<IMailSenderService, MailSenderManager>();
 
             builder.Services.ConfigureApplicationCookie(options =>
