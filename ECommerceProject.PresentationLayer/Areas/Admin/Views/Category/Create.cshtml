@@ -1,37 +1,33 @@
-﻿
+﻿@model AdminCatagoryViewModel
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Kategori Ekle";
     ViewData["ActivePage"] = "Category-Create";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
 <div class="max-w-7xl mx-auto">
-    <h1 class="text-3xl font-semibold text-gray-700 mb-8">Kategori Ekle</h1>
+    <h1 class="text-3xl font-semibold text-gray-700 mb-8">Yeni Kategori Ekle</h1>
 
-    <!-- Add Category Form -->
-    <div class="bg-gray-50 p-8 rounded-lg shadow-md mb-10">
+    <!-- Kategori Ekleme Formu -->
+    <div class="bg-gray-50 p-8 rounded-lg shadow-md">
         <h2 class="text-xl font-semibold text-gray-700 mb-6">Yeni Kategori Ekle</h2>
-        <form action="#" method="POST">
+        <form method="post">
             <div class="mb-6">
-                <label for="categoryName" class="block text-sm font-medium text-gray-600">
-                    Kategori
-                    Adı
-                </label>
-                <input type="text" id="categoryName" name="categoryName" placeholder="Kategori adını girin"
+                <label for="categoryName" class="block text-sm font-medium text-gray-600">Kategori Adı</label>
+                <input type="text" asp-for="NewCategory.Name" id="categoryName" placeholder="Örn:Kadın Giyim"
                        class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 text-gray-700 bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500">
+                @* <span asp-validation-for="CategoryDto.Name" class="text-red-500 text-sm"></span> *@
             </div>
 
             <div class="mb-6">
-                <label for="parentCategory" class="block text-sm font-medium text-gray-600">
-                    Üst Kategori
-                    (Opsiyonel)
-                </label>
-                <select id="parentCategory" name="parentCategory"
+                <label for="parentCategory" class="block text-sm font-medium text-gray-600">Üst Kategori (Opsiyonel)</label>
+                <select id="parentCategory" asp-for="NewCategory.ParentCategoryId"
                         class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 text-gray-700 bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500">
                     <option value="">Hiçbiri</option>
-                    <option value="1">Elektronik</option>
-                    <option value="2">Moda</option>
-                    <option value="3">Ev ve Yaşam</option>
+                    @foreach (var category in Model.Categories.Where(c => c.ParentCategory == null))
+                    {
+                        @await Html.PartialAsync("_CategoryDropdown", new { Category = category, Depth = 0 })
+                    }
                 </select>
             </div>
 
@@ -43,7 +39,4 @@
             </div>
         </form>
     </div>
-
 </div>
-
-

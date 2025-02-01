@@ -1,4 +1,6 @@
 ﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.PresentationLayer.ViewModels;
+using ECommerceProject.DtoLayer.Dtos.CategoryDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +26,37 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
             return View(categories);
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            AdminCatagoryViewModel adminCatagoryViewModel = new AdminCatagoryViewModel
+            {
+                NewCategory = new CategoryDto(),
+                Categories = _categoryService.TGetList()
+            };
+            return View(adminCatagoryViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Create(AdminCatagoryViewModel adminCatagoryViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                _categoryService.TInsert(new Category
+                {
+                    Name = adminCatagoryViewModel.NewCategory.Name,
+                    ParentCategoryId = adminCatagoryViewModel.NewCategory.ParentCategoryId
+                });
+                return RedirectToAction("Index");
+            }
+            return View(adminCatagoryViewModel);
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            _categoryService.TRecursivDeleteCategory(id);
+            return RedirectToAction("Index");
         }
     }
 }

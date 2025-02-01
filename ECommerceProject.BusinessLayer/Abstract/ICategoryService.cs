@@ -9,5 +9,6 @@ namespace ECommerceProject.BusinessLayer.Abstract
 {
     public interface ICategoryService : IGenericService<Category>
     {
+        void TRecursivDeleteCategory(int categoryId);
     }
 }

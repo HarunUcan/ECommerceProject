@@ -1,0 +1,17 @@
+﻿@model dynamic
+
+@{
+    var category = Model.Category as ECommerceProject.EntityLayer.Concrete.Category;
+    int depth = Model.Depth;
+    string indent = new string('—', depth); // Hiyerarşik yapı için boşluk
+}
+
+<option value="@category.CategoryId">@indent @category.Name</option>
+
+@if (category.SubCategories?.Any() == true)
+{
+    @foreach (var subCategory in category.SubCategories)
+    {
+        @await Html.PartialAsync("_CategoryDropdown", new { Category = subCategory, Depth = depth + 1 })
+    }
+}

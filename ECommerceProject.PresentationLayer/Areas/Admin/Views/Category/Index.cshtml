@@ -7,6 +7,7 @@
 }
 
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function toggleSubcategories(rowId) {
             const subcategories = document.getElementById(`subcategories-${rowId}`);
@@ -14,8 +15,26 @@
                 subcategories.classList.toggle('hidden');
             }
         }
+
+        function confirmDelete(categoryId) {
+            Swal.fire({
+                title: "Emin misiniz?",
+                text: "Bu kategoriyi ve buna bağlı tüm kategorileri silmek istediğinize emin misiniz? Bu işlem geri alınamaz!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Evet, sil!",
+                cancelButtonText: "İptal"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `/Admin/Category/Delete?id=${categoryId}`;
+                }
+            });
+        }
     </script>
 </head>
+
 
 <div class="max-w-7xl mx-auto">
     <h1 class="text-3xl font-semibold text-gray-700 mb-8">Mevcut Kategoriler</h1>

@@ -29,6 +29,12 @@ namespace ECommerceProject.DataAccessLayer.Concrete
                 .HasForeignKey(s => s.AppUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Category>()
+                .HasOne(c => c.ParentCategory)
+                .WithMany(c => c.SubCategories)
+                .HasForeignKey(c => c.ParentCategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             // Adress ile Sales arasındaki ilişki için Cascade Delete kaldırılıyor
             //modelBuilder.Entity<Sale>()
             //    .HasOne(s => s.Adress)

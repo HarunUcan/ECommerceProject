@@ -9,5 +9,6 @@ namespace ECommerceProject.DataAccessLayer.Abstract
 {
     public interface ICategoryDal : IGenericDal<Category>
     {
+        void RecursiveDeleteCategory(int categoryId);
     }
 }
