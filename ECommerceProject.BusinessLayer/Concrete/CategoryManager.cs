@@ -38,7 +38,7 @@ namespace ECommerceProject.BusinessLayer.Concrete
             _categoryDal.Insert(t);
         }
 
-        public void TRecursivDeleteCategory(int categoryId)
+        public void TRecursiveDeleteCategory(int categoryId)
         {
             _categoryDal.RecursiveDeleteCategory(categoryId);
         }

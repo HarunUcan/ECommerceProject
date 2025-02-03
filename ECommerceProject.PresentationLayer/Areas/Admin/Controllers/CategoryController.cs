@@ -29,33 +29,71 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            AdminCatagoryViewModel adminCatagoryViewModel = new AdminCatagoryViewModel
+            AdminCategoryViewModel adminCatagoryViewModel = new AdminCategoryViewModel
             {
-                NewCategory = new CategoryDto(),
+                CategoryDto = new CategoryDto(),
                 Categories = _categoryService.TGetList()
             };
             return View(adminCatagoryViewModel);
         }
 
         [HttpPost]
-        public IActionResult Create(AdminCatagoryViewModel adminCatagoryViewModel)
+        public IActionResult Create(AdminCategoryViewModel adminCategoryViewModel)
         {
             if (ModelState.IsValid)
             {
                 _categoryService.TInsert(new Category
                 {
-                    Name = adminCatagoryViewModel.NewCategory.Name,
-                    ParentCategoryId = adminCatagoryViewModel.NewCategory.ParentCategoryId
+                    Name = adminCategoryViewModel.CategoryDto.Name,
+                    ParentCategoryId = adminCategoryViewModel.CategoryDto.ParentCategoryId
                 });
                 return RedirectToAction("Index");
             }
-            return View(adminCatagoryViewModel);
+            return View(adminCategoryViewModel);
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var category = _categoryService.TGetById(id);
+            if (category == null)
+            {
+                return RedirectToAction("Index");
+            }
+            ViewBag.ParentCategoryId = category.ParentCategoryId;
+            AdminCategoryEditViewModel adminCategoryViewModel = new AdminCategoryEditViewModel
+            {
+                CategoryEditDto = new CategoryEditDto
+                {
+                    CategoryId = category.CategoryId,
+                    Name = category.Name,
+                    ParentCategoryId = category.ParentCategoryId
+                },
+                Categories = _categoryService.TGetList()
+            };
+            return View(adminCategoryViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(AdminCategoryEditViewModel adminCategoryEditViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                _categoryService.TUpdate(new Category
+                {
+                    CategoryId = adminCategoryEditViewModel.CategoryEditDto.CategoryId,
+                    Name = adminCategoryEditViewModel.CategoryEditDto.Name,
+                    ParentCategoryId = adminCategoryEditViewModel.CategoryEditDto.ParentCategoryId
+                });
+                return RedirectToAction("Index");
+            }
+            return View(adminCategoryEditViewModel);
         }
 
         [HttpGet]
         public IActionResult Delete(int id)
         {
-            _categoryService.TRecursivDeleteCategory(id);
+            _categoryService.TRecursiveDeleteCategory(id);
             return RedirectToAction("Index");
         }
     }

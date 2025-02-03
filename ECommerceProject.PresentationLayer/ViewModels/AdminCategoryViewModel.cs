@@ -3,9 +3,9 @@ using ECommerceProject.EntityLayer.Concrete;
 
 namespace ECommerceProject.PresentationLayer.ViewModels
 {
-    public class AdminCatagoryViewModel
+    public class AdminCategoryViewModel
     {
-        public CategoryDto NewCategory { get; set; }
+        public CategoryDto CategoryDto { get; set; }
         public List<Category> Categories { get; set; } = new List<Category>();
     }
 }
