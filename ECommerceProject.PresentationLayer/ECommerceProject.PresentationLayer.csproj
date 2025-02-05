@@ -39,6 +39,7 @@
     <Folder Include="Areas\User\Models\" />
     <Folder Include="Controllers\" />
     <Folder Include="Views\Shared\" />
+    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
 </Project>

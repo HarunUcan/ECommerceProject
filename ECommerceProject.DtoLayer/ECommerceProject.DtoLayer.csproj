@@ -24,11 +24,11 @@
     <Folder Include="Dtos\CartDtos\" />
     <Folder Include="Dtos\CartItemDtos\" />
     <Folder Include="Dtos\CouponDtos\" />
+    <Folder Include="Dtos\ProductDtos\" />
     <Folder Include="Dtos\SaleItemDtos\" />
     <Folder Include="Dtos\SaleDtos\" />
     <Folder Include="Dtos\ProductVariantDtos\" />
     <Folder Include="Dtos\ProductImageDtos\" />
-    <Folder Include="Dtos\ProductDtos\" />
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,8 @@ using ECommerceProject.DataAccessLayer.EntityFramework;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 namespace ECommerceProject.PresentationLayer
 {
@@ -14,6 +16,11 @@ namespace ECommerceProject.PresentationLayer
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Kültürü Ýngilizce (ABD) olarak ayarla
+            var cultureInfo = new CultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -31,13 +38,16 @@ namespace ECommerceProject.PresentationLayer
             {
                 options.TokenLifespan = TimeSpan.FromDays(2);
             });
-            builder.Services.AddTransient<IAdressService, AdressManager>();
-            builder.Services.AddTransient<IAdressDal, EfAdressDal>();
+            builder.Services.AddScoped<IAdressService, AdressManager>();
+            builder.Services.AddScoped<IAdressDal, EfAdressDal>();
 
-            builder.Services.AddTransient<ICategoryService, CategoryManager>();
-            builder.Services.AddTransient<ICategoryDal, EfCategoryDal>();
+            builder.Services.AddScoped<ICategoryService, CategoryManager>();
+            builder.Services.AddScoped<ICategoryDal, EfCategoryDal>();
 
-            builder.Services.AddTransient<IMailSenderService, MailSenderManager>();
+            builder.Services.AddScoped<IProductService, ProductManager>();
+            builder.Services.AddScoped<IProductDal, EfProductDal>();
+
+            builder.Services.AddScoped<IMailSenderService, MailSenderManager>();
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
@@ -46,6 +56,15 @@ namespace ECommerceProject.PresentationLayer
                 options.AccessDeniedPath = "/Login/AccessDenied";
             });
             var app = builder.Build();
+
+            // Kültürü HTTP isteðine göre zorla
+            var supportedCultures = new[] { cultureInfo };
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(cultureInfo),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            });
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
