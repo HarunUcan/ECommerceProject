@@ -7,6 +7,7 @@
 
 <head>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function filterProducts() {
             const input = document.getElementById('search-bar');
@@ -40,7 +41,7 @@
                                         <td class="border-b py-4">${product.id}</td>
                                 <td class="border-b py-4">
                                             <img src="${product.mainImageUrl}" alt="Ürün Resmi"
-                                         class="w-12 h-12 rounded-md">
+                                                 class="w-12 h-12 rounded-md object-cover">
                                 </td>
                                         <td class="border-b py-4">${product.name}</td>
                                         <td class="border-b py-4">${product.price} ₺</td>
@@ -48,8 +49,10 @@
                                 <td class="border-b py-4">
                                             <a href="/urun-duzenle/${product.name}"
                                        class="px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow">Düzenle</a>
-                                    <a href="#"
-                                       class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg shadow">Sil</a>
+                                    
+
+                                    <button onclick="confirmDelete(${product.id})" class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg shadow">Sil
+                    </button>
                                 </td>
                             </tr>
                             `);
@@ -75,6 +78,23 @@
         $(document).ready(function () {
             loadMoreProducts();
         });
+
+        function confirmDelete(productId) {
+            Swal.fire({
+                title: "Emin misiniz?",
+                text: "Bu ürünü silmek istediğinize emin misiniz? Bu işlem geri alınamaz!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Evet, sil!",
+                cancelButtonText: "İptal"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `/Admin/Product/Delete?id=${productId}`;
+                }
+            });
+        }
     </script>
 
 </head>

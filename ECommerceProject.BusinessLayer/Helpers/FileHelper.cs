@@ -20,5 +20,18 @@ namespace ECommerceProject.BusinessLayer.Helpers
             await File.WriteAllBytesAsync(path, fileData);
             return path;
         }
+
+        public static void DeleteFiles(List<string> paths)
+        {
+            if (paths == null) return;
+
+            foreach (var path in paths)
+            {
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+            }
+        }
     }
 }

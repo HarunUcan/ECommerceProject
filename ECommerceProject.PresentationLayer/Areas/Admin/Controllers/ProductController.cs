@@ -16,12 +16,14 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IProductService _productService;
         private readonly IProductImageService _productImageService;
+        private readonly ICategoryService _categoryService;
 
-        public ProductController(UserManager<AppUser> userManager, IProductService productService, IProductImageService productImageService)
+        public ProductController(UserManager<AppUser> userManager, IProductService productService, IProductImageService productImageService, ICategoryService categoryService)
         {
             _userManager = userManager;
             _productService = productService;
             _productImageService = productImageService;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
@@ -73,7 +75,11 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            AdminProductViewModel model = new AdminProductViewModel
+            {
+                Categories = _categoryService.TGetList()
+            };
+            return View(model);
         }
 
         [HttpPost]
@@ -138,6 +144,12 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                 return RedirectToAction("Index");
             }
             return View(model);
+        }
+
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            await _productService.TDeleteWithImagesAsync(new Product { ProductId = id });
+            return RedirectToAction("Index");
         }
     }
 }

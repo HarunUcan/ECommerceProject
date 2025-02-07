@@ -1,4 +1,5 @@
 ﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.BusinessLayer.Helpers;
 using ECommerceProject.DataAccessLayer.Abstract;
 using ECommerceProject.EntityLayer.Concrete;
 using System;
@@ -51,6 +52,12 @@ namespace ECommerceProject.BusinessLayer.Concrete
         public async Task<List<Product>> TGetPagedProductsAsync(int currentPage, int pageSize)
         {
             return await _productDal.GetPagedProductsAsync(currentPage, pageSize);
+        }
+
+        public async Task TDeleteWithImagesAsync(Product product)
+        {
+            List<string> paths = await _productDal.DeleteWithImagesAsync(product);
+            FileHelper.DeleteFiles(paths);
         }
     }
 }

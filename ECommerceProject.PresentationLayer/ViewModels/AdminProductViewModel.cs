@@ -1,4 +1,6 @@
-﻿namespace ECommerceProject.PresentationLayer.ViewModels
+﻿using ECommerceProject.EntityLayer.Concrete;
+
+namespace ECommerceProject.PresentationLayer.ViewModels
 {
     public class AdminProductViewModel
     {
@@ -16,5 +18,7 @@
 
         // Beden, renk ve stok miktarları
         public List<AdminProductSizeStockViewModel> AdminProductSizeStocks { get; set; }
+
+        public List<Category>? Categories { get; set; }
     }
 }

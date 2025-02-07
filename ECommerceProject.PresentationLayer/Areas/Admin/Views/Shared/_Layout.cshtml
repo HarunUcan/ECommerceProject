@@ -11,14 +11,33 @@
           crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script>
         function toggleSubmenu(submenuId, iconId) {
-            // Toggle submenu visibility
             const submenu = document.getElementById(submenuId);
             submenu.classList.toggle('hidden');
 
-            // Toggle arrow rotation
             const icon = document.getElementById(iconId);
             icon.classList.toggle('rotate-180');
         }
+
+        // Sayfa yüklendiğinde aktif menüyü aç ve ikonunu çevir
+        document.addEventListener("DOMContentLoaded", function () {
+            const activeMenuItem = document.querySelector(".bg-pink-700");
+            if (activeMenuItem) {
+                // Alt menüye sahip olup olmadığını kontrol et
+                const submenu = activeMenuItem.closest("div[id$='-submenu']");
+                if (submenu) {
+                    submenu.classList.remove("hidden");
+
+                    // Ebeveynin butonunu ve ikonunu bul
+                    const parentButton = submenu.previousElementSibling;
+                    if (parentButton) {
+                        const icon = parentButton.querySelector("svg");
+                        if (icon) {
+                            icon.classList.add("rotate-180");
+                        }
+                    }
+                }
+            }
+        });
     </script>
 </head>
 
@@ -28,30 +47,30 @@
         <aside class="w-64 bg-gray-900 text-gray-200">
             <div class="p-6 text-lg font-bold border-b border-gray-700">Admin Panel</div>
             <nav class="mt-4">
-                <a href="#" class="block py-3 px-6 @(ViewData["ActivePage"]?.ToString() == "Dashboard" ? "bg-pink-700" : "hover:bg-gray-700")">Dashboard</a>
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="block py-3 px-6 @(ViewData["ActivePage"]?.ToString() == "Dashboard" ? "bg-pink-700" : "hover:bg-gray-700")">Dashboard</a>
 
                 <!-- ÜRÜNLER -->
                 <div class="relative">
-                    <a href="#" onclick="toggleSubmenu('products-submenu', 'products-icon')"
-                       class="block py-3 px-6 text-white flex items-center justify-between">
-                        Ürünler
-                        <svg id="products-icon" class="w-4 h-4 ml-2 transition-transform duration-300"
+                    <button onclick="toggleSubmenu('products-submenu', 'products-icon')"
+                            class="w-full py-3 px-6 text-white flex items-center justify-between">
+                        <span>Ürünler</span>
+                        <svg id="products-icon" class="w-4 h-4 transition-transform duration-300"
                              fill="none" stroke="currentColor" viewBox="0 0 24 24"
                              xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
-                    </a>
+                    </button>
                     <div id="products-submenu" class="@(ViewData["ActivePage"]?.ToString() == "Products" ? "" : ViewData["ActivePage"]?.ToString() == "Product-Create" ? "" : "hidden")">
-                        <a href="#" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Products" ? "bg-pink-700" : "hover:bg-gray-700")">Mevcut Ürünler</a>
-                        <a href="#" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Product-Create" ? "bg-pink-700" : "hover:bg-gray-700")">Ürün Ekle</a>
+                        <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Products" ? "bg-pink-700" : "hover:bg-gray-700")">Mevcut Ürünler</a>
+                        <a asp-area="Admin" asp-controller="Product" asp-action="Create" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Product-Create" ? "bg-pink-700" : "hover:bg-gray-700")">Ürün Ekle</a>
                     </div>
                 </div>
 
+
                 <!-- KATEGORİLER -->
                 <div class="relative">
-                    <a href="#" onclick="toggleSubmenu('categories-submenu', 'categories-icon')"
-                       class="block py-3 px-6 text-white flex items-center justify-between">
+                    <button onclick="toggleSubmenu('categories-submenu', 'categories-icon')"
+                            class="w-full py-3 px-6 text-white flex items-center justify-between">
                         Kategoriler
                         <svg id="categories-icon" class="w-4 h-4 ml-2 transition-transform duration-300"
                              fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -59,10 +78,10 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
                             </path>
                         </svg>
-                    </a>
+                    </button>
                     <div id="categories-submenu" class="@(ViewData["ActivePage"]?.ToString() == "Categories" ? "" : ViewData["ActivePage"]?.ToString() == "Category-Create" ? "" : "hidden")">
-                        <a href="#" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Categories" ? "bg-pink-700" : "hover:bg-gray-700")">Mevcut Kategoriler</a>
-                        <a href="#" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Category-Create" ? "bg-pink-700" : "hover:bg-gray-700")">Kategori Ekle</a>
+                        <a asp-area="Admin" asp-controller="Category" asp-action="Index" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Categories" ? "bg-pink-700" : "hover:bg-gray-700")">Mevcut Kategoriler</a>
+                        <a asp-area="Admin" asp-controller="Category" asp-action="Create" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Category-Create" ? "bg-pink-700" : "hover:bg-gray-700")">Kategori Ekle</a>
                     </div>
                 </div>
 

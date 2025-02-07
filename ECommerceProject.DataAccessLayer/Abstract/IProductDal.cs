@@ -11,5 +11,6 @@ namespace ECommerceProject.DataAccessLayer.Abstract
     {
         Task<List<Product>> GetAllProductsWithCategoriesImagesAsync();
         Task<List<Product>> GetPagedProductsAsync(int currentPage, int pageSize);
+        Task<List<string>> DeleteWithImagesAsync(Product product);
     }
 }

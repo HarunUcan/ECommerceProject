@@ -13,6 +13,23 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
 {
     public class EfProductDal : GenericRepository<Product>, IProductDal
     {
+        public async Task<List<string>> DeleteWithImagesAsync(Product product)
+        {
+            using var context = new Context();
+            var productToDelete = await context.Products.FindAsync(product.ProductId);
+            if (productToDelete == null)
+            {
+                return null;
+            }
+            List<ProductImage> productImages = await context.ProductImages.Where(img => img.ProductId == productToDelete.ProductId).ToListAsync();
+            List<string> paths = productImages.Select(img => img.Url).ToList();
+
+            context.Products.Remove(productToDelete);
+            await context.SaveChangesAsync();
+
+            return paths;
+        }
+
         public async Task<List<Product>> GetAllProductsWithCategoriesImagesAsync()
         {
             using var context = new Context();

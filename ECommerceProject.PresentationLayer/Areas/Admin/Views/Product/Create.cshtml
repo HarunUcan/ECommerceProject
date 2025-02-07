@@ -145,26 +145,11 @@
                 <label for="category" class="block text-sm font-medium text-gray-600">Kategori</label>
                 <select id="category" name="CategoryId"
                         class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 text-gray-700 bg-gray-50">
-                    <optgroup label="Elektronik">
-                        <option>Telefon</option>
-                        <option>Bilgisayar</option>
-                    </optgroup>
-                    <optgroup label="Moda">
-                        <option value=2061>Erkek Giyim</option>
-                        <option value=4>Kadın Giyim</option>
-                    </optgroup>
-                    <optgroup label="Ev ve Yaşam">
-                        <option>Mobilya</option>
-                        <option>Mutfak Eşyaları</option>
-                    </optgroup>
-                    <optgroup label="Spor">
-                        <option>Futbol</option>
-                        <option>Fitness</option>
-                    </optgroup>
-                    <optgroup label="Kitap">
-                        <option>Roman</option>
-                        <option>Eğitim</option>
-                    </optgroup>
+                    <option value="">Hiçbiri</option>
+                    @foreach (var category in Model.Categories.Where(c => c.ParentCategory == null))
+                    {
+                        @await Html.PartialAsync("_CategoryDropdown", new { Category = category, Depth = 0 })
+                    }
                 </select>
             </div>
 
