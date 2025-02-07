@@ -33,6 +33,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
             return _productDal.GetList();
         }
 
+        public async Task<List<Product>> TGetAllProductsWithCategoriesImagesAsync()
+        {
+            return await _productDal.GetAllProductsWithCategoriesImagesAsync();
+        }
+
         public void TInsert(Product t)
         {
             _productDal.Insert(t);
@@ -41,6 +46,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
         public void TUpdate(Product t)
         {
             _productDal.Update(t);
+        }
+
+        public async Task<List<Product>> TGetPagedProductsAsync(int currentPage, int pageSize)
+        {
+            return await _productDal.GetPagedProductsAsync(currentPage, pageSize);
         }
     }
 }

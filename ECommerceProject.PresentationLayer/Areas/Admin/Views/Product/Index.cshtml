@@ -1,4 +1,4 @@
-﻿
+﻿@model List<ProductDto>
 @{
     ViewData["Title"] = "Index";
     ViewData["ActivePage"] = "Products";
@@ -6,7 +6,7 @@
 }
 
 <head>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function filterProducts() {
             const input = document.getElementById('search-bar');
@@ -21,6 +21,60 @@
                 }
             });
         }
+
+        let page = 1;
+        let isLoading = false;
+        let pageSize = 10; // Her sayfada kaç ürün gösterilecek
+
+        function loadMoreProducts() {
+            if (isLoading) return;
+            isLoading = true;
+            $("#loading").show();
+
+            $.get(`/Admin/Product/GetPagedProducts?page=${page}&pageSize=${pageSize}`, function (data) {
+                if (data.length > 0) {
+                    data.forEach(product => {
+                        $("#product-list").append(`
+
+                            <tr>
+                                        <td class="border-b py-4">${product.id}</td>
+                                <td class="border-b py-4">
+                                            <img src="${product.mainImageUrl}" alt="Ürün Resmi"
+                                         class="w-12 h-12 rounded-md">
+                                </td>
+                                        <td class="border-b py-4">${product.name}</td>
+                                        <td class="border-b py-4">${product.price} ₺</td>
+                                        <td class="border-b py-4">${product.categoryName}</td>
+                                <td class="border-b py-4">
+                                            <a href="/urun-duzenle/${product.name}"
+                                       class="px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow">Düzenle</a>
+                                    <a href="#"
+                                       class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg shadow">Sil</a>
+                                </td>
+                            </tr>
+                            `);
+                    });
+
+                    page++; // Sonraki sayfaya geç
+                } else {
+                    $(window).off("scroll"); // Ürün yoksa scroll olayını kaldır
+                }
+
+                $("#loading").hide();
+                isLoading = false;
+            });
+        }
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+                loadMoreProducts();
+            }
+        });
+
+        // Sayfa açıldığında ilk sayfayı yükle
+        $(document).ready(function () {
+            loadMoreProducts();
+        });
     </script>
 
 </head>
@@ -48,46 +102,38 @@
                     <th class="border-b-2 py-4 text-left text-gray-600">Ürün ID</th>
                     <th class="border-b-2 py-4 text-left text-gray-600">Ürün Resmi</th>
                     <th class="border-b-2 py-4 text-left text-gray-600">Ürün Adı</th>
-                    <th class="border-b-2 py-4 text-left text-gray-600">Fiyat</th>
+                    <th class="border-b-2 py-4 text-left text-gray-600">Fiyat(TL)</th>
                     <th class="border-b-2 py-4 text-left text-gray-600">Kategori</th>
                     <th class="border-b-2 py-4 text-left text-gray-600">İşlemler</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td class="border-b py-4">1</td>
-                    <td class="border-b py-4">
-                        <img src="@Url.Content("~/ECommerceProjectTheme/urun12.jpg")" alt="Ürün Resmi"
-                             class="w-12 h-12 rounded-md">
-                    </td>
-                    <td class="border-b py-4">Laptop</td>
-                    <td class="border-b py-4">10,000 TL</td>
-                    <td class="border-b py-4">Elektronik</td>
-                    <td class="border-b py-4">
-                        <a href="/urun-duzenle/1"
-                           class="px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow">Düzenle</a>
-                        <a href="#"
-                           class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg shadow">Sil</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="border-b py-4">2</td>
-                    <td class="border-b py-4">
-                        <img src="@Url.Content("~/ECommerceProjectTheme/urun5.jpg")" alt="Ürün Resmi"
-                             class="w-12 h-12 rounded-md">
-                    </td>
-                    <td class="border-b py-4">Tişört</td>
-                    <td class="border-b py-4">150 TL</td>
-                    <td class="border-b py-4">Moda</td>
-                    <td class="border-b py-4">
-                        <a href="/urun-duzenle/2"
-                           class="px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow">Düzenle</a>
-                        <a href="#"
-                           class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg shadow">Sil</a>
-                    </td>
-                </tr>
+            <tbody id="product-list">
+                @* @foreach (var product in Model)
+                {
+                    <tr>
+                        <td class="border-b py-4">@product.Id</td>
+                        <td class="border-b py-4">
+                            <img src="@Url.Content(product.MainImageUrl)" alt="Ürün Resmi"
+                                 class="w-12 h-12 rounded-md">
+                        </td>
+                        <td class="border-b py-4">@product.Name</td>
+                        <td class="border-b py-4">@product.Price</td>
+                        <td class="border-b py-4">@product.CategoryName</td>
+                        <td class="border-b py-4">
+                            <a href="/urun-duzenle/@product.Id"
+                               class="px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow">Düzenle</a>
+                            <a href="#"
+                               class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg shadow">Sil</a>
+                        </td>
+                    </tr>
+                } *@
             </tbody>
         </table>
+
+        <div id="product-list">
+            <!-- Ürünler buraya yüklenecek -->
+        </div>
+        <div id="loading" style="display: none; text-align: center;">Yükleniyor...</div>
     </div>
 </div>
 

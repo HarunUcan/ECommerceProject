@@ -1,4 +1,6 @@
 ﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.DtoLayer.Dtos.ProductDtos;
+using ECommerceProject.DtoLayer.Dtos.ProductImageDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -13,15 +15,59 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IProductService _productService;
+        private readonly IProductImageService _productImageService;
 
-        public ProductController(UserManager<AppUser> userManager, IProductService productService)
+        public ProductController(UserManager<AppUser> userManager, IProductService productService, IProductImageService productImageService)
         {
             _userManager = userManager;
             _productService = productService;
+            _productImageService = productImageService;
         }
-        public IActionResult Index()
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
+            
+            //List<Product> products = await _productService.TGetAllProductsWithCategoriesImagesAsync();
+            //List<ProductDto> productDtos = new List<ProductDto>();
+
+            //foreach (var product in products)
+            //{
+            //    productDtos.Add(new ProductDto
+            //    {
+            //        Id = product.ProductId,
+            //        Name = product.Name,
+            //        Description = product.Description,
+            //        Price = product.Price,
+            //        Stock = product.Stock,
+            //        CategoryName = product.Category.Name,
+            //        MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", "")
+            //    });
+            //}
+            //return View(productDtos);
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPagedProducts(int page = 1, int pageSize = 10)
+        {
+            List<Product> products = await _productService.TGetPagedProductsAsync(page, pageSize);
+            List<ProductDto> productDtos = new List<ProductDto>();
+
+            foreach (var product in products)
+            {
+                productDtos.Add(new ProductDto
+                {
+                    Id = product.ProductId,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    Stock = product.Stock,
+                    CategoryName = product.Category.Name,
+                    MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", "")
+                });
+            }
+            return Json(productDtos);
         }
 
         [HttpGet]
@@ -35,48 +81,17 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                List<ProductVariant> productVariants = new List<ProductVariant>();
-                foreach (var item in model.AdminProductSizeStocks)
-                {
-                    ProductSize productSize;
-                    switch(item.Size)
-                    {
-                        case "S":
-                            productSize = ProductSize.S;
-                            break;
-                        case "M":
-                            productSize = ProductSize.M;
-                            break;
-                        case "L":
-                            productSize = ProductSize.L;
-                            break;
-                        case "XL":
-                            productSize = ProductSize.XL;
-                            break;
-                        case "XXL":
-                            productSize = ProductSize.XXL;
-                            break;
-                        default:
-                            productSize = ProductSize.XS;
-                            break;
-                    }
-                    productVariants.Add(new ProductVariant
-                    {
-                        Size = productSize,
-                        Stock = item.Stock
-                    });
-                }
+                List<ProductImageDto> imageDtos = new List<ProductImageDto>();
 
-                List<ProductImage> productImages = new List<ProductImage>();
                 if (model.MainImage != null)
                 {
-                    string mainImagePath = Path.Combine("wwwroot/uploads", model.MainImage.FileName);
-                    using (var stream = new FileStream(mainImagePath, FileMode.Create))
+                    using (var memoryStream = new MemoryStream())
                     {
-                        await model.MainImage.CopyToAsync(stream);
-                        productImages.Add(new ProductImage
+                        await model.MainImage.CopyToAsync(memoryStream);
+                        imageDtos.Add(new ProductImageDto
                         {
-                            Url = mainImagePath,
+                            ImageData = memoryStream.ToArray(),
+                            ImageName = model.MainImage.FileName,
                             IsMain = true
                         });
                     }
@@ -86,17 +101,20 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                 {
                     foreach (var image in model.AdditionalImages)
                     {
-                        string imagePath = Path.Combine("wwwroot/uploads", image.FileName);
-                        using (var stream = new FileStream(imagePath, FileMode.Create))
+                        using (var memoryStream = new MemoryStream())
                         {
-                            await image.CopyToAsync(stream);
-                            productImages.Add(new ProductImage
+                            await image.CopyToAsync(memoryStream);
+                            imageDtos.Add(new ProductImageDto
                             {
-                                Url = imagePath
+                                ImageData = memoryStream.ToArray(),
+                                ImageName = image.FileName,
+                                IsMain = false
                             });
                         }
                     }
                 }
+
+                List<ProductImage> productImages = await _productImageService.SaveProductImageAsync(imageDtos);
 
                 List<CartItem> cartItems = new List<CartItem>();
                 var product = new Product
@@ -107,7 +125,12 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                     UniqueCode = $"{DateTime.Now.Year.ToString().Substring(2)}{DateTime.Now.Month}{DateTime.Now.Day}{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}",
                     Stock = model.AdminProductSizeStocks.Sum(x => x.Stock),//Toplam stok
                     CategoryId = model.CategoryId,
-                    ProductVariants = productVariants,
+                    ProductVariants = model.AdminProductSizeStocks
+                        .Select(item => new ProductVariant
+                        {
+                            Size = Enum.TryParse(item.Size, out ProductSize size) ? size : ProductSize.XS,
+                            Stock = item.Stock
+                        }).ToList(),
                     ProductImages = productImages,
                     CartItems = cartItems
                 };

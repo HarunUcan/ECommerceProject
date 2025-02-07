@@ -9,5 +9,7 @@ namespace ECommerceProject.DataAccessLayer.Abstract
 {
     public interface IProductDal : IGenericDal<Product>
     {
+        Task<List<Product>> GetAllProductsWithCategoriesImagesAsync();
+        Task<List<Product>> GetPagedProductsAsync(int currentPage, int pageSize);
     }
 }
