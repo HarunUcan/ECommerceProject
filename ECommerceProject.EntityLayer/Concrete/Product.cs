@@ -11,7 +11,10 @@ namespace ECommerceProject.EntityLayer.Concrete
     {
         public int ProductId { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
+        public string? Color { get; set; }
+        public int? ProductGroupId { get; set; }
+        public ProductGroup? ProductGroup { get; set; }
         public ICollection<ProductVariant> ProductVariants { get; set; }
         public ICollection<ProductImage> ProductImages { get; set; }
         public string UniqueCode { get; set; }
@@ -33,11 +36,20 @@ namespace ECommerceProject.EntityLayer.Concrete
 
     public enum ProductSize
     {
-        XS = 0,
-        S = 1,
-        M = 2,
-        L = 3,
-        XL = 4,
-        XXL = 5
+        NOSIZE = 0,
+        STD = 1,
+
+        S = 2,
+        M = 3,
+        L = 4,
+
+        XS = 5,
+        XL = 6,
+
+        XXS = 7,
+        XXL = 8,
+
+        XXXS = 9,
+        XXXL = 10
     }
 }

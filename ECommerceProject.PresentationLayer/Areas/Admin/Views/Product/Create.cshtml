@@ -20,6 +20,24 @@
             /* Firefox için */
         }
 
+        input[type="color"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            padding: 0;
+        }
+
+            input[type="color"]::-webkit-color-swatch {
+                border-radius: 50%;
+                border: none;
+            }
+
+            input[type="color"]::-moz-color-swatch {
+                border-radius: 50%;
+                border: none;
+            }
+
+
         /* Focus kaldırma */
         input,
         select,
@@ -76,32 +94,47 @@
             }
         }
 
-        let stockIndex = 1;
+        let sizeStockIndex = 1;
+
         function addSizeStock() {
-            const container = document.getElementById('sizeStockContainer');
-            const div = document.createElement('div');
-            div.classList.add('size-stock');
-            div.classList.add('flex');
-            div.classList.add('items-center');
-            div.classList.add('space-x-2');
-            div.innerHTML = `
-                    <select name="AdminProductSizeStocks[${stockIndex}].Size"
-                                class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                    </select>
-                                <input type="number" name="AdminProductSizeStocks[${stockIndex}].Stock" placeholder="Stok Miktarı"
-                               class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
-                    <button type="button" onclick="removeSizeStock(this)"
-                            class="px-3 py-2 bg-red-500 text-white rounded-lg">
-                        Sil
-                    </button>
-                `;
-            container.appendChild(div);
-            stockIndex++;
+            const container = document.getElementById("sizeStockContainer");
+            const sizeStockDiv = document.createElement("div");
+            sizeStockDiv.classList.add("flex", "gap-2", "items-center", "mt-4");
+
+            sizeStockDiv.innerHTML = `
+                <select name="Variants[0].Sizes[${sizeStockIndex}].Size"
+                        class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
+                    <option value="NOSIZE">Hiçbiri</option>
+                    <option value="STD">Standart</option>
+                    <option value="XXXS">XXXS</option>
+                    <option value="XXS">XXS</option>
+                    <option value="XS">XS</option>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                    <option value="XXL">XXL</option>
+                    <option value="XXXL">XXXL</option>
+                </select>
+
+                <input type="number" name="Variants[0].Sizes[${sizeStockIndex}].Stock"
+                       placeholder="Stok Miktarı"
+                       class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
+
+                <button type="button" onclick="removeSizeStock(this)"
+                        class="px-3 py-2 bg-red-500 text-white rounded-lg">
+                    Sil
+                </button>
+            `;
+
+            container.appendChild(sizeStockDiv);
+            sizeStockIndex++;
         }
+
+        function removeSizeStock(button) {
+            button.parentElement.remove();
+        }
+
     </script>
 
 </head>
@@ -153,33 +186,56 @@
                 </select>
             </div>
 
-            <!-- Beden ve Stok Miktarları -->
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-600">Beden, Renk ve Stok Miktarı</label>
-                <div id="sizeStockContainer" class="mt-2 space-y-2">
-                    <div class="size-stock flex items-center space-x-2">
-                        <select name="AdminProductSizeStocks[0].Size"
-                                class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                        </select>
-                        <input type="number" name="AdminProductSizeStocks[0].Stock" placeholder="Stok Miktarı"
-                               class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
-                        <button type="button" onclick="removeSizeStock(this)"
-                                class="px-3 py-2 bg-red-500 text-white rounded-lg">
-                            Sil
-                        </button>
-                    </div>
-                </div>
-                <button type="button" onclick="addSizeStock()" class="mt-2 px-4 py-2 bg-green-500 text-white rounded-lg">
-                    +
-                    Varyant
-                    Ekle
-                </button>
-            </div>
+            <div class="color-size-stock-container border border-gray-300 p-4 rounded-lg mb-4">
 
+                <div class="mb-6 flex items-center gap-2">
+
+                    <label class="text-sm font-medium text-gray-600">Ürün Rengi: </label>
+                    <input type="color" name="Color" value="#000000"
+                           class="w-10 h-10 my-auto rounded-full border border-gray-500 cursor-pointer my-2 appearance-none">
+
+                </div>
+
+                <!-- Beden ve Stok Miktarları -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-600">Beden ve Stok Miktarları</label>
+                    <div id="sizeStockContainer" class="">
+                        <div class="flex gap-2 items-center mt-4">
+                            <select name="Variants[0].Sizes[0].Size"
+                                    class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
+                                <option value="NOSIZE">Hiçbiri</option>
+                                <option value="STD">Standart</option>
+                                <option value="XXXS">XXXS</option>
+                                <option value="XXS">XXS</option>
+                                <option value="XS">XS</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
+                                <option value="XXXL">XXXL</option>
+                            </select>
+
+                            <input type="number" name="Variants[0].Sizes[0}].Stock"
+                                   placeholder="Stok Miktarı"
+                                   class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
+
+                            <button type="button" onclick="removeSizeStock(this)"
+                                    class="px-3 py-2 bg-red-500 text-white rounded-lg">
+                                Sil
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <button type="button" onclick="addSizeStock()"
+                            class="mt-4 px-3 py-1 bg-blue-500 text-white rounded-lg">
+                        + Beden Ekle
+                    </button>
+                    
+                </div>
+                </div>
             <!-- Main Product Image -->
             <div class="mb-6">
                 <label for="mainImage" class="block text-sm font-medium text-gray-600">Ana Ürün Görseli</label>

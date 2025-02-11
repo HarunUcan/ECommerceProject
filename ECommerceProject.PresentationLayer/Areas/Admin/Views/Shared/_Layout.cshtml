@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kategori Ekle</title>
+    <title>@ViewData["Title"]</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
           integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
@@ -62,7 +62,9 @@
                     </button>
                     <div id="products-submenu" class="@(ViewData["ActivePage"]?.ToString() == "Products" ? "" : ViewData["ActivePage"]?.ToString() == "Product-Create" ? "" : "hidden")">
                         <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Products" ? "bg-pink-700" : "hover:bg-gray-700")">Mevcut Ürünler</a>
+                        <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Product-Groups" ? "bg-pink-700" : "hover:bg-gray-700")">Mevcut Ürün Grupları</a>
                         <a asp-area="Admin" asp-controller="Product" asp-action="Create" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Product-Create" ? "bg-pink-700" : "hover:bg-gray-700")">Ürün Ekle</a>
+                        <a asp-area="Admin" asp-controller="Product" asp-action="CreateProductGroup" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Product-Create-Group" ? "bg-pink-700" : "hover:bg-gray-700")">Ürün Grubu Ekle</a>
                     </div>
                 </div>
 

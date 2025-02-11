@@ -4,6 +4,7 @@ using ECommerceProject.DataAccessLayer.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerceProject.DataAccessLayer.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20250208185403_product_color_added")]
+    partial class product_color_added
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -290,10 +293,8 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("DiscountAmount")
@@ -315,9 +316,6 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("ProductGroupId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
@@ -329,35 +327,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("ProductGroupId");
-
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.ProductGroup", b =>
-                {
-                    b.Property<int>("ProductGroupId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductGroupId"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProductGroupId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("ProductGroup");
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.ProductImage", b =>
@@ -392,6 +362,9 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductVariantId"));
+
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -635,23 +608,6 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ECommerceProject.EntityLayer.Concrete.ProductGroup", "ProductGroup")
-                        .WithMany("Products")
-                        .HasForeignKey("ProductGroupId");
-
-                    b.Navigation("Category");
-
-                    b.Navigation("ProductGroup");
-                });
-
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.ProductGroup", b =>
-                {
-                    b.HasOne("ECommerceProject.EntityLayer.Concrete.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
                 });
 
@@ -800,11 +756,6 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductVariants");
-                });
-
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.ProductGroup", b =>
-                {
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Sale", b =>

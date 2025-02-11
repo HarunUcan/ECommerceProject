@@ -33,7 +33,7 @@ namespace ECommerceProject.DataAccessLayer.Concrete
                 .HasOne(c => c.ParentCategory)
                 .WithMany(c => c.SubCategories)
                 .HasForeignKey(c => c.ParentCategoryId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
 
             // Adress ile Sales arasındaki ilişki için Cascade Delete kaldırılıyor
             //modelBuilder.Entity<Sale>()

@@ -1,0 +1,347 @@
+﻿@model AdminProductGroupViewModel
+@{
+    ViewData["Title"] = "Create";
+    ViewData["ActivePage"] = "Product-Create-Group";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <style>
+        /* Sayı girişindeki okları kaldırmak için */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+            /* Firefox için */
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border-radius: 50%;
+            border: none;
+        }
+
+        input[type="color"]::-moz-color-swatch {
+            border-radius: 50%;
+            border: none;
+        }
+
+        /* Focus kaldırma */
+        input,
+        select,
+        textarea,
+        button {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Resim yükleme alanı tasarımı */
+        .file-upload-container {
+            width: 100%;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f3f4f6;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .file-upload-label {
+            color: #6B7280;
+            font-size: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .file-upload-label i {
+            color: #4B5563;
+            margin-right: 8px;
+        }
+
+        /* Yüklenen resmin önizlemesi */
+        .file-upload-preview {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .file-upload-preview.active {
+            display: block;
+        }
+    </style>
+
+    <script>
+        // Resim önizlemesi işlevi
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            const label = preview.nextElementSibling;
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    label.classList.add('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function previewMultipleImages(input, containerId) {
+            const container = document.getElementById(containerId);
+            const addButton = container.querySelector('.add-button');
+
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const imgContainer = document.createElement('div');
+                        imgContainer.classList.add('relative', 'w-20', 'h-20', 'm-2');
+
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.classList.add('w-full', 'h-full', 'object-cover', 'rounded-lg', 'border', 'border-gray-300');
+
+                        const deleteIcon = document.createElement('button');
+                        deleteIcon.innerHTML = '<i class="fa-solid fa-trash-can text-red-500 text-sm"></i>';
+                        deleteIcon.classList.add('absolute', 'top-[-20px]', 'right-[0px]', 'cursor-pointer', 'transform', 'translate-x-1/2', 'translate-y-1/2');
+                        deleteIcon.onclick = () => imgContainer.remove();
+
+                        imgContainer.appendChild(img);
+                        imgContainer.appendChild(deleteIcon);
+                        container.insertBefore(imgContainer, addButton);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        let stockIndex = 0;
+
+        // Varyant ekleme
+        function addVariant() {
+            const container = document.getElementById("sizeStockContainer");
+            const variantIndex = stockIndex++;
+
+            // Yeni varyant için ana div oluştur
+            const variantDiv = document.createElement("div");
+            variantDiv.classList.add("variant", "p-4", "border", "border-gray-300", "rounded-lg", "mb-4");
+
+            // Varyant görsel yükleme alanı
+            variantDiv.innerHTML = `
+                <div class="mb-6">
+                    <div class="mb-6">
+                        <label for="productName" class="block text-sm font-medium text-gray-600">Ürün Adı</label>
+                                <input type="text" id="productName" name="Products[${variantIndex}].ProductName" placeholder="Ürün adını girin"
+                               class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 text-gray-700 bg-gray-50">
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="description" class="block text-sm font-medium text-gray-600">Ürün Açıklaması</label>
+                                <textarea id="description" name="Products[${variantIndex}].Description" rows="4" placeholder="Ürün açıklamasını girin"
+                                  class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 text-gray-700 bg-gray-50"></textarea>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="price" class="block text-sm font-medium text-gray-600">Fiyat</label>
+                        <div class="mt-2 flex items-center rounded-lg border border-gray-300 bg-gray-50 shadow-sm">
+                                    <input type="number" step="0.01" id="price" name="Products[${variantIndex}].Price" placeholder="Ürün fiyatını girin"
+                                   class="block w-full px-4 py-2 text-gray-700 bg-gray-50 border-none appearance-none rounded-l-lg" />
+                            <div class="border-l border-gray-300 h-8"></div>
+                                    <select id="currency" name="Products[${variantIndex}].Currency"
+                                    class="block px-3 py-2 text-gray-700 bg-gray-50 border-none rounded-r-lg">
+                                <option value="TRY">TRY</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label for="mainGroupImage_${variantIndex}" class="block text-sm font-medium text-gray-600">Ana Ürün Görseli</label>
+                    <div class="w-full h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 p-4 cursor-pointer"
+                         onclick="document.getElementById('mainGroupImage_${variantIndex}').click()">
+                        <input type="file" id="mainGroupImage_${variantIndex}" name="Products[${variantIndex}].MainImage" accept="image/*" class="hidden"
+                               onchange="previewImage(this, 'mainGroupImagePreview_${variantIndex}')">
+                        <img id="mainGroupImagePreview_${variantIndex}" class="hidden w-32 h-32 object-cover rounded-lg">
+                        <span id="groupImageLabel_${variantIndex}" class="text-gray-500 text-sm">Resim Ekle</span>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="additionalGroupImages_${variantIndex}" class="block text-sm font-medium text-gray-600">Ekstra Ürün Görselleri</label>
+                    <div id="additionalGroupImagesContainer_${variantIndex}"
+                         class="flex gap-2 flex-wrap border-2 border-dashed border-gray-300 p-4 rounded-lg items-center">
+                        <label class="add-button w-20 h-20 flex items-center justify-center bg-gray-100 text-gray-500 rounded-lg cursor-pointer border border-gray-300 self-center">
+                                    <input type="file" id="additionalGroupImages_${variantIndex}" name="Products[${variantIndex}].AdditionalImages" accept="image/*" multiple
+                                   class="hidden" onchange="previewMultipleImages(this, 'additionalGroupImagesContainer_${variantIndex}')">
+                            <span class="text-2xl font-bold">+</span>
+                        </label>
+                    </div>
+                </div>
+
+                <label class="block text-sm font-medium text-gray-600 mt-4">Varyant Rengi</label>
+                        <input type="color" name="Products[${variantIndex}].Color" value="#000000"
+                       class="w-10 h-10 rounded-full border border-gray-300 cursor-pointer p-0 appearance-none">
+
+                <div class="size-container mt-2 space-y-2">
+                    ${generateSizeStockInputs(variantIndex, 0)}
+                </div>
+
+                <button type="button" onclick="addSizeToVariant(${variantIndex})"
+                        class="mt-2 px-3 py-1 bg-blue-500 text-white rounded-lg">
+                    + Beden Ekle
+                </button>
+
+                <button type="button" onclick="removeVariant(this)"
+                        class="mt-2 px-3 py-1 bg-red-500 text-white rounded-lg">
+                    Varyantı Sil
+                </button>
+            `;
+
+            container.appendChild(variantDiv);
+        }
+
+
+        // Ek resimleri önizlemek için işlev
+        function previewAdditionalImages(input, previewId) {
+            const previewContainer = document.getElementById(previewId);
+
+            // Var olan resimleri sil
+            previewContainer.innerHTML = "";
+
+            if (input.files) {
+                for (const file of input.files) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const imgElement = document.createElement("img");
+                        imgElement.src = e.target.result;
+                        imgElement.classList.add("file-upload-preview", "w-20", "h-20", "mr-2", "mb-2");
+                        previewContainer.appendChild(imgElement);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        // Beden ve stok alanlarını oluştur
+        function generateSizeStockInputs(variantIndex, sizeIndex) {
+            return `
+                <div class="size-stock flex items-center space-x-2">
+                            <select name="Products[${variantIndex}].Variants[${sizeIndex}].Size"
+                            class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
+                        <option value="NOSIZE">Hiçbiri</option>
+                        <option value="STD">Standart</option>
+                        <option value="XXXS">XXXS</option>
+                        <option value="XXS">XXS</option>
+                        <option value="XS">XS</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                        <option value="XXXL">XXXL</option>
+                    </select>
+                            <input type="number" name="Products[${variantIndex}].Sizes[${sizeIndex}].Stock"
+                           placeholder="Stok Miktarı"
+                           class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
+                    <button type="button" onclick="removeSizeStock(this)"
+                            class="px-3 py-2 bg-red-500 text-white rounded-lg">
+                        Sil
+                    </button>
+                </div>
+            `;
+        }
+
+        // Varyanta yeni beden ekleme fonksiyonu
+        function addSizeToVariant(variantIndex) {
+            const sizeContainer = document.querySelector(`[name="Products[${variantIndex}].Color"]`).parentElement.querySelector(".size-container");
+            const sizeIndex = sizeContainer.children.length;
+            sizeContainer.insertAdjacentHTML("beforeend", generateSizeStockInputs(variantIndex, sizeIndex));
+        }
+
+        // Varyantı silme
+        function removeVariant(button) {
+            button.parentElement.remove();
+        }
+
+        // Beden ve stok girişini silme
+        function removeSizeStock(button) {
+            button.parentElement.remove();
+        }
+    </script>
+</head>
+
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-semibold text-gray-700 mb-8">Ürün Grubu Oluştur</h1>
+
+    <!-- Add Product Form -->
+    <div class="bg-gray-50 p-8 rounded-lg shadow-md">
+        <h2 class="text-xl font-semibold text-gray-700 mb-6">Yeni Ürün Grubu Oluştur</h2>
+        <form action="#" method="POST" enctype="multipart/form-data">
+            <div class="mb-6">
+                <label for="productName" class="block text-sm font-medium text-gray-600">Ürün Grubu Adı</label>
+                <input type="text" id="productName" name="GroupName" placeholder="Ürün grubu adını girin"
+                       class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 text-gray-700 bg-gray-50">
+            </div>
+
+            <div class="mb-6">
+                <label for="description" class="block text-sm font-medium text-gray-600">Ürün Grubu Açıklaması</label>
+                <textarea id="description" name="GroupDescription" rows="4" placeholder="Ürün grubu açıklamasını girin"
+                          class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 text-gray-700 bg-gray-50"></textarea>
+            </div>
+
+            <div class="mb-6">
+                <label for="price" class="block text-sm font-medium text-gray-600">Fiyat</label>
+                <div class="mt-2 flex items-center rounded-lg border border-gray-300 bg-gray-50 shadow-sm">
+                    <input type="number" step="0.01" id="price" name="GroupPrice" placeholder="Ürün grubu fiyatını girin"
+                           class="block w-full px-4 py-2 text-gray-700 bg-gray-50 border-none appearance-none rounded-l-lg" />
+                    <div class="border-l border-gray-300 h-8"></div>
+                    <select id="currency" name="Currency"
+                            class="block px-3 py-2 text-gray-700 bg-gray-50 border-none rounded-r-lg">
+                        <option value="TRY">TRY</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label for="category" class="block text-sm font-medium text-gray-600">Kategori</label>
+                <select id="category" name="GroupCategoryId"
+                        class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-2 text-gray-700 bg-gray-50">
+                    <option value="">Hiçbiri</option>
+                    @foreach (var category in Model.Categories.Where(c => c.ParentCategory == null))
+                    {
+                        @await Html.PartialAsync("_CategoryDropdown", new { Category = category, Depth = 0 })
+                    }
+                </select>
+            </div>
+
+            <!-- Varyantlar ve Beden-Stok -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-600">Varyantlar ve Stok</label>
+                <div id="sizeStockContainer" class="mt-2 space-y-4"></div>
+                <button type="button" onclick="addVariant()" class="mt-2 px-4 py-2 bg-green-500 text-white rounded-lg">
+                    + Varyant Ekle
+                </button>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit" class="px-6 py-2 bg-blue-500 text-white rounded-lg">Kaydet</button>
+            </div>
+        </form>
+    </div>
+</div>

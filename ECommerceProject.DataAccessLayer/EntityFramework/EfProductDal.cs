@@ -50,5 +50,12 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                 .Include(p => p.ProductImages.Where(img => img.IsMain)) // Sadece IsMain olanları getir
                 .ToListAsync();
         }
+
+        public async Task<int> InsertRange(List<Product> products)
+        {
+            using var context = new Context();
+            context.Products.AddRange(products);
+            return await context.SaveChangesAsync();
+        }
     }
 }
