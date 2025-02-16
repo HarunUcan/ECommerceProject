@@ -9,5 +9,8 @@ namespace ECommerceProject.BusinessLayer.Abstract
 {
     public interface IProductGroupService : IGenericService<ProductGroup>
     {
+        List<ProductGroup> TGetAllProductGroupsWithProducts();
+        ProductGroup TGetGetByIdWithProducts(int id);
+        void TDeleteWithProducts(int id);
     }
 }

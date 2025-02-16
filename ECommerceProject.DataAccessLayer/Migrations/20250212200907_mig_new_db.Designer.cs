@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerceProject.DataAccessLayer.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250209194532_product_group_category_update")]
-    partial class product_group_category_update
+    [Migration("20250212200907_mig_new_db")]
+    partial class mig_new_db
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -360,7 +360,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("ProductGroup");
+                    b.ToTable("ProductGroups");
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.ProductImage", b =>

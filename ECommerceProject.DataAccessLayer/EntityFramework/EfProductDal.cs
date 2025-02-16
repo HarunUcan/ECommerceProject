@@ -30,6 +30,25 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             return paths;
         }
 
+        public async Task<List<string>> DeleteWithImagesAsync(ICollection<Product> products)
+        {
+            using var context = new Context();
+            List<string> paths = new List<string>();
+            foreach (var product in products)
+            {
+                var productToDelete = await context.Products.FindAsync(product.ProductId);
+                if (productToDelete == null)
+                {
+                    return null;
+                }
+                List<ProductImage> productImages = await context.ProductImages.Where(img => img.ProductId == productToDelete.ProductId).ToListAsync();
+                paths.AddRange(productImages.Select(img => img.Url).ToList());
+                context.Products.Remove(productToDelete);
+            }
+            await context.SaveChangesAsync();
+            return paths;
+        }
+
         public async Task<List<Product>> GetAllProductsWithCategoriesImagesAsync()
         {
             using var context = new Context();

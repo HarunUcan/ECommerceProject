@@ -1,4 +1,5 @@
 ﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.BusinessLayer.Helpers;
 using ECommerceProject.DataAccessLayer.Abstract;
 using ECommerceProject.EntityLayer.Concrete;
 using System;
@@ -23,9 +24,25 @@ namespace ECommerceProject.BusinessLayer.Concrete
             _productGroupDal.Delete(t);
         }
 
+        public void TDeleteWithProducts(int id)
+        {
+            var imagePaths =  _productGroupDal.DeleteWithProducts(id);
+            FileHelper.DeleteFiles(imagePaths);
+        }
+
+        public List<ProductGroup> TGetAllProductGroupsWithProducts()
+        {
+            return _productGroupDal.GetAllProductGroupsWithProducts();
+        }
+
         public ProductGroup TGetById(int id)
         {
             return _productGroupDal.GetById(id);
+        }
+
+        public ProductGroup TGetGetByIdWithProducts(int id)
+        {
+            return _productGroupDal.GetByIdWithProducts(id);
         }
 
         public List<ProductGroup> TGetList()

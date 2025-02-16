@@ -62,9 +62,9 @@
                     </button>
                     <div id="products-submenu" class="@(ViewData["ActivePage"]?.ToString() == "Products" ? "" : ViewData["ActivePage"]?.ToString() == "Product-Create" ? "" : "hidden")">
                         <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Products" ? "bg-pink-700" : "hover:bg-gray-700")">Mevcut Ürünler</a>
-                        <a asp-area="Admin" asp-controller="Product" asp-action="Index" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Product-Groups" ? "bg-pink-700" : "hover:bg-gray-700")">Mevcut Ürün Grupları</a>
+                        <a asp-area="Admin" asp-controller="ProductGroup" asp-action="Index" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Product-Groups" ? "bg-pink-700" : "hover:bg-gray-700")">Mevcut Ürün Grupları</a>
                         <a asp-area="Admin" asp-controller="Product" asp-action="Create" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Product-Create" ? "bg-pink-700" : "hover:bg-gray-700")">Ürün Ekle</a>
-                        <a asp-area="Admin" asp-controller="Product" asp-action="CreateProductGroup" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Product-Create-Group" ? "bg-pink-700" : "hover:bg-gray-700")">Ürün Grubu Ekle</a>
+                        <a asp-area="Admin" asp-controller="ProductGroup" asp-action="CreateProductGroup" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Product-Create-Group" ? "bg-pink-700" : "hover:bg-gray-700")">Ürün Grubu Ekle</a>
                     </div>
                 </div>
 

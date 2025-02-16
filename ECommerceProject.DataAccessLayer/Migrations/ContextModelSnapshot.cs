@@ -53,7 +53,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("Adresses");
+                    b.ToTable("Adresses", (string)null);
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.AppRole", b =>
@@ -184,7 +184,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasKey("CartId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.CartItem", b =>
@@ -213,7 +213,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Category", b =>
@@ -238,7 +238,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasIndex("ParentCategoryId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Coupon", b =>
@@ -276,7 +276,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasKey("CouponId");
 
-                    b.ToTable("Coupons");
+                    b.ToTable("Coupons", (string)null);
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Product", b =>
@@ -331,7 +331,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasIndex("ProductGroupId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.ProductGroup", b =>
@@ -357,7 +357,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("ProductGroup");
+                    b.ToTable("ProductGroups", (string)null);
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.ProductImage", b =>
@@ -382,7 +382,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages");
+                    b.ToTable("ProductImages", (string)null);
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.ProductVariant", b =>
@@ -406,7 +406,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductVariants");
+                    b.ToTable("ProductVariants", (string)null);
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Sale", b =>
@@ -438,7 +438,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("Sales");
+                    b.ToTable("Sales", (string)null);
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.SaleItem", b =>
@@ -470,7 +470,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasIndex("SaleId");
 
-                    b.ToTable("SaleItems");
+                    b.ToTable("SaleItems", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

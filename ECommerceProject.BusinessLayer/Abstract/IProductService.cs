@@ -12,6 +12,7 @@ namespace ECommerceProject.BusinessLayer.Abstract
         Task<List<Product>> TGetAllProductsWithCategoriesImagesAsync();
         Task<List<Product>> TGetPagedProductsAsync(int currentPage, int pageSize);
         Task TDeleteWithImagesAsync(Product product);
+        Task TDeleteWithImagesAsync(ICollection<Product> products);
         Task<int> TInsertRange(List<Product> products);
     }
 }

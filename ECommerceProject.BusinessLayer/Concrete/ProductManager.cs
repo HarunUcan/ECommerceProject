@@ -64,5 +64,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
         {
             return await _productDal.InsertRange(products);
         }
+
+        public async Task TDeleteWithImagesAsync(ICollection<Product> products)
+        {
+            List<string> paths = await _productDal.DeleteWithImagesAsync(products);
+            FileHelper.DeleteFiles(paths);
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace ECommerceProject.PresentationLayer.ViewModels
     {
         public string ProductName { get; set; }
         public string? Description { get; set; }
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
         public string? Currency { get; set; }
         public int CategoryId { get; set; }
         public string? Color { get; set; }
@@ -21,5 +21,7 @@ namespace ECommerceProject.PresentationLayer.ViewModels
         public List<AdminProductSizesViewModel>? Variants { get; set; }
 
         public List<Category>? Categories { get; set; }
+        public bool? UseGroupDescription { get; set; }
+        public bool? UseGroupPrice { get; set; }
     }
 }

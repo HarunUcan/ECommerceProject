@@ -152,7 +152,7 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                     Name = model.ProductName,
                     Description = model.Description,
                     Color = model.Color,
-                    Price = model.Price,
+                    Price = model.Price ?? 0,
                     UniqueCode = $"{DateTime.Now.Year.ToString().Substring(2)}{DateTime.Now.Month}{DateTime.Now.Day}{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}",
                     //Stock = adminProductSizesViewModel.Sum(x => x.Sizes.Sum(y => y.Stock)),
                     CategoryId = model.CategoryId,
@@ -161,105 +161,6 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                     CartItems = cartItems
                 };
                 _productService.TInsert(product);
-                return RedirectToAction("Index");
-            }
-            return View(model);
-        }
-
-        [HttpGet]
-        public IActionResult CreateProductGroup()
-        {
-            AdminProductGroupViewModel model = new AdminProductGroupViewModel
-            {
-                Categories = _categoryService.TGetList()
-            };
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateProductGroup(AdminProductGroupViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                // Burada ProductGroupService sınıfına ProductGroup return eden bir Insert metodu yazılacak
-                // çünkü ProductGroup oluşturulduktan sonra Id'si lazım olacak
-                _productGroupService.TInsert(new ProductGroup
-                {
-                    Name = model.GroupName,
-                    Description = model.GroupDescription,
-                    CategoryId = model.GroupCategoryId,
-                });
-                var productGroup = _productGroupService.TGetList().LastOrDefault();
-
-
-                List<Product> products = new List<Product>();
-                foreach (var product in model.Products)
-                {
-                    List<ProductImageDto> productImageDtos = new List<ProductImageDto>();
-                    if (product.MainImage != null)
-                    {
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            product.MainImage.CopyTo(memoryStream);
-                            productImageDtos.Add(new ProductImageDto
-                            {
-                                ImageData = memoryStream.ToArray(),
-                                ImageName = product.MainImage.FileName,
-                                IsMain = true
-                            });
-                        }
-                    }
-
-                    if (product.AdditionalImages != null)
-                    {
-                        foreach (var image in product.AdditionalImages)
-                        {
-                            using (var memoryStream = new MemoryStream())
-                            {
-                                image.CopyTo(memoryStream);
-                                productImageDtos.Add(new ProductImageDto
-                                {
-                                    ImageData = memoryStream.ToArray(),
-                                    ImageName = image.FileName,
-                                    IsMain = false
-                                });
-                            }
-                        }
-                    }
-
-                    List<ProductVariant> productVariants = new List<ProductVariant>();
-                    foreach (var variant in product.Variants)
-                    {
-                        
-                            productVariants.Add(new ProductVariant
-                            {
-                                //Color = variant.Color,
-                                Size = Enum.TryParse(variant.Size, out ProductSize size) ? size : ProductSize.NOSIZE,
-                                Stock = variant.Stock
-                            });
-                        
-                    }
-
-                    List<ProductImage> productImages = await _productImageService.SaveProductImageAsync(productImageDtos);
-
-
-                    List<CartItem> cartItems = new List<CartItem>();
-                    products.Add(new Product
-                    {
-                        Name = $"{model.GroupName}-{product.ProductName}",
-                        Description = product.Description != null ? product.Description : model.GroupDescription != null ? model.GroupDescription : "",
-                        Color = product.Color,
-                        Price = product.Price,
-                        UniqueCode = $"{DateTime.Now.Year.ToString().Substring(2)}{DateTime.Now.Month}{DateTime.Now.Day}{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}",
-                        Stock = productVariants.Sum(x => x.Stock),
-                        ProductGroupId = productGroup.ProductGroupId,
-                        CategoryId = model.GroupCategoryId,
-                        ProductVariants = productVariants,
-                        ProductImages = productImages,
-                        CartItems = cartItems
-                    });
-                }
-                await _productService.TInsertRange(products);
                 return RedirectToAction("Index");
             }
             return View(model);
