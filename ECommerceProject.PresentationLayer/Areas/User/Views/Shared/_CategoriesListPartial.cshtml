@@ -1,0 +1,33 @@
+﻿@model dynamic
+
+@{
+    Layout = null;
+}
+
+@{
+    var category = Model.Category as ECommerceProject.EntityLayer.Concrete.Category;
+    int depth = Model.Depth;
+    int subCategoryToggleCounter = category.CategoryId;
+}
+
+<li class="@((depth == 0) ? "font-semibold text-lg" : "group")">
+    <a href="#kategori-@category.CategoryId" class="flex items-center space-x-2 text-gray-700 hover:text-black">
+        <span>@category.Name</span>
+        @if (category.SubCategories?.Any() == true)
+        {
+            <svg class="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+        }
+    </a>
+
+    @if (category.SubCategories?.Any() == true)
+    {
+        <ul class="hidden group-hover:block pl-4 list-inside text-sm text-gray-600 space-y-2 transition-all duration-300">
+            @foreach (var subCategory in category.SubCategories)
+            {
+                @await Html.PartialAsync("_CategoriesListPartial", new { Category = subCategory, Depth = depth + 1 })
+            }
+        </ul>
+    }
+</li>

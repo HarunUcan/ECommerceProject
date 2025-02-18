@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\css\_Layout.css" />
     <None Include="wwwroot\EmailTemplates\ConfirmationMail.html" />
   </ItemGroup>
 

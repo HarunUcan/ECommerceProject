@@ -30,7 +30,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "User/Home",
+      //"launchUrl": "User/Home", //Burası Silinecek
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

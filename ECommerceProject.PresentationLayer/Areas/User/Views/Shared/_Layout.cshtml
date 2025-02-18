@@ -1,49 +1,226 @@
-﻿<!DOCTYPE html>
+﻿@model dynamic
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ECommerceProject.PresentationLayer</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ECommerceProject.PresentationLayer.styles.css" asp-append-version="true" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="~/css/_Layout.css" asp-append-version="true">
+    <title>ECommerce App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@400;500&display=swap"
+          rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+          integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" defer />
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js" defer></script>
+
+    <script src="~/js/layout.js" defer></script>
+
 </head>
+
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ECommerceProject.PresentationLayer</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+    <!-- Üst Menü -->
+    <header class="sticky top-0  shadow-md z-10">
+        <div class="flex justify-between items-center px-6 py-6 bg-white text-black w-full">
+            <!-- Menü İkonu -->
+            <div class="menu-icon">
+                <button id="menu-button" class="lg:hidden text-black">
+                    <i class="fa-solid fa-bars text-xl"></i>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+            </div>
+
+            <!-- Site Adı -->
+            <a href="">
+                <div class="text-2xl font-bold text-center flex-grow md:text-xl">ECommerce App</div>
+            </a>
+            <!-- Sepet ve Giriş Yap İkonları -->
+            <div class="header-icons flex justify-between items-center gap-6">
+                <!-- Sepet Iconu -->
+                <div class="header-cart">
+                    <a href="cartpage.html" class="hover:text-gray-400">
+                        <i class="fa-solid fa-bag-shopping text-black text-xl"></i>
+                        <span class="absolute flex justify-center items-center w-[15px] h-[15px] bg-red-700 top-7 right-14 rounded-full text-white text-xs">3</span>
+                        <!-- Örnek olarak 3 ürün var -->
+                    </a>
+                </div>
+
+                <!-- Giriş Yap Iconu -->
+                <a asp-area="User" asp-controller="CustomerProfile" asp-action="Index" class="hover:text-gray-400">
+                    <i class="fa-regular fa-user text-black text-xl"></i> <!-- Giriş yap ikonunu ekledik -->
+                </a>
+            </div>
+        </div>
+
+        <nav class="hidden lg:block w-full px-2 pb-2 bg-white">
+            <div class="flex justify-center container mx-auto h-6">
+                <div class="flex items-center justify-center gap-8">
+                    <ul class="flex items-center justify-center gap-8">
+                        <li class="cursor-pointer hover:border-b-2 border-red-700">Yeni Gelenler</li>
+                        <li class="cursor-pointer hover:border-b-2 border-red-700">Çok Satanlar</li>
+                        <li id="categories-btn" class="cursor-pointer hover:border-b-2 border-red-700">Kategoriler</li>
                     </ul>
                 </div>
             </div>
         </nav>
+        <div id="dropdown-categories"
+             class="absolute top-full left-0 w-full border-t border-gray-200 bg-white hidden z-50">
+
+            <!-- Kategori Menüsü Versiyon 4 -->
+            <!-- Alpine.js Kullanılmıyor -->
+            <div class="flex justify-stretch bg-white px-12 py-6 rounded-lg shadow-md">
+                @foreach (var category in Model.Categories)
+                {
+                    if (category.ParentCategory == null)
+                    {
+                        <ul class="space-y-3">
+                            <li class="font-semibold text-lg">@category.Name</li>
+                            @await Html.PartialAsync("_CategoriesListPartial", new { Category = category, Depth = 1 })
+                        </ul>
+                    }
+                }
+                @* @foreach(var category in Model.Categories)
+                {
+                    if(category.ParentCategory == null)
+                    {
+                        <ul class="space-y-2">
+                            <li class="font-semibold text-lg">@category.Name</li>
+                            @if(category.SubCategories.Count > 0)
+                            {
+                                @foreach (var subCategory in category.SubCategories)
+                                {
+                                    <li><a href="#kategori1" class="text-gray-700 hover:text-black">@subCategory.Name</a></li>
+                                }
+                            }
+                        </ul>
+                    }
+                } *@
+
+                <ul class="space-y-3">
+                    <li class="font-semibold text-lg">Erkek Giyim</li>
+                    <li class="group">
+                        <a href="#kategori1" class="flex items-center space-x-2 text-gray-700 hover:text-black">
+                            <span>Tişörtler</span>
+                            <svg id="products-icon" class="w-4 h-4 transition-transform duration-300" fill="none"
+                                 stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </a>
+                        <ul class="hidden group-hover:block pl-4 list-inside text-sm text-gray-600 space-y-2 transition-all duration-300">
+                            <li><a href="#altkategori1" class="hover:text-black">Basic Tişörtler</a></li>
+                            <li><a href="#altkategori2" class="hover:text-black">Tasarım Tişörtler</a></li>
+                            <li><a href="#altkategori3" class="hover:text-black">Oversized Tişörtler</a></li>
+                            <li><a href="#altkategori4" class="hover:text-black">Polo Yaka Tişörtler</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#kategori2" class="text-gray-700 hover:text-black">Kategori 2</a></li>
+                    <li><a href="#kategori3" class="text-gray-700 hover:text-black">Kategori 3</a></li>
+                    <li><a href="#kategori4" class="text-gray-700 hover:text-black">Kategori 4</a></li>
+                </ul>
+
+                <ul class="space-y-2">
+                    <li class="font-semibold text-lg">Kadın Giyim</li>
+                    <li><a href="#kategori1" class="text-gray-700 hover:text-black">Kategori 1</a></li>
+                    <li><a href="#kategori2" class="text-gray-700 hover:text-black">Kategori 2</a></li>
+                    <li><a href="#kategori3" class="text-gray-700 hover:text-black">Kategori 3</a></li>
+                    <li><a href="#kategori4" class="text-gray-700 hover:text-black">Kategori 4</a></li>
+                </ul>
+
+                <ul class="space-y-2">
+                    <li class="font-semibold text-lg">Aksesuar</li>
+                    <li><a href="#kategori1" class="text-gray-700 hover:text-black">Kategori 1</a></li>
+                    <li><a href="#kategori2" class="text-gray-700 hover:text-black">Kategori 2</a></li>
+                    <li><a href="#kategori3" class="text-gray-700 hover:text-black">Kategori 3</a></li>
+                    <li><a href="#kategori4" class="text-gray-700 hover:text-black">Kategori 4</a></li>
+                </ul>
+            </div>
+
+
+            <!-- Menü -->
+            
+
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <!-- Menü İçeriği -->
+    <div id="mobile-menu" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="bg-white w-80 h-full shadow-lg p-6 relative">
+            <!-- Kapatma Butonu -->
+            <button id="close-menu" class="absolute top-4 left-4 text-xl">
+                <i class="fa-solid fa-x"></i>
+            </button>
+
+            <!-- Üye Girişi ve Kayıt -->
+            <div class="text-center font-bold text-lg border-b pb-2 mb-4">
+                <a href="#" class="mr-2">ÜYE GİRİŞİ</a> | <a href="#">KAYIT OL</a>
+            </div>
+
+            <!-- Menü Öğeleri -->
+            <ul class="space-y-3">
+                <li><a href="#" class="hover:text-red-600">YENİ GELENLER</a></li>
+                <li><a href="#" class="text-red-500">FIRSAT ÜRÜNLERİ</a></li>
+                <li><a href="#">ELBİSE</a></li>
+                <li class="flex justify-between items-center">
+                    <a href="#">ÜST GİYİM</a>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </li>
+                <li class="flex justify-between items-center">
+                    <a href="#">ALT GİYİM</a>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </li>
+                <li class="flex justify-between items-center">
+                    <a href="#">AKSESUAR</a>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </li>
+                <li><a href="#">BUSINESS</a></li>
+                <li><a href="#">SPORTS WEAR</a></li>
+            </ul>
+
+            <!-- Alt Bilgi -->
+            <div class="mt-6 text-sm text-gray-600">
+                <a href="#" class="block">Yardım</a>
+                <a href="#" class="block">Sık Sorulan Sorular</a>
+                <a href="#" class="block">Kolay İade</a>
+                <a href="#" class="block">Sipariş Takip</a>
+            </div>
+
+            <!-- Sosyal Medya -->
+            <div class="flex space-x-4 mt-4 text-xl">
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+            </div>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - ECommerceProject.PresentationLayer - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    <!-- Soldan Açılan Dikey Menü -->
+    @*
+    <div id="nav-menu" class="nav-menu">
+        <!-- Geri Butonu -->
+        <button id="close-button"
+                class="absolute top-1/2 right-[0px] -translate-y-1/2 bg-red-700 text-white w-10 h-24 rounded-l-full flex items-center justify-center shadow-lg">
+            <i class="fa-solid fa-arrow-left text-xl"></i>
+        </button>
+
+        <h2 class="text-xl ml-4 mb-2">Ürünler</h2> <!-- Kategoriler başlığı -->
+        <hr class="w-48 h-px ml-4 bg-white border-0 rounded dark:bg-gray-700">
+        <ul>
+            <li><a href="#kategori1">Kategori 1</a></li>
+            <li><a href="#kategori2">Kategori 2</a></li>
+            <li><a href="#kategori3">Kategori 3</a></li>
+            <li><a href="#kategori4">Kategori 4</a></li>
+        </ul>
+    </div>
+    *@
+
+    @RenderBody()
+
+    <!-- Swiper Slider Hero Bölümü -->
+    <!-- Menü -->
+    
 </body>
+
 </html>

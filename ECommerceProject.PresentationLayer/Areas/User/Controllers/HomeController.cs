@@ -1,4 +1,6 @@
+using ECommerceProject.BusinessLayer.Abstract;
 using ECommerceProject.PresentationLayer.Models;
+using ECommerceProject.PresentationLayer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -6,19 +8,27 @@ using System.Diagnostics;
 namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 {
     [Area("User")]
-    [Authorize]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IProductService productService, ICategoryService categoryService)
         {
-            _logger = logger;
+            _productService = productService;
+            _categoryService = categoryService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var products = await _productService.TGetAllProductsWithCategoriesImagesAsync();
+            var categories = _categoryService.TGetList();
+            var homeViewModel = new HomeViewModel
+            {
+                Products = products,
+                Categories = categories
+            };
+            return View(homeViewModel);
         }
 
         public IActionResult Privacy()

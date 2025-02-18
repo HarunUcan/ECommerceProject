@@ -1,0 +1,107 @@
+﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+h1,
+h2,
+h3 {
+    font-family: 'Playfair Display', serif;
+}
+
+.product-card {
+    position: relative;
+    transition: background-color 0.3s ease;
+    overflow: hidden;
+}
+
+    .product-card:hover {
+        background-color: #f0f0f0;
+    }
+
+.product-image {
+    transition: opacity 0.3s ease;
+}
+
+.product-card:hover .product-image {
+    opacity: 1;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 1.75rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-card:hover .overlay {
+    opacity: 1;
+}
+
+/* Hamburger Menü */
+.nav-menu {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    /* Başlangıçta gizli */
+    width: 250px;
+    height: 100%;
+    background-color: black;
+    color: white;
+    transition: left 0.3s ease;
+    z-index: 1000;
+    /* Diğer içeriklerin üzerinde görünmesi için */
+    padding-top: 30px;
+    /* Header yüksekliği kadar boşluk bırak */
+}
+
+    .nav-menu.active {
+        left: 0;
+        /* Aktif olduğunda görünür hale gelir */
+    }
+
+    .nav-menu ul {
+        list-style-type: none;
+        padding: 20px 0;
+        margin: 0;
+    }
+
+        .nav-menu ul li {
+            padding: 10px 20px;
+        }
+
+            .nav-menu ul li a {
+                color: white;
+                font-size: 1rem;
+                text-decoration: none;
+                font-family: 'Playfair Display', serif;
+            }
+
+                .nav-menu ul li a:hover {
+                    color: gray;
+                }
+
+
+.swiper-pagination-bullet-active {
+    background-color: black !important;
+    /* Seçili noktanın rengi */
+}

@@ -1,8 +1,82 @@
-﻿@{
+﻿@model HomeViewModel
+@{
     ViewData["Title"] = "Home Page";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="relative mx-2 md:mx-6 lg:mx-12 mt-6">
+    <div class="swiper mySwiper rounded-xl">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <img src="~/ECommerceProjectTheme/SliderImages/slider7.jpg" alt="Slide 1" class="w-full h-[250px] md:h-[500px] object-cover">
+            </div>
+            <div class="swiper-slide">
+                <img src="~/ECommerceProjectTheme/SliderImages/slider8.jpg" alt="Slide 2" class="w-full h-[250px] md:h-[500px] object-cover">
+            </div>
+            <div class="swiper-slide">
+                <img src="~/ECommerceProjectTheme/SliderImages/slider5.jpg" alt="Slide 3" class="w-full h-[250px] md:h-[500px] object-cover">
+            </div>
+            <div class="swiper-slide">
+                <img src="~/ECommerceProjectTheme/SliderImages/slider3.jpg" alt="Slide 3" class="w-full h-[250px] md:h-[500px] object-cover">
+            </div>
+        </div>
+        <!-- Slider Kontrolleri -->
+        <div class="swiper-button-next text-white"></div>
+        <div class="swiper-button-prev text-white"></div>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
+
+<h2 class="text-3xl font-semibold text-center mt-8 mb-4 text-gray-900">Öne Çıkan Ürünler</h2>
+<hr class="w-72 h-px mx-auto bg-gray-100 border-0 rounded dark:bg-gray-700">
+
+<!-- Ürünler Bölümü -->
+<section class="pb-16 md:px-3 w-full">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 px-2 py-10">
+        <!-- Ürünler Listesi -->
+
+        @foreach(var product in Model.Products)
+        {
+            <div class="bg-white shadow-md border border-gray-200 rounded-lg p-3 relative">
+                <!-- Ürün Resmi -->
+                <img src="@product.ProductImages.FirstOrDefault(img => img.IsMain == true).Url.Replace("wwwroot","")" alt="Ürün" class="w-full h-48 md:h-64 object-cover rounded-lg">
+
+                <!-- Ürün Bilgileri -->
+                <h2 class="text-lg font-semibold mt-3">@product.Name</h2>
+                <p class="text-gray-500 text-sm">@product.Description</p>
+
+                <!-- Fiyat -->
+                <p class="text-black font-bold mt-2">@product.Price ₺</p>
+
+                <!-- Renk Seçenekleri -->
+                <div class="relative flex justify-start items-center mt-2">
+                    <div id="colorContainer" class="relative flex items-center">
+                        <div class="w-5 h-5 rounded-full border-2 border-white bg-[#8B5E3B]"></div>
+                        <div class="w-5 h-5 rounded-full border-2 border-white bg-[#000000] -ml-2.5"></div>
+                        <div class="w-5 h-5 rounded-full border-2 border-white bg-[#FF0000] -ml-2.5"></div>
+                        <div class="w-5 h-5 rounded-full border-2 border-white bg-gray-300 text-xs flex items-center justify-center font-bold -ml-2.5">
+                            +2
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sepete Ekle Butonu -->
+                <button class="mt-4 w-full border-2 border-gray-600 text-black py-2 rounded hover:bg-zinc-100 transition duration-200 ease-in-out">
+                    <i class="fa-solid fa-cart-shopping mr-2"></i> Sepete Ekle
+                </button>
+            </div>
+        }
+
+
+    </div>
+</section>
+
+<footer class="bg-black text-white text-center py-8">
+    <p>&copy; 2024 ECommerce App. Tüm Hakları Saklıdır.</p>
+</footer>
+
+
+<script src="~/js/home.js" defer></script>
+
+
+
