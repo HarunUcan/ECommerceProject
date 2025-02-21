@@ -7,15 +7,19 @@
 @{
     var category = Model.Category as ECommerceProject.EntityLayer.Concrete.Category;
     int depth = Model.Depth;
-    int subCategoryToggleCounter = category.CategoryId;
+    var textSize = depth == 0 ? "text-lg font-semibold" : depth == 1 ? "text-base font-medium" : "text-sm";
+    var paddingClass = depth == 0 || depth == 1 ? "" : "pl-4"; // `depth == 1` ve üstü girintili olacak
 }
 
-<li class="@((depth == 0) ? "font-semibold text-lg" : "group")">
-    <a href="#kategori-@category.CategoryId" class="flex items-center space-x-2 text-gray-700 hover:text-black">
+<li class="relative @paddingClass">
+    <a href="#kategori-@category.CategoryId"
+       class="flex items-center space-x-2 text-gray-700 hover:text-black @textSize"
+       onmouseover="openSubmenu(@category.CategoryId, @depth)"
+       onmouseleave="closeSubmenu(@category.CategoryId, @depth)">
         <span>@category.Name</span>
-        @if (category.SubCategories?.Any() == true)
+        @if (category.SubCategories?.Any() == true && depth > 0)
         {
-            <svg class="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg class="w-4 h-4 transition-transform duration-300" id="arrow-@category.CategoryId" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
             </svg>
         }
@@ -23,7 +27,10 @@
 
     @if (category.SubCategories?.Any() == true)
     {
-        <ul class="hidden group-hover:block pl-4 list-inside text-sm text-gray-600 space-y-2 transition-all duration-300">
+        <ul id="submenu-@category.CategoryId"
+            class="text-sm text-gray-600 space-y-2 transition-all duration-300 @(depth == 0 ? "" : "hidden")"
+            onmouseover="cancelClose(@category.CategoryId)"
+            onmouseleave="closeSubmenu(@category.CategoryId, @depth)">
             @foreach (var subCategory in category.SubCategories)
             {
                 @await Html.PartialAsync("_CategoriesListPartial", new { Category = subCategory, Depth = depth + 1 })
@@ -31,3 +38,57 @@
         </ul>
     }
 </li>
+
+
+
+
+
+<script>
+    let closeTimeouts = {};
+
+    function openSubmenu(categoryId, depth) {
+        let submenu = document.getElementById(`submenu-${categoryId}`);
+        let arrow = document.getElementById(`arrow-${categoryId}`);
+
+        if (submenu) {
+            submenu.classList.remove("hidden"); // Alt kategoriyi aç
+        }
+
+        if (arrow) {
+            arrow.classList.add("rotate-180"); // Oku döndür
+        }
+
+        // Kapanma zamanlayıcısını temizle
+        if (closeTimeouts[categoryId]) {
+            clearTimeout(closeTimeouts[categoryId]);
+            closeTimeouts[categoryId] = null;
+        }
+    }
+
+    function closeSubmenu(categoryId, depth) {
+        // Eğer ana kategori (`depth == 0`) ise kapanmamalı!
+        if (depth == 0) return;
+
+        closeTimeouts[categoryId] = setTimeout(() => {
+            let submenu = document.getElementById(`submenu-${categoryId}`);
+            let arrow = document.getElementById(`arrow-${categoryId}`);
+
+            if (submenu) {
+                submenu.classList.add("hidden"); // Alt kategoriyi kapat
+            }
+
+            if (arrow) {
+                arrow.classList.remove("rotate-180"); // Oku eski haline getir
+            }
+        }, 200); // 200ms gecikme vererek ani kapanmayı engelle
+    }
+
+    function cancelClose(categoryId) {
+        if (closeTimeouts[categoryId]) {
+            clearTimeout(closeTimeouts[categoryId]); // Eğer kullanıcı alt kategorinin içine girdiyse kapanmasını engelle
+        }
+    }
+
+
+
+</script>

@@ -47,12 +47,16 @@
                                         <td class="border-b py-4">${product.price} ₺</td>
                                         <td class="border-b py-4">${product.categoryName}</td>
                                 <td class="border-b py-4">
-                                            <a href="/urun-duzenle/${product.name}"
-                                       class="px-4 py-2 text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow">Düzenle</a>
+                                            <button onclick="toggleFeatured(${product.id}, this)"
+                                        class="${product.isFeatured ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500'} transition"
+                                        title="Öne Çıkanlara Ekle/Kaldır">
+                                    <i class="fa-solid fa-star"></i>
+                                </button>
                                     
+                                    <a href="/urun-duzenle/${product.id}"
+                                                       class="text-yellow-600 hover:text-yellow-800 transition"><i class="fas fa-edit" title="Düzenle"></i></a>
 
-                                    <button onclick="confirmDelete(${product.id})" class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg shadow">Sil
-                    </button>
+                                            <button onclick="confirmDelete(${product.id})" class="text-red-600 hover:text-red-800 transition" title="Sil"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
                             `);
@@ -92,6 +96,25 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = `/Admin/Product/Delete?id=${productId}`;
+                }
+            });
+        }
+
+        // Öne çıkan ürünü işaretleme fonksiyonu
+        function toggleFeatured(productId, btn) {
+            $.get(`/Admin/Product/ToggleFeatured/${productId}`, function (response) {
+                console.log(response);
+                if (response.success) {
+                    // Eğer buton zaten 'text-yellow-500' sınıfına sahipse, kaldır ve eski rengini ekle
+                    if ($(btn).hasClass("text-yellow-500")) {
+                        $(btn).removeClass("text-yellow-500")
+                            .addClass("text-gray-600 hover:text-yellow-500")
+                            .attr("title", "Öne Çıkar");
+                    } else {
+                        $(btn).removeClass("text-gray-600 hover:text-yellow-500")
+                            .addClass("text-yellow-500")
+                            .attr("title", "Öne Çıkarmayı Kaldır");
+                    }
                 }
             });
         }

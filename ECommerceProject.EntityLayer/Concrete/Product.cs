@@ -13,6 +13,7 @@ namespace ECommerceProject.EntityLayer.Concrete
         public string Name { get; set; }
         public string? Description { get; set; }
         public string? Color { get; set; }
+        public bool IsFeatured { get; set; }
         public int? ProductGroupId { get; set; }
         public ProductGroup? ProductGroup { get; set; }
         public ICollection<ProductVariant> ProductVariants { get; set; }

@@ -68,10 +68,18 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                     Price = product.Price,
                     Stock = product.Stock,
                     CategoryName = product.Category.Name,
-                    MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", "")
+                    MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", ""),
+                    IsFeatured = product.IsFeatured
                 });
             }
             return Json(productDtos);
+        }
+
+        [HttpGet]
+        public IActionResult ToggleFeatured(int id)
+        {
+            bool response = _productService.TToggleFeatured(id);
+            return response == true ? Json(new { success = response }) : Json(new { error = response });
         }
 
         [HttpGet]

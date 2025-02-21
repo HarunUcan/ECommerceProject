@@ -61,8 +61,14 @@
                 <div class="flex items-center justify-center gap-8">
                     <ul class="flex items-center justify-center gap-8">
                         <li class="cursor-pointer hover:border-b-2 border-red-700">Yeni Gelenler</li>
+                        <li class="cursor-pointer hover:border-b-2 border-red-700 text-red-500">Fırsat Ürünleri</li>
                         <li class="cursor-pointer hover:border-b-2 border-red-700">Çok Satanlar</li>
-                        <li id="categories-btn" class="cursor-pointer hover:border-b-2 border-red-700">Kategoriler</li>
+                        <li id="categories-btn" class="flex items-center justify-center cursor-pointer hover:border-b-2 border-red-700">
+                            <span>Kategoriler</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -70,74 +76,18 @@
         <div id="dropdown-categories"
              class="absolute top-full left-0 w-full border-t border-gray-200 bg-white hidden z-50">
 
-            <!-- Kategori Menüsü Versiyon 4 -->
-            <!-- Alpine.js Kullanılmıyor -->
+            <!-- Kategori Menüsü -->
             <div class="flex justify-stretch bg-white px-12 py-6 rounded-lg shadow-md">
                 @foreach (var category in Model.Categories)
                 {
                     if (category.ParentCategory == null)
                     {
-                        <ul class="space-y-3">
-                            <li class="font-semibold text-lg">@category.Name</li>
-                            @await Html.PartialAsync("_CategoriesListPartial", new { Category = category, Depth = 1 })
+                        <ul class="space-y-3 inline-block align-top mr-6">
+                            <!-- Yan yana sıralamak için inline-block kullanıyoruz -->
+                            @await Html.PartialAsync("_CategoriesListPartial", new { Category = category, Depth = 0 })
                         </ul>
                     }
                 }
-                @* @foreach(var category in Model.Categories)
-                {
-                    if(category.ParentCategory == null)
-                    {
-                        <ul class="space-y-2">
-                            <li class="font-semibold text-lg">@category.Name</li>
-                            @if(category.SubCategories.Count > 0)
-                            {
-                                @foreach (var subCategory in category.SubCategories)
-                                {
-                                    <li><a href="#kategori1" class="text-gray-700 hover:text-black">@subCategory.Name</a></li>
-                                }
-                            }
-                        </ul>
-                    }
-                } *@
-
-                <ul class="space-y-3">
-                    <li class="font-semibold text-lg">Erkek Giyim</li>
-                    <li class="group">
-                        <a href="#kategori1" class="flex items-center space-x-2 text-gray-700 hover:text-black">
-                            <span>Tişörtler</span>
-                            <svg id="products-icon" class="w-4 h-4 transition-transform duration-300" fill="none"
-                                 stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </a>
-                        <ul class="hidden group-hover:block pl-4 list-inside text-sm text-gray-600 space-y-2 transition-all duration-300">
-                            <li><a href="#altkategori1" class="hover:text-black">Basic Tişörtler</a></li>
-                            <li><a href="#altkategori2" class="hover:text-black">Tasarım Tişörtler</a></li>
-                            <li><a href="#altkategori3" class="hover:text-black">Oversized Tişörtler</a></li>
-                            <li><a href="#altkategori4" class="hover:text-black">Polo Yaka Tişörtler</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="#kategori2" class="text-gray-700 hover:text-black">Kategori 2</a></li>
-                    <li><a href="#kategori3" class="text-gray-700 hover:text-black">Kategori 3</a></li>
-                    <li><a href="#kategori4" class="text-gray-700 hover:text-black">Kategori 4</a></li>
-                </ul>
-
-                <ul class="space-y-2">
-                    <li class="font-semibold text-lg">Kadın Giyim</li>
-                    <li><a href="#kategori1" class="text-gray-700 hover:text-black">Kategori 1</a></li>
-                    <li><a href="#kategori2" class="text-gray-700 hover:text-black">Kategori 2</a></li>
-                    <li><a href="#kategori3" class="text-gray-700 hover:text-black">Kategori 3</a></li>
-                    <li><a href="#kategori4" class="text-gray-700 hover:text-black">Kategori 4</a></li>
-                </ul>
-
-                <ul class="space-y-2">
-                    <li class="font-semibold text-lg">Aksesuar</li>
-                    <li><a href="#kategori1" class="text-gray-700 hover:text-black">Kategori 1</a></li>
-                    <li><a href="#kategori2" class="text-gray-700 hover:text-black">Kategori 2</a></li>
-                    <li><a href="#kategori3" class="text-gray-700 hover:text-black">Kategori 3</a></li>
-                    <li><a href="#kategori4" class="text-gray-700 hover:text-black">Kategori 4</a></li>
-                </ul>
             </div>
 
 
@@ -196,30 +146,9 @@
         </div>
     </div>
 
-    <!-- Soldan Açılan Dikey Menü -->
-    @*
-    <div id="nav-menu" class="nav-menu">
-        <!-- Geri Butonu -->
-        <button id="close-button"
-                class="absolute top-1/2 right-[0px] -translate-y-1/2 bg-red-700 text-white w-10 h-24 rounded-l-full flex items-center justify-center shadow-lg">
-            <i class="fa-solid fa-arrow-left text-xl"></i>
-        </button>
-
-        <h2 class="text-xl ml-4 mb-2">Ürünler</h2> <!-- Kategoriler başlığı -->
-        <hr class="w-48 h-px ml-4 bg-white border-0 rounded dark:bg-gray-700">
-        <ul>
-            <li><a href="#kategori1">Kategori 1</a></li>
-            <li><a href="#kategori2">Kategori 2</a></li>
-            <li><a href="#kategori3">Kategori 3</a></li>
-            <li><a href="#kategori4">Kategori 4</a></li>
-        </ul>
-    </div>
-    *@
 
     @RenderBody()
 
-    <!-- Swiper Slider Hero Bölümü -->
-    <!-- Menü -->
     
 </body>
 

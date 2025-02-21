@@ -76,5 +76,19 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             context.Products.AddRange(products);
             return await context.SaveChangesAsync();
         }
+
+        public bool ToggleFeatured(int productId)
+        {
+            using var context = new Context();
+            var product = context.Products.Find(productId);
+
+            if (product == null)
+                return false;
+            
+            product.IsFeatured = !product.IsFeatured;
+            context.SaveChanges();
+
+            return true;
+        }
     }
 }

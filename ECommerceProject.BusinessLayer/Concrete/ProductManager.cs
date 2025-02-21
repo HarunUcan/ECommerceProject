@@ -70,5 +70,10 @@ namespace ECommerceProject.BusinessLayer.Concrete
             List<string> paths = await _productDal.DeleteWithImagesAsync(products);
             FileHelper.DeleteFiles(paths);
         }
+
+        public bool TToggleFeatured(int productId)
+        {
+            return _productDal.ToggleFeatured(productId);
+        }
     }
 }

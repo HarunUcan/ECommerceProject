@@ -14,5 +14,6 @@ namespace ECommerceProject.BusinessLayer.Abstract
         Task TDeleteWithImagesAsync(Product product);
         Task TDeleteWithImagesAsync(ICollection<Product> products);
         Task<int> TInsertRange(List<Product> products);
+        bool TToggleFeatured(int productId);
     }
 }
