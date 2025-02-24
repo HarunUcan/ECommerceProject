@@ -40,4 +40,47 @@ var swiper = new Swiper(".mySwiper", {
     },
 });
 
+var productSwiper = new Swiper(".productSwiper", {
+    slidesPerView: 2, // Aynı anda görünen ürün sayısı
+    spaceBetween: 15,
+    slidesPerGroup: 2, // Her tıklamada 2 ürün kaydır
+    loop: true,
+    loopFillGroupWithBlank: true, // Boşlukları otomatik doldur
+    loopedSlides: 6, // Döngüde düzgün çalışması için artırıldı
+    autoplay: {
+        delay: 2500,
+        disableOnInteraction: false,
+        waitForTransition: false, // Geçişi bekleme, hemen başlasın
+    },
+    pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+    },
+    navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+    },
+    breakpoints: {
+        640: {
+            slidesPerView: 3,
+            spaceBetween: 15,
+            slidesPerGroup: 3, // Tabletlerde 3 ürün kaydır
+        },
+        1024: {
+            slidesPerView: 4,
+            spaceBetween: 20,
+            slidesPerGroup: 4, // Büyük ekranlarda 4 ürün kaydır
+        },
+        1280: {
+            slidesPerView: 5,
+            spaceBetween: 25,
+            slidesPerGroup: 5, // Daha büyük ekranlarda 5 ürün kaydır
+        },
+    },
+    on: {
+        init: function () {
+            this.loopFix(); // Başlangıçta boşluk sorununu düzelt
+        },
+    },
+});
 

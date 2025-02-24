@@ -21,11 +21,13 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 
         public async Task<IActionResult> Index()
         {
+            // TODO: Product Service'e featured productlarý getirme metodu yazýlacak.
             var products = await _productService.TGetAllProductsWithCategoriesImagesAsync();
+            var featuredProducts = products.Where(x => x.IsFeatured).ToList();
             var categories = _categoryService.TGetList();
             var homeViewModel = new HomeViewModel
             {
-                Products = products,
+                Products = featuredProducts,
                 Categories = categories
             };
             return View(homeViewModel);
