@@ -75,5 +75,15 @@ namespace ECommerceProject.BusinessLayer.Concrete
         {
             return _productDal.ToggleFeatured(productId);
         }
+
+        public async Task<List<Product>> TGetFeaturedProductsAsync(int maxProductCount = 15)
+        {
+            return await _productDal.GetFeaturedProductsAsync(maxProductCount);
+        }
+
+        public async Task<List<Product>> TGetFeaturedCategoryProductsAsync(int maxProductCountPerCategory = 15)
+        {
+            return await _productDal.GetFeaturedCategoryProductsAsync(maxProductCountPerCategory);
+        }
     }
 }

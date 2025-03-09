@@ -21,14 +21,14 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // TODO: Product Service'e featured productlarý getirme metodu yazýlacak.
-            var products = await _productService.TGetAllProductsWithCategoriesImagesAsync();
-            var featuredProducts = products.Where(x => x.IsFeatured).ToList();
+            var featuredProducts = await _productService.TGetFeaturedProductsAsync(); // Default olarak max 15 ürün getirir
+            var featuredCategoryProducts = await _productService.TGetFeaturedCategoryProductsAsync(); // Default olarak kategori baþýna max 15 ürün getirir
             var categories = _categoryService.TGetList();
             var homeViewModel = new HomeViewModel
             {
-                Products = featuredProducts,
-                Categories = categories
+                FeaturedProducts = featuredProducts,
+                Categories = categories,
+                FeaturedCategoryProducts = featuredCategoryProducts
             };
             return View(homeViewModel);
         }

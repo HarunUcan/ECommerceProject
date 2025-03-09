@@ -1,5 +1,7 @@
 ﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.BusinessLayer.Helpers;
 using ECommerceProject.DataAccessLayer.Abstract;
+using ECommerceProject.DtoLayer.Dtos.ProductImageDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using System;
 using System.Collections.Generic;
@@ -41,6 +43,22 @@ namespace ECommerceProject.BusinessLayer.Concrete
         public void TRecursiveDeleteCategory(int categoryId)
         {
             _categoryDal.RecursiveDeleteCategory(categoryId);
+        }
+
+        public async Task<string> TSaveCategoryImageAsync(byte[] imageData, string imageName)
+        {
+            var filePath = await FileHelper.SaveFileAsync(imageData, $"{Guid.NewGuid()}{Path.GetExtension(imageName)}");
+            return filePath;
+        }
+
+        public bool TToggleFeatured(int categoryId)
+        {
+            return _categoryDal.ToggleFeatured(categoryId);
+        }
+
+        public bool TToggleTopFourCategory(int categoryId)
+        {
+            return _categoryDal.ToggleTopFourCategory(categoryId);
         }
 
         public void TUpdate(Category t)

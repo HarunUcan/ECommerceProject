@@ -160,7 +160,7 @@
                 </form>
                 <div class="text-red-500" asp-validation-summary="ModelOnly"></div>
                 <p class="text-sm text-center text-gray-600 mt-4">
-                    Daha önce kayıt oldunuz mu? <a href="loginpage.html"
+                    Daha önce kayıt oldunuz mu? <a asp-area="User" asp-controller="Login" asp-action="Index"
                                                    class="text-black font-medium hover:underline">Giriş Yap</a>
                 </p>
             </section>

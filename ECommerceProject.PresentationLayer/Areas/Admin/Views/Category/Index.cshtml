@@ -8,6 +8,7 @@
 
 <head>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function toggleSubcategories(rowId) {
             const subcategories = document.getElementById(`subcategories-${rowId}`);
@@ -32,6 +33,44 @@
                 }
             });
         }
+
+        // Öne çıkan ürünü işaretleme fonksiyonu
+        function toggleFeatured(categoryId, btn) {
+            $.get(`/Admin/Category/ToggleFeatured/${categoryId}`, function (response) {
+                console.log(response);
+                if (response.success) {
+                    // Eğer buton zaten 'text-amber-500' sınıfına sahipse, kaldır ve eski rengini ekle
+                    if ($(btn).hasClass("text-amber-500")) {
+                        $(btn).removeClass("text-amber-500")
+                            .addClass("text-gray-600 hover:text-amber-500")
+                            .attr("title", "Öne Çıkar");
+                    } else {
+                        $(btn).removeClass("text-gray-600 hover:text-amber-500")
+                            .addClass("text-amber-500")
+                            .attr("title", "Öne Çıkarmayı Kaldır");
+                    }
+                }
+            });
+        }
+
+        function toggleTopFourCategory(categoryId, btn) {
+            $.get(`/Admin/Category/ToggleTopFourCategory/${categoryId}`, function (response) {
+                console.log(response);
+                if (response.success) {
+                    // Eğer buton zaten 'text-green-600' sınıfına sahipse, kaldır ve eski rengini ekle
+                    if ($(btn).hasClass("text-green-600")) {
+                        $(btn).removeClass("text-green-600")
+                            .addClass("text-gray-600 hover:text-green-600")
+                            .attr("title", "4'lü Kategori Grubuna Ekle");
+                    } else {
+                        $(btn).removeClass("text-gray-600 hover:text-green-600")
+                            .addClass("text-green-600")
+                            .attr("title", "4'lü Kategori Grubundan Kaldır");
+                    }
+                }
+            });
+        }
+
     </script>
 </head>
 

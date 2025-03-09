@@ -4,6 +4,7 @@ using ECommerceProject.DtoLayer.Dtos.CategoryDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ECommerceProject.DtoLayer.Dtos.ProductImageDtos;
 
 namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
 {
@@ -27,6 +28,19 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        public IActionResult ToggleFeatured(int id)
+        {
+            bool response = _categoryService.TToggleFeatured(id);
+            return response == true ? Json(new { success = response }) : Json(new { error = response });
+        }
+        [HttpGet]
+        public IActionResult ToggleTopFourCategory(int id)
+        {
+            bool response = _categoryService.TToggleTopFourCategory(id);
+            return response == true ? Json(new { success = response }) : Json(new { error = response });
+        }
+
+        [HttpGet]
         public IActionResult Create()
         {
             AdminCategoryViewModel adminCatagoryViewModel = new AdminCategoryViewModel
@@ -38,14 +52,26 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(AdminCategoryViewModel adminCategoryViewModel)
+        public async Task<IActionResult> Create(AdminCategoryViewModel adminCategoryViewModel)
         {
             if (ModelState.IsValid)
             {
+                string? imageUrl = null;
+
+                if (adminCategoryViewModel.MainImage != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await adminCategoryViewModel.MainImage.CopyToAsync(memoryStream);
+                        imageUrl = await _categoryService.TSaveCategoryImageAsync(memoryStream.ToArray(), adminCategoryViewModel.MainImage.FileName);
+                    }
+                }
+                    
                 _categoryService.TInsert(new Category
                 {
                     Name = adminCategoryViewModel.CategoryDto.Name,
-                    ParentCategoryId = adminCategoryViewModel.CategoryDto.ParentCategoryId
+                    ParentCategoryId = adminCategoryViewModel.CategoryDto.ParentCategoryId,
+                    ImageUrl = imageUrl
                 });
                 return RedirectToAction("Index");
             }

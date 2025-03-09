@@ -11,20 +11,38 @@
 }
 <li>
     <div class="flex justify-between items-center @backgroundColor p-4 rounded-lg">
-        <span class="font-medium text-gray-800">@category.Name</span>
+        <div class="flex justify-center items-center gap-2">
+            @if(category.ImageUrl != null)
+            {
+                <img src="@category.ImageUrl?.Replace("wwwroot","")" alt="Kategori Resmi"
+                     class="w-8 h-8 rounded-md object-cover" />
+            }            
+            <span class="font-medium text-gray-800">@category.Name</span>
+        </div>
+        
         <div class="space-x-3 flex items-center">
             @if (category.SubCategories?.Any() == true)
             {
                 <button onclick="toggleSubcategories(@subCategoryToggleCounter)" class="text-blue-600" title="Alt Kategorileri Gör">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25" />
-                    </svg> <!-- Alt Kategorileri Gör -->
+                    <i class="fas fa-eye"></i> <!-- Alt Kategorileri Gör -->
                 </button>
             }
+            
+            <button onclick="toggleFeatured(@category.CategoryId, this)"
+                    class="@(category.IsFeatured ? "text-amber-500" : "text-gray-600 hover:text-amber-500") transition"
+                    title="@(category.IsFeatured ? "Öne Çıkarmayı Kaldır" : "Öne Çıkar")">
+                <i class="fa-solid fa-star"></i>
+            </button> <!-- Öne Çıkar/Kaldır -->
+
+            @* BURANIN BACKEND KODLARI YAZILMMADI SADECE TASARIM VAR *@
+            <button onclick="toggleTopFourCategory(@category.CategoryId, this)"
+                    class="@(category.IsTopFourCategory ? "text-green-600" : "text-gray-600 hover:text-green-600") transition"
+                    title="@(category.IsFeatured ? "4'lü Kategori Grubundan Kaldır" : "4'lü Kategori Grubuna Ekle")">
+                <i class="fa-solid fa-dice-four"></i>
+            </button> <!-- 4'lü Kategori Grubunu Öne Çıkar/Kaldır -->
+            
             <a asp-area="Admin" asp-controller="Category" asp-action="Edit" asp-route-id="@category.CategoryId" class="text-yellow-600" title="Düzenle">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 3.487a2.121 2.121 0 113 3l-1.5 1.5-3-3 1.5-1.5zM6.75 14.25l7.5-7.5 3 3-7.5 7.5H6.75v-3z" />
-                </svg> <!-- Düzenle -->
+                <i class="fas fa-edit" title="Düzenle"></i> <!-- Düzenle -->
             </a>
             <button onclick="confirmDelete(@category.CategoryId)" class="text-red-600" title="Sil">
                 <i class="fa-solid fa-trash-can mr-2"></i> <!-- Sil -->

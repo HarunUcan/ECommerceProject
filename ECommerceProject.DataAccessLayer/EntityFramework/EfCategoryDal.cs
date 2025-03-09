@@ -51,5 +51,27 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             }
             categoriesToRemove.Add(category); // Ana kategoriyi de ekleyelim
         }
+
+        public bool ToggleFeatured(int categoryId)
+        {
+            using var context = new Context();
+            var category = context.Categories.FirstOrDefault(c => c.CategoryId == categoryId);
+            if (category == null) return false;
+
+            category.IsFeatured = !category.IsFeatured;
+            context.SaveChanges();
+            return true;
+        }
+
+        public bool ToggleTopFourCategory(int categoryId)
+        {
+            using var context = new Context();
+            var category = context.Categories.FirstOrDefault(c => c.CategoryId == categoryId);
+            if (category == null) return false;
+
+            category.IsTopFourCategory = !category.IsTopFourCategory;
+            context.SaveChanges();
+            return true;
+        }
     }
 }

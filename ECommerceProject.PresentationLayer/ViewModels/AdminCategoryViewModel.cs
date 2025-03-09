@@ -7,5 +7,6 @@ namespace ECommerceProject.PresentationLayer.ViewModels
     {
         public CategoryDto CategoryDto { get; set; }
         public List<Category> Categories { get; set; } = new List<Category>();
+        public IFormFile? MainImage { get; set; }
     }
 }

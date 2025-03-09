@@ -11,6 +11,8 @@ namespace ECommerceProject.DataAccessLayer.Abstract
     {
         Task<List<Product>> GetAllProductsWithCategoriesImagesAsync();
         Task<List<Product>> GetPagedProductsAsync(int currentPage, int pageSize);
+        Task<List<Product>> GetFeaturedProductsAsync(int maxProductCount = 15);
+        Task<List<Product>> GetFeaturedCategoryProductsAsync(int maxProductCountPerCategory = 15);
         Task<List<string>> DeleteWithImagesAsync(Product product);
         Task<List<string>> DeleteWithImagesAsync(ICollection<Product> products);
         Task<int> InsertRange(List<Product> products);

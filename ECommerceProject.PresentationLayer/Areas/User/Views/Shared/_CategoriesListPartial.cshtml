@@ -7,16 +7,33 @@
 @{
     var category = Model.Category as ECommerceProject.EntityLayer.Concrete.Category;
     int depth = Model.Depth;
+    var bottomMargin = depth == 0 ? "mb-2" : "";
     var textSize = depth == 0 ? "text-lg font-semibold" : depth == 1 ? "text-base font-medium" : "text-sm";
     var paddingClass = depth == 0 || depth == 1 ? "" : "pl-4"; // `depth == 1` ve üstü girintili olacak
 }
 
-<li class="relative @paddingClass">
+<li class="relative  @paddingClass">
     <a href="#kategori-@category.CategoryId"
-       class="flex items-center space-x-2 text-gray-700 hover:text-black @textSize"
+       class="flex items-center space-x-2 text-gray-700 hover:text-black @textSize @bottomMargin"
        onmouseover="openSubmenu(@category.CategoryId, @depth)"
        onmouseleave="closeSubmenu(@category.CategoryId, @depth)">
-        <span>@category.Name</span>
+       <div class="flex justify-center items-center gap-2">
+           @if (category.ImageUrl != null)
+            {
+                <img src="@category.ImageUrl?.Replace("wwwroot", "")" alt="Kategori Resmi"
+                class="w-6 h-6 rounded-md object-cover" />
+
+                <span>@category.Name</span>
+            }
+            else
+            {
+                <span class="pl-8">@category.Name</span>
+            }
+
+            @* <span>@category.Name</span> *@
+            
+       </div>
+        
         @if (category.SubCategories?.Any() == true && depth > 0)
         {
             <svg class="w-4 h-4 transition-transform duration-300" id="arrow-@category.CategoryId" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

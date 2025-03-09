@@ -11,7 +11,7 @@
     <!-- Kategori Ekleme Formu -->
     <div class="bg-gray-50 p-8 rounded-lg shadow-md">
         <h2 class="text-xl font-semibold text-gray-700 mb-6">Yeni Kategori Ekle</h2>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div class="mb-6">
                 <label for="categoryName" class="block text-sm font-medium text-gray-600">Kategori Adı</label>
                 <input type="text" asp-for="CategoryDto.Name" id="categoryName" placeholder="Örn:Kadın Giyim"
@@ -31,6 +31,18 @@
                 </select>
             </div>
 
+            <!-- Main Category Image -->
+            <div class="mb-6">
+                <label for="mainImage" class="block text-sm font-medium text-gray-600">Kategori Görseli</label>
+                <div class="w-full h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 p-4 cursor-pointer"
+                     onclick="document.getElementById('mainImage').click()">
+                    <input type="file" id="mainImage" asp-for="@Model.MainImage" accept="image/*" class="hidden"
+                           onchange="previewImage(this, 'mainImagePreview')">
+                    <img id="mainImagePreview" class="hidden w-32 h-32 object-cover rounded-lg">
+                    <span id="imageLabel" class="text-gray-500 text-sm">Resim Ekle</span>
+                </div>
+            </div>
+
             <div class="flex justify-end">
                 <button type="submit"
                         class="px-6 py-2 text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-white">
@@ -40,3 +52,20 @@
         </form>
     </div>
 </div>
+
+<script>
+    function previewImage(input, previewId) {
+        const preview = document.getElementById(previewId);
+        const label = document.getElementById('imageLabel');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                label.classList.add('hidden');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

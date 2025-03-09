@@ -58,6 +58,45 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                 .ToListAsync();
         }
 
+        public async Task<List<Product>> GetFeaturedCategoryProductsAsync(int maxProductCountPerCategory = 15)
+        {
+            using var context = new Context();
+
+            var featuredCategories = await context.Categories
+                .Where(c => c.IsFeatured)
+                .Select(c => c.CategoryId)
+                .ToListAsync();
+
+            var products = new List<Product>();
+
+            foreach (var categoryId in featuredCategories)
+            {
+                var categoryProducts = await context.Products
+                    .Where(p => p.CategoryId == categoryId)
+                    .OrderByDescending(p => p.ProductId)
+                    .Take(maxProductCountPerCategory)
+                    .Include(p => p.Category)
+                    .Include(p => p.ProductImages.Where(img => img.IsMain))
+                    .ToListAsync();
+
+                products.AddRange(categoryProducts);
+            }
+
+            return products;
+        }
+
+        public async Task<List<Product>> GetFeaturedProductsAsync(int maxProductCount = 15)
+        {
+            using var context = new Context();
+            return await context.Products
+                .Where(p => p.IsFeatured)
+                .OrderByDescending(p => p.ProductId)
+                .Take(maxProductCount)
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages.Where(img => img.IsMain)) // Sadece IsMain olanları getir
+                .ToListAsync();
+        }
+
         public async Task<List<Product>> GetPagedProductsAsync(int currentPage, int pageSize)
         {
             using var context = new Context();
