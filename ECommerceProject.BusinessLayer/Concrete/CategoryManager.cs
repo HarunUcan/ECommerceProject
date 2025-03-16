@@ -30,6 +30,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
             return _categoryDal.GetById(id);
         }
 
+        public Category TGetBySlug(string slug)
+        {
+            return _categoryDal.GetBySlug(slug);
+        }
+
         public List<Category> TGetList()
         {
             return _categoryDal.GetList();
@@ -38,10 +43,29 @@ namespace ECommerceProject.BusinessLayer.Concrete
         public void TInsert(Category t)
         {
             _categoryDal.Insert(t);
+            var categoryWithSlug = _categoryDal.GetList().FirstOrDefault(c => c.CategoryId == t.CategoryId);
+            string slug = categoryWithSlug.Name.Aggregate("", (current, c) => current + c.ToString().ToLower());
+            slug = slug.Replace(" ", "-");
+            slug = slug.Replace("ç", "c");
+            slug = slug.Replace("ğ", "g");
+            slug = slug.Replace("ı", "i");
+            slug = slug.Replace("ö", "o");
+            slug = slug.Replace("ş", "s");
+            slug = slug.Replace("ü", "u");
+            categoryWithSlug.Slug = slug;
+            bool isSlugExist = _categoryDal.SearchBySlug(slug);
+            if (isSlugExist)
+                categoryWithSlug.Slug += $"-{categoryWithSlug.CategoryId}";
+
+            _categoryDal.Update(categoryWithSlug);
         }
 
         public void TRecursiveDeleteCategory(int categoryId)
         {
+            var category = _categoryDal.GetById(categoryId);
+            if(category != null && category.ImageUrl != null)
+                FileHelper.DeleteFile(category.ImageUrl);
+
             _categoryDal.RecursiveDeleteCategory(categoryId);
         }
 
@@ -49,6 +73,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
         {
             var filePath = await FileHelper.SaveFileAsync(imageData, $"{Guid.NewGuid()}{Path.GetExtension(imageName)}");
             return filePath;
+        }
+
+        public bool TSearchBySlug(string slug)
+        {
+            return _categoryDal.SearchBySlug(slug);
         }
 
         public bool TToggleFeatured(int categoryId)
@@ -63,6 +92,13 @@ namespace ECommerceProject.BusinessLayer.Concrete
 
         public void TUpdate(Category t)
         {
+            if(t.ImageUrl != null)
+            {
+                var category = _categoryDal.GetById(t.CategoryId);
+                if (category != null && category.ImageUrl != null)
+                    FileHelper.DeleteFile(category.ImageUrl);
+            }
+            
             _categoryDal.Update(t);
         }
     }

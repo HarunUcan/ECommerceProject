@@ -12,5 +12,7 @@ namespace ECommerceProject.DataAccessLayer.Abstract
         void RecursiveDeleteCategory(int categoryId);
         bool ToggleFeatured(int categoryId);
         bool ToggleTopFourCategory(int categoryId);
+        bool SearchBySlug(string slug);
+        Category GetBySlug(string slug);
     }
 }

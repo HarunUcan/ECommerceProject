@@ -101,17 +101,53 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(AdminCategoryEditViewModel adminCategoryEditViewModel)
+        public async Task<IActionResult> Edit(AdminCategoryEditViewModel adminCategoryEditViewModel)
         {
             if (ModelState.IsValid)
             {
-                _categoryService.TUpdate(new Category
+                var categoryImage = _categoryService.TGetById(adminCategoryEditViewModel.CategoryEditDto.CategoryId).ImageUrl;
+
+                if (categoryImage == null) {
+                    string? imageUrl = null;
+
+                    if (adminCategoryEditViewModel.MainImage != null)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await adminCategoryEditViewModel.MainImage.CopyToAsync(memoryStream);
+                            imageUrl = await _categoryService.TSaveCategoryImageAsync(memoryStream.ToArray(), adminCategoryEditViewModel.MainImage.FileName);
+                        }
+                    }
+                    _categoryService.TUpdate(new Category
+                    {
+                        CategoryId = adminCategoryEditViewModel.CategoryEditDto.CategoryId,
+                        Name = adminCategoryEditViewModel.CategoryEditDto.Name,
+                        ParentCategoryId = adminCategoryEditViewModel.CategoryEditDto.ParentCategoryId,
+                        ImageUrl = imageUrl
+                    });
+                    return RedirectToAction("Index");
+                }
+                else
                 {
-                    CategoryId = adminCategoryEditViewModel.CategoryEditDto.CategoryId,
-                    Name = adminCategoryEditViewModel.CategoryEditDto.Name,
-                    ParentCategoryId = adminCategoryEditViewModel.CategoryEditDto.ParentCategoryId
-                });
-                return RedirectToAction("Index");
+                    string? imageUrl = categoryImage;
+
+                    if (adminCategoryEditViewModel.MainImage != null)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await adminCategoryEditViewModel.MainImage.CopyToAsync(memoryStream);
+                            imageUrl = await _categoryService.TSaveCategoryImageAsync(memoryStream.ToArray(), adminCategoryEditViewModel.MainImage.FileName);
+                        }
+                    }
+                    _categoryService.TUpdate(new Category
+                    {
+                        CategoryId = adminCategoryEditViewModel.CategoryEditDto.CategoryId,
+                        Name = adminCategoryEditViewModel.CategoryEditDto.Name,
+                        ParentCategoryId = adminCategoryEditViewModel.CategoryEditDto.ParentCategoryId,
+                        ImageUrl = imageUrl
+                    });
+                    return RedirectToAction("Index");
+                }
             }
             return View(adminCategoryEditViewModel);
         }

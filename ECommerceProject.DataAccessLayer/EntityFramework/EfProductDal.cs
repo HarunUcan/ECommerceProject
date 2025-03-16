@@ -97,6 +97,19 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                 .ToListAsync();
         }
 
+        public async Task<List<Product>> GetListByCategorySlugAsync(string slug)
+        {
+            using var context = new Context();
+            var isSlugExists = await context.Categories.AnyAsync(c => c.Slug == slug);
+            if (!isSlugExists)
+                throw new Exception("Kategori bulunamadı");
+            return await context.Products
+                .Where(p => p.Category.Slug == slug)
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages.Where(img => img.IsMain)) // Sadece IsMain olanları getir
+                .ToListAsync();
+        }
+
         public async Task<List<Product>> GetPagedProductsAsync(int currentPage, int pageSize)
         {
             using var context = new Context();
@@ -108,6 +121,42 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                 .Include(p => p.ProductImages.Where(img => img.IsMain)) // Sadece IsMain olanları getir
                 .ToListAsync();
         }
+
+        public async Task<List<Product>> GetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId)
+        {
+            using var context = new Context();
+
+            // Ana kategori + tüm alt kategorileri al
+            var categoryIds = await GetSubCategoryIdsAsync(categoryId);
+            categoryIds.Add(categoryId); // Ana kategoriyi de ekle
+
+            return await context.Products
+                .Where(p => categoryIds.Contains(p.CategoryId)) // Kategori ID'leri listede olanları getir
+                .OrderByDescending(p => p.ProductId)
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages.Where(img => img.IsMain)) // Sadece IsMain olanları getir
+                .ToListAsync();
+        }
+        private async Task<List<int>> GetSubCategoryIdsAsync(int categoryId)
+        {
+            using var context = new Context();
+            var subCategoryIds = await context.Categories
+                .Where(c => c.ParentCategoryId == categoryId)
+                .Select(c => c.CategoryId)
+                .ToListAsync();
+
+            var allSubCategoryIds = new List<int>(subCategoryIds);
+
+            foreach (var subCategoryId in subCategoryIds)
+            {
+                allSubCategoryIds.AddRange(await GetSubCategoryIdsAsync(subCategoryId));
+            }
+
+            return allSubCategoryIds;
+        }
+
 
         public async Task<int> InsertRange(List<Product> products)
         {

@@ -14,5 +14,7 @@ namespace ECommerceProject.BusinessLayer.Abstract
         bool TToggleFeatured(int categoryId);
         bool TToggleTopFourCategory(int categoryId);
         Task<string> TSaveCategoryImageAsync(byte[] imageData, string imageName);
+        bool TSearchBySlug(string slug);
+        Category TGetBySlug(string slug);
     }
 }

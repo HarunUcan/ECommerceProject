@@ -1,4 +1,6 @@
 using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.DtoLayer.Dtos.ProductDtos;
+using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.Models;
 using ECommerceProject.PresentationLayer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +33,49 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 FeaturedCategoryProducts = featuredCategoryProducts
             };
             return View(homeViewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPagedProductsByCategory(int page = 1, int pageSize = 10, int categoryId=0)
+        {
+            List<Product> products = await _productService.TGetPagedProductsByCategoryAsync(page, pageSize, categoryId);
+            List<ProductDto> productDtos = new List<ProductDto>();
+
+            foreach (var product in products)
+            {
+                productDtos.Add(new ProductDto
+                {
+                    Id = product.ProductId,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    Stock = product.Stock,
+                    CategoryName = product.Category.Name,
+                    MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", ""),
+                    IsFeatured = product.IsFeatured
+                });
+            }
+            return Json(productDtos);
+        }
+
+        public async Task<IActionResult> CategoryAsync(string slug)
+        {
+            try
+            {
+                var products = await _productService.TGetListByCategorySlugAsync(slug); // Kategoriyi arar, bulamazsa hata fýrlatýr
+                var currentCategory = _categoryService.TGetBySlug(slug);
+                var categories = _categoryService.TGetList();
+                var homeViewModel = new HomeViewModel
+                {
+                    Categories = categories,
+                    Products = products,
+                    CurrentCategory = currentCategory.CategoryId
+                };
+                return View(homeViewModel);
+            } catch {
+                return Content("404, Sayfa Bulunamadý");
+            }
+            
         }
 
         public IActionResult Privacy()

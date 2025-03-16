@@ -10,38 +10,89 @@
     var bottomMargin = depth == 0 ? "mb-2" : "";
     var textSize = depth == 0 ? "text-lg font-semibold" : depth == 1 ? "text-base font-medium" : "text-sm";
     var paddingClass = depth == 0 || depth == 1 ? "" : "pl-4"; // `depth == 1` ve üstü girintili olacak
+
+    // string ConvertToSlug(string text)
+    // {
+    //     text = text.ToLower();
+
+    //     text = text.Replace("ı", "i");
+    //     text = text.Replace("İ", "I");
+    //     text = text.Replace("ş", "s");
+    //     text = text.Replace("Ş", "S");
+    //     text = text.Replace("ğ", "g");
+    //     text = text.Replace("Ğ", "G");
+    //     text = text.Replace("ü", "u");
+    //     text = text.Replace("Ü", "U");
+    //     text = text.Replace("ö", "o");
+    //     text = text.Replace("Ö", "O");
+    //     text = text.Replace("ç", "c");
+    //     text = text.Replace("Ç", "C");
+
+    //     text = text.Replace(" ", "-");
+
+    //     text = text.Replace(".", "");
+    //     text = text.Replace("/", "");
+    //     text = text.Replace("?", "");
+    //     text = text.Replace("!", "");
+    //     text = text.Replace(":", "");
+    //     text = text.Replace(";", "");
+    //     text = text.Replace(",", "");
+
+    //     return text;
+    // }
 }
 
-<li class="relative  @paddingClass">
-    <a href="#kategori-@category.CategoryId"
-       class="flex items-center space-x-2 text-gray-700 hover:text-black @textSize @bottomMargin"
-       onmouseover="openSubmenu(@category.CategoryId, @depth)"
-       onmouseleave="closeSubmenu(@category.CategoryId, @depth)">
-       <div class="flex justify-center items-center gap-2">
-           @if (category.ImageUrl != null)
-            {
-                <img src="@category.ImageUrl?.Replace("wwwroot", "")" alt="Kategori Resmi"
-                class="w-6 h-6 rounded-md object-cover" />
+<li class="relative @paddingClass">
+    @if (category.ImageUrl != null)
+    {       
+        <a href="@category.Slug"
+           class="flex items-center space-x-2 @(depth > 0 ? "ml-8" : "ml-0") text-gray-700 hover:text-black @textSize @bottomMargin"
+           onmouseover="openSubmenu(@category.CategoryId, @depth)"
+           onmouseleave="closeSubmenu(@category.CategoryId, @depth)">
+           <div class="flex justify-center items-center gap-2">
+               
+               <img src="@category.ImageUrl?.Replace("wwwroot", "")" alt="Kategori Resmi"
+               class="w-6 h-6 rounded-md object-cover" />
 
-                <span>@category.Name</span>
-            }
-            else
-            {
-                <span class="pl-8">@category.Name</span>
-            }
+               <span>@category.Name</span>
+               
 
-            @* <span>@category.Name</span> *@
+               @* <span>@category.Name</span> *@
+                
+           </div>
             
-       </div>
-        
-        @if (category.SubCategories?.Any() == true && depth > 0)
-        {
-            <svg class="w-4 h-4 transition-transform duration-300" id="arrow-@category.CategoryId" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-        }
-    </a>
+            @if (category.SubCategories?.Any() == true && depth > 0)
+            {
+                <svg class="w-4 h-4 transition-transform duration-300" id="arrow-@category.CategoryId" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            }
+        </a>
+    }
+    else
+    {
+        <a href="@category.Slug"
+           class="flex items-center space-x-2 text-gray-700 hover:text-black @textSize @bottomMargin"
+           onmouseover="openSubmenu(@category.CategoryId, @depth)"
+           onmouseleave="closeSubmenu(@category.CategoryId, @depth)">
+            <div class="flex justify-center items-center gap-2">
+                
+                
+                <span class="pl-8">@category.Name</span>
+                
 
+                @* <span>@category.Name</span> *@
+
+            </div>
+
+            @if (category.SubCategories?.Any() == true && depth > 0)
+            {
+                <svg class="w-4 h-4 transition-transform duration-300" id="arrow-@category.CategoryId" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            }
+        </a>
+    }
     @if (category.SubCategories?.Any() == true)
     {
         <ul id="submenu-@category.CategoryId"
@@ -55,57 +106,3 @@
         </ul>
     }
 </li>
-
-
-
-
-
-<script>
-    let closeTimeouts = {};
-
-    function openSubmenu(categoryId, depth) {
-        let submenu = document.getElementById(`submenu-${categoryId}`);
-        let arrow = document.getElementById(`arrow-${categoryId}`);
-
-        if (submenu) {
-            submenu.classList.remove("hidden"); // Alt kategoriyi aç
-        }
-
-        if (arrow) {
-            arrow.classList.add("rotate-180"); // Oku döndür
-        }
-
-        // Kapanma zamanlayıcısını temizle
-        if (closeTimeouts[categoryId]) {
-            clearTimeout(closeTimeouts[categoryId]);
-            closeTimeouts[categoryId] = null;
-        }
-    }
-
-    function closeSubmenu(categoryId, depth) {
-        // Eğer ana kategori (`depth == 0`) ise kapanmamalı!
-        if (depth == 0) return;
-
-        closeTimeouts[categoryId] = setTimeout(() => {
-            let submenu = document.getElementById(`submenu-${categoryId}`);
-            let arrow = document.getElementById(`arrow-${categoryId}`);
-
-            if (submenu) {
-                submenu.classList.add("hidden"); // Alt kategoriyi kapat
-            }
-
-            if (arrow) {
-                arrow.classList.remove("rotate-180"); // Oku eski haline getir
-            }
-        }, 200); // 200ms gecikme vererek ani kapanmayı engelle
-    }
-
-    function cancelClose(categoryId) {
-        if (closeTimeouts[categoryId]) {
-            clearTimeout(closeTimeouts[categoryId]); // Eğer kullanıcı alt kategorinin içine girdiyse kapanmasını engelle
-        }
-    }
-
-
-
-</script>

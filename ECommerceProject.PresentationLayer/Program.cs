@@ -90,11 +90,14 @@ namespace ECommerceProject.PresentationLayer
 
             //app.UseEndpoints(endpoints =>
             //{
-               
+
 
             //    endpoints.MapDefaultControllerRoute();
             //});
-
+            app.MapControllerRoute(
+                name: "categoryRoute",
+                pattern: "{slug}",
+                defaults: new { area = "User", controller = "Home", action = "Category" });
             app.MapControllerRoute(
                    name: "areas",
                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");

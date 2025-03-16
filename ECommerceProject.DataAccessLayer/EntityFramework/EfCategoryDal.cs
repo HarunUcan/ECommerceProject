@@ -73,5 +73,17 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             context.SaveChanges();
             return true;
         }
+
+        public bool SearchBySlug(string slug)
+        {
+            using var context = new Context();
+            return context.Categories.Any(c => c.Slug == slug);
+        }
+
+        public Category GetBySlug(string slug)
+        {
+            using var context = new Context();
+            return context.Categories.FirstOrDefault(c => c.Slug == slug);
+        }
     }
 }

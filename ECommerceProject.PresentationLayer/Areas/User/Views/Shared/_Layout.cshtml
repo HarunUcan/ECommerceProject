@@ -45,7 +45,7 @@
             <div class="header-icons flex justify-between items-center gap-6">
                 <!-- Sepet Iconu -->
                 <div class="header-cart">
-                    <a href="cartpage.html" class="hover:text-gray-400">
+                    <a asp-area="User" asp-controller="Cart" asp-action="Index" class="hover:text-gray-400">
                         <i class="fa-solid fa-bag-shopping text-black text-xl"></i>
                         <span class="absolute flex justify-center items-center w-[15px] h-[15px] bg-red-700 top-7 right-14 rounded-full text-white text-xs">3</span>
                         <!-- Örnek olarak 3 ürün var -->
@@ -153,6 +153,127 @@
 
 
     @RenderBody()
+
+
+    <footer class="bg-black text-white mt-12">
+        <div class="max-w-7xl mx-auto px-6 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+                <!-- Logo ve Sosyal Medya -->
+                <div>
+                    <h2 class="text-xl font-medium">ECommerce Project</h2>
+                    <p class="text-gray-400 mt-3">
+                        Kaliteli ürünleri en iyi fiyatlarla sunuyoruz.
+                    </p>
+                    <h3 class="text-lg font-medium mt-4">Bizi Takip Edin</h3>
+                    <div class="mt-3 flex space-x-3">
+                        <a href="#" class="bg-gray-800 p-3 rounded-full hover:bg-gray-700 transition flex items-center justify-center w-10 h-10">
+                            <i class="fab fa-facebook-f text-white"></i>
+                        </a>
+                        <a href="#" class="bg-gray-800 p-3 rounded-full hover:bg-gray-700 transition flex items-center justify-center w-10 h-10">
+                            <i class="fab fa-twitter text-white"></i>
+                        </a>
+                        <a href="#" class="bg-gray-800 p-3 rounded-full hover:bg-gray-700 transition flex items-center justify-center w-10 h-10">
+                            <i class="fab fa-instagram text-white"></i>
+                        </a>
+                        <a href="#" class="bg-gray-800 p-3 rounded-full hover:bg-gray-700 transition flex items-center justify-center w-10 h-10">
+                            <i class="fab fa-linkedin-in text-white"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Menü Bağlantıları -->
+                <div>
+                    <h3 class="text-lg font-medium">Bağlantılar</h3>
+                    <ul class="mt-3 space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Hakkımızda</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Mağaza</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">İletişim</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Gizlilik Politikası</a></li>
+                    </ul>
+                </div>
+
+                <!-- Müşteri Hizmetleri -->
+                <div>
+                    <h3 class="text-lg font-medium">Müşteri Hizmetleri</h3>
+                    <ul class="mt-3 space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Sıkça Sorulan Sorular</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Kargo Takibi</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">İade Politikası</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Ödeme Seçenekleri</a></li>
+                    </ul>
+                </div>
+
+                <!-- Ödeme Yöntemleri -->
+                <div>
+                    <h3 class="text-lg font-medium">Ödeme Yöntemleri</h3>
+                    <div class="mt-3">
+                        <img src="~/ECommerceProjectTheme/logo_band_colored1X.png" alt="Ödeme Yöntemleri" class="">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Alt Kısım -->
+            <div class="mt-8 border-t border-gray-700 pt-6 text-center text-gray-400">
+                &copy; @DateTime.Now.Year ECommerce Project. Tüm hakları saklıdır.
+            </div>
+        </div>
+    </footer>
+
+
+    @* TODO: home.js yada layout.js'den çağırılınca çalışmıyor burası düzeltilecek *@
+    <script>
+        let closeTimeouts = {};
+
+        function openSubmenu(categoryId, depth) {
+            let submenu = document.getElementById(`submenu-${categoryId}`);
+            let arrow = document.getElementById(`arrow-${categoryId}`);
+
+            if (submenu) {
+                submenu.classList.remove("hidden"); // Alt kategoriyi aç
+            }
+
+            if (arrow) {
+                arrow.classList.add("rotate-180"); // Oku döndür
+            }
+
+            // Kapanma zamanlayıcısını temizle
+            if (closeTimeouts[categoryId]) {
+                clearTimeout(closeTimeouts[categoryId]);
+                closeTimeouts[categoryId] = null;
+            }
+        }
+
+        function closeSubmenu(categoryId, depth) {
+            // Eğer ana kategori (`depth == 0`) ise kapanmamalı!
+            if (depth == 0) return;
+
+            closeTimeouts[categoryId] = setTimeout(() => {
+                let submenu = document.getElementById(`submenu-${categoryId}`);
+                let arrow = document.getElementById(`arrow-${categoryId}`);
+
+                if (submenu) {
+                    submenu.classList.add("hidden"); // Alt kategoriyi kapat
+                }
+
+                if (arrow) {
+                    arrow.classList.remove("rotate-180"); // Oku eski haline getir
+                }
+            }, 200); // 200ms gecikme vererek ani kapanmayı engelle
+        }
+
+        function cancelClose(categoryId) {
+            if (closeTimeouts[categoryId]) {
+                clearTimeout(closeTimeouts[categoryId]); // Eğer kullanıcı alt kategorinin içine girdiyse kapanmasını engelle
+            }
+        }
+
+
+
+    </script>
+
+    <script src="~/js/home.js" defer></script>
 
     
 </body>

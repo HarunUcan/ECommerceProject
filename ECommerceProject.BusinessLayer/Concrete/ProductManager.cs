@@ -54,6 +54,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
             return await _productDal.GetPagedProductsAsync(currentPage, pageSize);
         }
 
+        public async Task<List<Product>> TGetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId)
+        {
+            return await _productDal.GetPagedProductsByCategoryAsync(currentPage, pageSize, categoryId);
+        }
+
         public async Task TDeleteWithImagesAsync(Product product)
         {
             List<string> paths = await _productDal.DeleteWithImagesAsync(product);
@@ -84,6 +89,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
         public async Task<List<Product>> TGetFeaturedCategoryProductsAsync(int maxProductCountPerCategory = 15)
         {
             return await _productDal.GetFeaturedCategoryProductsAsync(maxProductCountPerCategory);
+        }
+
+        public async Task<List<Product>> TGetListByCategorySlugAsync(string slug)
+        {
+            return await _productDal.GetListByCategorySlugAsync(slug);
         }
     }
 }
