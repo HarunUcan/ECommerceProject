@@ -1,0 +1,223 @@
+﻿@model ProductDetailViewModel
+@{
+    ViewData["Title"] = "ProductDetail";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .product-image {
+            border-radius: 12px;
+        }
+
+        .related-product {
+            transition: transform 0.3s ease;
+        }
+
+        .related-product:hover {
+            transform: scale(1.05);
+        }
+
+        .details-container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .price {
+            font-size: 1.75rem;
+            color: #333;
+        }
+
+        .btn-add-to-cart {
+            background-color: black;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-add-to-cart:hover {
+            background-color: gray;
+        }
+
+        .size-option {
+            padding: 10px 20px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .size-option:hover {
+            background-color: #f0f0f0;
+        }
+
+        .size-option.selected {
+            background-color: #007104;
+            color: white;
+        }
+
+        .size-option.disabled {
+            background-color: #e0e0e0;
+            cursor: not-allowed;
+            color: #999;
+        }
+
+        .out-of-stock {
+            color: #999;
+            position: relative;
+        }
+
+        .out-of-stock .fa-times {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            color: red;
+            font-size: 18px;
+            background-color: white;
+            border-radius: 50%;
+            border-color: black;
+            border-width: 1px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+
+        /* .stock-status {
+            font-size: 0.875rem;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .stock-status.in-stock {
+            color: #4CAF50;
+        }
+
+        .stock-status.out-of-stock {
+            color: #F44336;
+        } */
+
+        .stock-quantity {
+            font-size: 0.875rem;
+            color: #555;
+            margin-top: 3px;
+        }
+
+        .quantity-input {
+            display: flex;
+            align-items: center;
+            border: 2px solid #333;
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+
+        .quantity-input input {
+            width: 40px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        #slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+
+        /* Hide default scrollbar for the carousel */
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            /* Internet Explorer 10+ */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+            /* WebKit */
+        }
+
+        @@layer base {
+
+            input[type="number"]::-webkit-inner-spin-button,
+            input[type="number"]::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+
+<!-- Ürün Detay Bölümü -->
+<div class="details-container bg-white p-6 rounded-lg shadow-lg mt-8">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Ürün Resmi -->
+        <div>
+            <img src="@Model.ProductDto.MainImageUrl" alt="Ürün Resmi" class="product-image w-full h-auto">
+        </div>
+
+        <!-- Ürün Bilgileri -->
+        <div>
+            <h1 class="text-3xl font-semibold mb-2">@Model.ProductDto.Name</h1>
+            <p class="text-gray-600 mb-4">
+                @Model.ProductDto.Description
+            </p>
+            <div class="price font-bold mb-4">₺@Model.ProductDto.Price</div>
+
+            <!-- Beden Seçimi -->
+            <label class="block mb-2 text-gray-700 font-medium">Beden Seçimi</label>
+            <div class="flex space-x-4 mb-4">
+                <button class="size-option" onclick="selectSize(this)">S</button>
+                <button class="size-option" onclick="selectSize(this)">M</button>
+                <button class="size-option out-of-stock disabled relative" onclick="selectSize(this)">
+                    L <i class="fa-solid fa-times"></i>
+                </button>
+                <button class="size-option" onclick="selectSize(this)">XL</button>
+            </div>
+
+            <!-- Adet Seçimi -->
+            <label class="block mb-2 text-gray-700 font-medium">Adet Seçimi</label>
+            <div class="flex justify-center items-center quantity-input w-28">
+                <button class="flex justify-center items-center bg-white w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
+                    -
+                </button>
+                <input type="number" class="outline-none" value="1" min="1">
+                <button class="flex justify-center items-center bg-white w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
+                    +
+                </button>
+            </div>
+
+            <!-- Stok Adedi -->
+            <div class="stock-quantity mb-4">Stok Adedi: 20</div>
+
+            <!-- Sepete Ekle Butonu -->
+            <button class="btn-add-to-cart w-full py-3 rounded-lg text-lg font-semibold">
+                <i class="fa-solid fa-bag-shopping mr-2"></i> Sepete Ekle
+            </button>
+        </div>
+    </div>
+
+    <!-- Ürün Özellikleri -->
+    <div class="mt-8">
+        <h2 class="text-2xl font-semibold mb-4">Ürün Özellikleri</h2>
+        <ul class="list-disc pl-6 text-gray-600">
+            <li>Malzeme: %100 Pamuk</li>
+            <li>Renk: Beyaz</li>
+            <li>Boyut: S, M, L, XL</li>
+            <li>Yıkama Talimatları: 30°C’de yıkanabilir.</li>
+        </ul>
+    </div>
+</div>
+

@@ -44,8 +44,8 @@
 
 <li class="relative @paddingClass">
     @if (category.ImageUrl != null)
-    {       
-        <a href="@category.Slug"
+    {
+        <a asp-area="User" asp-controller="Home" asp-action="Category" asp-route-slug="@category.Slug"
            class="flex items-center space-x-2 @(depth > 0 ? "ml-8" : "ml-0") text-gray-700 hover:text-black @textSize @bottomMargin"
            onmouseover="openSubmenu(@category.CategoryId, @depth)"
            onmouseleave="closeSubmenu(@category.CategoryId, @depth)">
@@ -71,7 +71,7 @@
     }
     else
     {
-        <a href="@category.Slug"
+        <a asp-area="User" asp-controller="Home" asp-action="Category" asp-route-slug="@category.Slug"
            class="flex items-center space-x-2 text-gray-700 hover:text-black @textSize @bottomMargin"
            onmouseover="openSubmenu(@category.CategoryId, @depth)"
            onmouseleave="closeSubmenu(@category.CategoryId, @depth)">

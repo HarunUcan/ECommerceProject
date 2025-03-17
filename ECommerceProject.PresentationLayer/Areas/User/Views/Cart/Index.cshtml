@@ -4,6 +4,69 @@
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
 }
 
+<head>
+    <script>
+        function increaseQuantity(inputId) {
+            const input = document.getElementById(inputId);
+            input.value = parseInt(input.value) + 1;
+        }
+
+        function decreaseQuantity(inputId) {
+            const input = document.getElementById(inputId);
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .quantity-input {
+            display: flex;
+            align-items: center;
+            /* border: 2px solid #333; */
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+
+        .quantity-input input {
+            width: 40px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        @@layer base {
+
+            input[type="number"]::-webkit-inner-spin-button,
+            input[type="number"]::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+
+        textarea:focus,
+        input:focus {
+            outline: none;
+        }
+    </style>
+</head>
+
 <!-- Sepet İçeriği -->
 <main class="container mx-auto px-4 py-8 flex-1">
     <h1 class="text-2xl font-bold mb-8 text-left">Sepet</h1>
@@ -24,7 +87,7 @@
                     <!-- Ürün Satırı -->
                     <tr class="border-b">
                         <td class="py-4 flex items-center space-x-4">
-                            <img src="urun1.jpg" alt="Ürün 1"
+                            <img src="~/uploads/11019c2d-55cd-48fb-9cca-49323d34a1e7.jpg" alt="Ürün 1"
                                  class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
                             <div>
                                 <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
@@ -60,7 +123,7 @@
                     <!-- Ürün Satırı -->
                     <tr class="border-b">
                         <td class="py-4 flex items-center space-x-4">
-                            <img src="urun13.jpg" alt="Ürün 1"
+                            <img src="~/uploads/1111adad-4d44-45ac-8d1a-5cd146478861.jpg" alt="Ürün 1"
                                  class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
                             <div>
                                 <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
@@ -91,7 +154,7 @@
                     <!-- Ürün Satırı -->
                     <tr class="border-b">
                         <td class="py-4 flex items-center space-x-4">
-                            <img src="urun6.jpg" alt="Ürün 1"
+                            <img src="~/uploads/40851d80-cf07-40ac-bd91-03c28e2e7afc.jpg" alt="Ürün 1"
                                  class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
                             <div>
                                 <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
@@ -122,7 +185,7 @@
                     <!-- Ürün Satırı -->
                     <tr class="border-b">
                         <td class="py-4 flex items-center space-x-4">
-                            <img src="urun10.jpg" alt="Ürün 1"
+                            <img src="~/uploads/4f3e6c15-9b34-403c-8f9c-5731548c7be1.jpg" alt="Ürün 1"
                                  class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
                             <div>
                                 <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
@@ -153,7 +216,7 @@
                     <!-- Ürün Satırı -->
                     <tr class="border-b">
                         <td class="py-4 flex items-center space-x-4">
-                            <img src="urun2.jpg" alt="Ürün 2"
+                            <img src="~/uploads/2352783d-936b-440b-829a-e4eaf74d8374.jpg" alt="Ürün 2"
                                  class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
                             <div>
                                 <div class="font-semibold">Baskılı Siyah Sweatshirt</div>
@@ -184,7 +247,7 @@
                     <!-- Ürün Satırı -->
                     <tr class="border-b">
                         <td class="py-4 flex items-center space-x-4">
-                            <img src="urun10.jpg" alt="Ürün 1"
+                            <img src="~/uploads/3a88c635-413c-49ad-a1af-11fc45c6ea6c.jpg" alt="Ürün 1"
                                  class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
                             <div>
                                 <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
@@ -484,4 +547,14 @@
 
     </div>
 </main>
+
+<script>
+
+    // "İndirim Kodu" butonuna tıklandığında kod alanını göster
+    document.getElementById('discount-button').addEventListener('click', () => {
+        const couponSection = document.getElementById('coupon-section');
+        couponSection.classList.toggle('hidden'); // Alanı görünür yap veya gizle
+        document.getElementById('discount-button').classList.toggle('hidden'); // Butonu gizle
+    });
+</script>
 

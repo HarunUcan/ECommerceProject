@@ -9,6 +9,7 @@ namespace ECommerceProject.BusinessLayer.Abstract
 {
     public interface IProductService : IGenericService<Product>
     {
+        Task<Product> TGetByIdWithAllFeaturesAsync(int id);
         Task<List<Product>> TGetAllProductsWithCategoriesImagesAsync();
         Task<List<Product>> TGetPagedProductsAsync(int currentPage, int pageSize);
         Task<List<Product>> TGetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId);

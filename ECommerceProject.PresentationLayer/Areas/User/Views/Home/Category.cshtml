@@ -33,36 +33,39 @@
                         $("#product-list").append(`
 
                     <div class="swiper-slide bg-white shadow-md relative w-full lg:w-60">
-                        <!-- Ürün Resmi -->
-                                <img src="${product.mainImageUrl}" alt="Ürün" class="w-full h-60 md:h-72 object-cover">
+                        <a href="User/Home/ProductDetail/${product.id}">
 
-                        <div class="pb-3 px-3">
-                            <!-- Ürün Bilgileri -->
-                                    <h2 class="product-name text-lg font-semibold mt-3">${product.name}</h2>
-                                    <p class="product-description text-gray-500 text-sm">${product.description}</p>
+                            <!-- Ürün Resmi -->
+                                    <img src="${product.mainImageUrl}" alt="Ürün" class="w-full h-60 md:h-72 object-cover">
 
-                            <div id="price-color-group" class="flex items-center justify-between">
-                                <!-- Fiyat -->
-                                        <p class="text-black font-bold mt-2">₺${product.price}</p>
+                            <div class="pb-3 px-3">
+                                <!-- Ürün Bilgileri -->
+                                        <h2 class="product-name text-lg font-semibold mt-3">${product.name}</h2>
+                                        <p class="product-description text-gray-500 text-sm">${product.description}</p>
 
-                                <!-- Renk Seçenekleri -->
-                                <div class="relative flex justify-start items-center mt-2">
-                                    <div id="colorContainer" class="relative flex items-center">
-                                        <div class="w-5 h-5 rounded-full border-2 border-white bg-[#8B5E3B]"></div>
-                                        <div class="w-5 h-5 rounded-full border-2 border-white bg-[#000000] -ml-2.5"></div>
-                                        <div class="w-5 h-5 rounded-full border-2 border-white bg-[#FF0000] -ml-2.5"></div>
-                                        <div class="w-5 h-5 rounded-full border-2 border-white bg-gray-300 text-xs flex items-center justify-center font-bold -ml-2.5">
-                                            +2
+                                <div id="price-color-group" class="flex items-center justify-between">
+                                    <!-- Fiyat -->
+                                            <p class="text-black font-bold mt-2">₺${product.price}</p>
+
+                                    <!-- Renk Seçenekleri -->
+                                    <div class="relative flex justify-start items-center mt-2">
+                                        <div id="colorContainer" class="relative flex items-center">
+                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[#8B5E3B]"></div>
+                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[#000000] -ml-2.5"></div>
+                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[#FF0000] -ml-2.5"></div>
+                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-gray-300 text-xs flex items-center justify-center font-bold -ml-2.5">
+                                                +2
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Sepete Ekle Butonu -->
-                            <button class="mt-4 w-full border-2 border-gray-600 text-black py-2 rounded hover:bg-zinc-100 transition duration-200 ease-in-out">
-                                <i class="fa-solid fa-cart-shopping mr-2"></i> Sepete Ekle
-                            </button>
-                        </div>
+                                <!-- Sepete Ekle Butonu -->
+                                <button class="mt-4 w-full border-2 border-gray-600 text-black py-2 rounded hover:bg-zinc-100 transition duration-200 ease-in-out">
+                                    <i class="fa-solid fa-cart-shopping mr-2"></i> Sepete Ekle
+                                </button>
+                            </div>
+                        </a>
                     </div>
                                     `);
                     });

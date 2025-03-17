@@ -95,5 +95,10 @@ namespace ECommerceProject.BusinessLayer.Concrete
         {
             return await _productDal.GetListByCategorySlugAsync(slug);
         }
+
+        public async Task<Product> TGetByIdWithAllFeaturesAsync(int id)
+        {
+            return await _productDal.GetByIdWithAllFeaturesAsync(id);
+        }
     }
 }

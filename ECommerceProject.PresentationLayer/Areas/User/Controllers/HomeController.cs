@@ -58,6 +58,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             return Json(productDtos);
         }
 
+        [HttpGet]
         public async Task<IActionResult> CategoryAsync(string slug)
         {
             try
@@ -76,6 +77,38 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 return Content("404, Sayfa Bulunamadý");
             }
             
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ProductDetail(int id)
+        {
+            try
+            {
+                var product = await _productService.TGetByIdWithAllFeaturesAsync(id);
+                var categories = _categoryService.TGetList();
+
+                var productDto = new ProductDto
+                {
+                    Id = product.ProductId,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Price = product.Price,
+                    Stock = product.Stock,
+                    CategoryName = product.Category.Name,
+                    MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", ""),
+                    IsFeatured = product.IsFeatured
+                };
+                var productDetailViewModel = new ProductDetailViewModel
+                {
+                    ProductDto = productDto,
+                    Categories = categories
+                };
+                return View(productDetailViewModel);
+            }
+            catch
+            {
+                return Content("404, Sayfa Bulunamadý");
+            }
         }
 
         public IActionResult Privacy()

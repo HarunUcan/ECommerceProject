@@ -178,5 +178,17 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
 
             return true;
         }
+
+        public async Task<Product> GetByIdWithAllFeaturesAsync(int id)
+        {
+            using var context = new Context();
+            var product = await context.Products
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(p => p.ProductId == id);
+            if (product == null)
+                throw new Exception("Ürün bulunamadı");
+            return product;
+        }
     }
 }
