@@ -13,7 +13,8 @@ namespace ECommerceProject.DataAccessLayer.Concrete
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost;initial catalog = ECommerceProjectDb;User Id=sa; Password=sa1234SA; MultipleActiveResultSets=true; Trust Server Certificate=true;");
+            // optionsBuilder.UseSqlServer("Server=localhost;initial catalog = ECommerceProjectDb;User Id=sa; Password=sa1234SA; MultipleActiveResultSets=true; Trust Server Certificate=true;");
+            optionsBuilder.UseSqlServer("Server=213.136.75.68,1433; Initial Catalog=ECommerceProjectDb; User Id=sa; Password=sa1234SA; MultipleActiveResultSets=true; Trust Server Certificate=true;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
