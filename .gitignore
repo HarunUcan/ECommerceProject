@@ -3,12 +3,7 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
-# Ignore image files in the uploads directory
-ECommerceProject.PresentationLayer/wwwroot/uploads/*.jpg
-ECommerceProject.PresentationLayer/wwwroot/uploads/*.jpeg
-ECommerceProject.PresentationLayer/wwwroot/uploads/*.png
-ECommerceProject.PresentationLayer/wwwroot/uploads/*.gif
-ECommerceProject.PresentationLayer/wwwroot/uploads/*.webp
+
 
 # User-specific files
 *.rsuser
