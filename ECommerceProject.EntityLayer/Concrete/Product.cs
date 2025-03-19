@@ -21,6 +21,7 @@ namespace ECommerceProject.EntityLayer.Concrete
         public string UniqueCode { get; set; }
         public decimal Price { get; set; }
         public int Stock { get; set; }
+        public string? Slug { get; set; }
         public decimal? DiscountRate { get; set; }
         public decimal? DiscountAmount { get; set; }
         public DateTime? DiscountStartDate { get; set; }

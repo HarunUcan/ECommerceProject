@@ -99,7 +99,7 @@
 
     </header>
 
-    <!-- Menü İçeriği -->
+    <!-- Mobil Menü -->
     <div id="mobile-menu" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
         <div class="bg-white w-80 h-full shadow-lg p-6 relative">
             <div class="flex items-center justify-between border-b pb-2 mb-4">
@@ -114,25 +114,15 @@
                 </div>
             </div>
 
-            <!-- Menü Öğeleri -->
+            <!-- Dinamik Menü Öğeleri -->
             <ul class="space-y-3">
-                <li><a href="#" class="hover:text-red-600">YENİ GELENLER</a></li>
-                <li><a href="#" class="text-red-500">FIRSAT ÜRÜNLERİ</a></li>
-                <li><a href="#">ELBİSE</a></li>
-                <li class="flex justify-between items-center">
-                    <a href="#">ÜST GİYİM</a>
-                    <i class="fa-solid fa-chevron-right"></i>
-                </li>
-                <li class="flex justify-between items-center">
-                    <a href="#">ALT GİYİM</a>
-                    <i class="fa-solid fa-chevron-right"></i>
-                </li>
-                <li class="flex justify-between items-center">
-                    <a href="#">AKSESUAR</a>
-                    <i class="fa-solid fa-chevron-right"></i>
-                </li>
-                <li><a href="#">BUSINESS</a></li>
-                <li><a href="#">SPORTS WEAR</a></li>
+                @foreach (var category in Model.Categories)
+                {
+                    if (category.ParentCategory == null)
+                    {
+                        @await Html.PartialAsync("_MobileCategoriesPartial", new { Category = category, Depth = 0 })
+                    }
+                }
             </ul>
 
             <!-- Alt Bilgi -->
@@ -274,6 +264,22 @@
     </script>
 
     <script src="~/js/home.js" defer></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".toggle-submenu").forEach(item => {
+                item.addEventListener("click", function () {
+                    let submenu = this.nextElementSibling;
+                    submenu.classList.toggle("hidden");
+                    this.querySelector("i").classList.toggle("rotate-90");
+                });
+            });
+
+            document.getElementById("close-menu").addEventListener("click", function () {
+                document.getElementById("mobile-menu").classList.add("hidden");
+            });
+        });
+    </script>
 
     
 </body>

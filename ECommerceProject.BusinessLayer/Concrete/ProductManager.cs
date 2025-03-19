@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ECommerceProject.BusinessLayer.Concrete
@@ -42,6 +43,8 @@ namespace ECommerceProject.BusinessLayer.Concrete
         public void TInsert(Product t)
         {
             _productDal.Insert(t);
+            t.Slug = transformToSlug(t.Name, t.ProductId);
+            _productDal.Update(t);
         }
 
         public void TUpdate(Product t)
@@ -67,7 +70,14 @@ namespace ECommerceProject.BusinessLayer.Concrete
 
         public async Task<int> TInsertRange(List<Product> products)
         {
-            return await _productDal.InsertRange(products);
+            await _productDal.InsertRange(products);
+
+            foreach (var product in products)
+            {
+                product.Slug = transformToSlug(product.Name, product.ProductId);
+                _productDal.Update(product);
+            }
+            return products.Count;
         }
 
         public async Task TDeleteWithImagesAsync(ICollection<Product> products)
@@ -96,9 +106,37 @@ namespace ECommerceProject.BusinessLayer.Concrete
             return await _productDal.GetListByCategorySlugAsync(slug);
         }
 
-        public async Task<Product> TGetByIdWithAllFeaturesAsync(int id)
+        public async Task<Product> TGetBySlugWithAllFeaturesAsync(string slug)
         {
-            return await _productDal.GetByIdWithAllFeaturesAsync(id);
+            return await _productDal.GetBySlugWithAllFeaturesAsync(slug);
+        }
+
+        private string transformToSlug(string name, int id)
+        {
+            // Küçük harfe çevir
+            name = name.ToLower();
+
+            // Türkçe karakterleri İngilizceye çevir
+            name = name.Replace("ç", "c")
+                       .Replace("ğ", "g")
+                       .Replace("ı", "i")
+                       .Replace("ö", "o")
+                       .Replace("ş", "s")
+                       .Replace("ü", "u");
+
+            // Boşlukları ve geçersiz karakterleri "-" ile değiştir
+            name = Regex.Replace(name, @"\s+", "-"); // Birden fazla boşluğu tek "-" yap
+            name = Regex.Replace(name, @"[^a-z0-9\-]", ""); // Geçersiz karakterleri kaldır
+
+            // Birden fazla gelen "-" karakterini tek "-" yap
+            name = Regex.Replace(name, @"-+", "-");
+
+            // Başta veya sonda "-" varsa temizle
+            name = name.Trim('-');
+
+            name += $"-{id}";
+
+            return name;
         }
     }
 }

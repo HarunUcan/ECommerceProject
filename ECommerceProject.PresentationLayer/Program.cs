@@ -94,17 +94,39 @@ namespace ECommerceProject.PresentationLayer
 
             //    endpoints.MapDefaultControllerRoute();
             //});
+
+            //Admin Routes
+            app.MapControllerRoute(
+                name: "admin_default",
+                pattern: "admin",
+                defaults: new { area = "Admin", controller = "Dashboard", action = "Index" });
+
+            app.MapControllerRoute(
+                name: "admin_route",
+                pattern: "admin/{controller}/{action}/{id?}",
+                defaults: new { area = "Admin", controller = "Dashboard", action = "Index" });
+
+            //User Routes
             app.MapControllerRoute(
                 name: "categoryRoute",
                 pattern: "{slug}",
                 defaults: new { area = "User", controller = "Home", action = "Category" });
+
+            app.MapControllerRoute(
+                name: "productDetailRoute",
+                pattern: "urun/{slug}",
+                defaults: new { area = "User", controller = "Home", action = "ProductDetail" });
+
+
             app.MapControllerRoute(
                    name: "areas",
                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{area=User}/{controller=Home}/{action=Index}/{id?}");
+                pattern: "{area=User}/{controller=Home}/{action=Index}/{id?}");            
 
+            
             app.Run();
         }
     }

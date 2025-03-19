@@ -1,4 +1,5 @@
 using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.DataAccessLayer.Concrete;
 using ECommerceProject.DtoLayer.Dtos.ProductDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.Models;
@@ -6,6 +7,7 @@ using ECommerceProject.PresentationLayer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 {
@@ -48,6 +50,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     Id = product.ProductId,
                     Name = product.Name,
                     Description = product.Description,
+                    Slug = product.Slug,
                     Price = product.Price,
                     Stock = product.Stock,
                     CategoryName = product.Category.Name,
@@ -80,11 +83,11 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ProductDetail(int id)
+        public async Task<IActionResult> ProductDetail(string slug)
         {
             try
             {
-                var product = await _productService.TGetByIdWithAllFeaturesAsync(id);
+                var product = await _productService.TGetBySlugWithAllFeaturesAsync(slug);
                 var categories = _categoryService.TGetList();
 
                 var productDto = new ProductDto

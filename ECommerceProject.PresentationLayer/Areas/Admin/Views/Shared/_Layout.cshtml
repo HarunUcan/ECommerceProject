@@ -100,8 +100,8 @@
                         </svg>
                     </a>
                     <div id="coupons-submenu" class="@(ViewData["ActivePage"]?.ToString() == "Coupons" ? "" : ViewData["ActivePage"]?.ToString() == "Coupon-Create" ? "" : "hidden")">
-                        <a href="#" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Coupons" ? "bg-pink-700" : "hover:bg-gray-700")">Mevcut Kuponlar</a>
-                        <a href="#" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Coupon-Create" ? "bg-pink-700" : "hover:bg-gray-700")">Kupon Ekle</a>
+                        <a asp-area="Admin" asp-controller="Coupon" asp-action="Index" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Coupons" ? "bg-pink-700" : "hover:bg-gray-700")">Mevcut Kuponlar</a>
+                        <a asp-area="Admin" asp-controller="Coupon" asp-action="Create" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Coupon-Create" ? "bg-pink-700" : "hover:bg-gray-700")">Kupon Ekle</a>
                     </div>
                 </div>
 

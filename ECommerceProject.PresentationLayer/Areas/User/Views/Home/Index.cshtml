@@ -67,7 +67,7 @@
             @foreach (var product in Model.FeaturedProducts)
             {
                     <div class="swiper-slide bg-white shadow-md relative w-60">
-                        <a asp-area="User" asp-controller="Home" asp-action="ProductDetail" asp-route-id="@product.ProductId">
+                    <a asp-area="User" asp-controller="Home" asp-action="ProductDetail" asp-route-slug="@product.Slug">
 
                             <!-- Ürün Resmi -->
                             <img src="@product.ProductImages.FirstOrDefault(img => img.IsMain == true).Url.Replace("wwwroot","")" alt="Ürün" class="w-full h-60 md:h-72 object-cover">
@@ -152,7 +152,7 @@
                     if(product.CategoryId != category.CategoryId) continue;
 
                     <div class="swiper-slide bg-white shadow-md relative w-60">
-                        <a asp-area="User" asp-controller="Home" asp-action="ProductDetail" asp-route-id="@product.ProductId">
+                        <a asp-area="User" asp-controller="Home" asp-action="ProductDetail" asp-route-slug="@product.Slug">
 
                             <!-- Ürün Resmi -->
                             <img src="@product.ProductImages.FirstOrDefault(img => img.IsMain == true)?.Url.Replace("wwwroot","")" alt="Ürün" class="w-full h-60 md:h-72 object-cover">
