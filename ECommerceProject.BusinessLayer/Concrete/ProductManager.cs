@@ -57,9 +57,9 @@ namespace ECommerceProject.BusinessLayer.Concrete
             return await _productDal.GetPagedProductsAsync(currentPage, pageSize);
         }
 
-        public async Task<List<Product>> TGetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId)
+        public async Task<List<Product>> TGetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId, string[]? sizes, string[]? colors, int minPrice = 0, int maxPrice = int.MaxValue)
         {
-            return await _productDal.GetPagedProductsByCategoryAsync(currentPage, pageSize, categoryId);
+            return await _productDal.GetPagedProductsByCategoryAsync(currentPage, pageSize, categoryId, sizes, colors, minPrice, maxPrice);
         }
 
         public async Task TDeleteWithImagesAsync(Product product)

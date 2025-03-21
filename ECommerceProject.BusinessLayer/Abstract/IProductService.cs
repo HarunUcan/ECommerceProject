@@ -12,7 +12,7 @@ namespace ECommerceProject.BusinessLayer.Abstract
         Task<Product> TGetBySlugWithAllFeaturesAsync(string slug);
         Task<List<Product>> TGetAllProductsWithCategoriesImagesAsync();
         Task<List<Product>> TGetPagedProductsAsync(int currentPage, int pageSize);
-        Task<List<Product>> TGetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId);
+        Task<List<Product>> TGetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId, string[]? sizes, string[]? colors, int minPrice = 0, int maxPrice = int.MaxValue);
         Task<List<Product>> TGetListByCategorySlugAsync(string slug);
         Task<List<Product>> TGetFeaturedProductsAsync(int maxProductCount = 15);
         Task<List<Product>> TGetFeaturedCategoryProductsAsync(int maxProductCountPerCategory = 15);

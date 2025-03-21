@@ -122,7 +122,7 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                 .ToListAsync();
         }
 
-        public async Task<List<Product>> GetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId)
+        public async Task<List<Product>> GetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId, string[]? sizes, string[]? colors, int minPrice = 0, int maxPrice = int.MaxValue)
         {
             using var context = new Context();
 
@@ -130,8 +130,19 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             var categoryIds = await GetSubCategoryIdsAsync(categoryId);
             categoryIds.Add(categoryId); // Ana kategoriyi de ekle
 
+            //Renklerin ilk harflerini büyük yap
+            if (colors != null)
+            {
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    colors[i] = colors[i].ToUpper();
+                }
+            }
+
             return await context.Products
                 .Where(p => categoryIds.Contains(p.CategoryId)) // Kategori ID'leri listede olanları getir
+                .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
+                .Where(p => colors == null || colors.Length == 0 || colors.Contains(p.NearestColor))
                 .OrderByDescending(p => p.ProductId)
                 .Skip((currentPage - 1) * pageSize)
                 .Take(pageSize)

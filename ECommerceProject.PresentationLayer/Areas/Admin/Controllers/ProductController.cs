@@ -1,4 +1,5 @@
 ﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.BusinessLayer.Helpers;
 using ECommerceProject.DtoLayer.Dtos.ProductDtos;
 using ECommerceProject.DtoLayer.Dtos.ProductImageDtos;
 using ECommerceProject.EntityLayer.Concrete;
@@ -154,12 +155,15 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
 
                 List<ProductImage> productImages = await _productImageService.SaveProductImageAsync(imageDtos);
 
+                var nearestColor = ColorHelper.GetNearestColor(model.Color);
+
                 List<CartItem> cartItems = new List<CartItem>();
                 var product = new Product
                 {
                     Name = model.ProductName,
                     Description = model.Description,
                     Color = model.Color,
+                    NearestColor = nearestColor,
                     Price = model.Price ?? 0,
                     UniqueCode = $"{DateTime.Now.Year.ToString().Substring(2)}{DateTime.Now.Month}{DateTime.Now.Day}{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}",
                     //Stock = adminProductSizesViewModel.Sum(x => x.Sizes.Sum(y => y.Stock)),

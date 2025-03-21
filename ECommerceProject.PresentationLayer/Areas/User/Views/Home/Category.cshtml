@@ -1,7 +1,20 @@
 ﻿@model HomeViewModel
+@using Microsoft.AspNetCore.Http.Extensions;
+@using System.Text.Json
 @{
     ViewData["Title"] = "Category";
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+@{
+    string categorySlug = Model.Categories.FirstOrDefault(c => c.CategoryId == Model.CurrentCategory)?.Slug;
+    var currentUrl = Context.Request.GetDisplayUrl();
+    var page = Context.Request.Query["page"].ToString();
+    var colors = Context.Request.Query["colors"].ToArray();
+    string colorsJson = JsonSerializer.Serialize(colors).Replace("\"", "").Replace("[","").Replace("]","");
+    var sizes = Context.Request.Query["sizes"].ToArray();
+    string sizesJson = JsonSerializer.Serialize(sizes).Replace("\"", "").Replace("[", "").Replace("]", ""); ;
+    var minPrice = Context.Request.Query["minPrice"].ToString();
+    var maxPrice = Context.Request.Query["maxPrice"].ToString();
 }
 
 <head>
@@ -27,7 +40,50 @@
             isLoading = true;
             $("#loading").show();
 
-            $.get(`/User/Home/GetPagedProductsByCategory?page=${page}&pageSize=${pageSize}&categoryId=${categoryId}`, function (data) {
+            // Temel URL değişkeni
+            let baseUrl = `/User/Home/GetPagedProductsByCategory?page=${page}&pageSize=${pageSize}&categoryId=${categoryId}`;
+
+            // Filtreleri eklemek için boş bir dizi tanımla
+            let filters = [];
+
+            let selectedSizes = @Html.Raw(Json.Serialize(sizesJson));
+            let selectedColors = @Html.Raw(Json.Serialize(colorsJson));
+
+            let selectedSizeArr = selectedSizes.split(",").map(size => size.trim())
+            let selectedColorArr = selectedColors.split(",").map(color => color.trim())
+            console.log("selectedSizes:", selectedSizes, typeof selectedSizes);
+            console.log("selectedColors:", selectedColors, typeof selectedColors);
+            
+
+            console.log("selectedSizes:", selectedSizes, typeof selectedSizes);
+            let minPrice = '@minPrice';
+            filters.push(`minPrice=${minPrice}`);
+            let maxPrice = '@maxPrice';
+            filters.push(`maxPrice=${maxPrice}`);
+
+            
+
+            // Eğer birden fazla beden (size) seçildiyse, URL'ye ekle
+            if (selectedSizeArr.length > 0 && selectedSizeArr[0] != "") {
+                // filters.push(`sizes=${selectedSizes.join("&sizes=")}`);
+                selectedSizeArr.forEach(size => {
+                    filters.push(`sizes=${size}`);
+                    console.log("size:", size);
+                });
+            }
+
+            // Eğer birden fazla renk (color) seçildiyse, URL'ye ekle
+            if (selectedColorArr.length > 0 && selectedColorArr[0] != "") {
+                // filters.push(`colors=${selectedColors.join("&colors=")}`);
+                filters.push(`colors=${selectedColorArr.join("&colors=")}`);
+                console.log("selectedColorArr:", selectedColorArr);
+            }
+
+            // Filtreleri birleştirerek tam URL'yi oluştur
+            console.log("filters:", filters);
+            let finalUrl = baseUrl + (filters.length > 0 ? "&" + filters.join("&") : "");
+
+            $.get(finalUrl, function (data) {
                 if (data.length > 0) {
                     data.forEach(product => {
                         $("#product-list").append(`
@@ -98,7 +154,7 @@
     if(category.CategoryId == Model.CurrentCategory)
     {
         <div class="flex justify-center items-center">
-            <div class="border-b-2 border-gray-300 p-2 w-1/2">
+            <div class="border-b-2 border-gray-300 p-2 mb-4 w-3/4">
                 <h1 class="text-2xl font-semibold text-center mt-10">@category.Name</h1>
 
             </div>
@@ -107,45 +163,153 @@
 }
 
 <section class="pb-16 md:px-3 w-full">
-    <div id="product-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 px-2 py-10">
-        <!-- Ürünler Listesi -->
-        @* @foreach (var product in Model.Products)
-        {
-            <div class="swiper-slide bg-white shadow-md relative w-60">
-                <!-- Ürün Resmi -->
-                <img src="@product.ProductImages.FirstOrDefault(img => img.IsMain == true)?.Url.Replace("wwwroot","")" alt="Ürün" class="w-full h-60 md:h-72 object-cover">
+    <!-- Mobilde Görünecek Filtre Butonu -->
+    <div class="md:hidden py-2">
+        <button id="filter-btn" class="bg-gray-800 text-white px-4 py-2 w-full">Filtrele<i class="fa-solid fa-filter ml-1"></i></button>
+    </div>
 
-                <div class="pb-3 px-3">
-                    <!-- Ürün Bilgileri -->
-                    <h2 class="product-name text-lg font-semibold mt-3">@product.Name</h2>
-                    <p class="product-description text-gray-500 text-sm">@product.Description</p>
+    <div id="container" class="grid grid-cols-1 md:grid-cols-4 md:gap-4">
+        <!-- Filtreleme Alanı (PC'de Sidebar, Mobilde Gizli) -->
+        <aside id="filter-sidebar" class="hidden md:block md:col-span-1 bg-white p-4 my-10 rounded-md sticky top-32 h-[450px] overflow-y-auto">
+            <h2 class="font-semibold text-lg mb-2">Filtreleme</h2>
+            <form id="filter-form" action="@categorySlug" method="GET">
+                <!-- Sayfalama ve Kategori ID (Gizli Input) -->
+                @* <input type="hidden" name="page" value="1">
+                <input type="hidden" name="pageSize" value="10">
+                <input type="hidden" name="categoryId" value="0"> *@
 
-                    <div id="price-color-group" class="flex items-center justify-between">
-                        <!-- Fiyat -->
-                        <p class="text-black font-bold mt-2">₺@product.Price</p>
-
-                        <!-- Renk Seçenekleri -->
-                        <div class="relative flex justify-start items-center mt-2">
-                            <div id="colorContainer" class="relative flex items-center">
-                                <div class="w-5 h-5 rounded-full border-2 border-white bg-[#8B5E3B]"></div>
-                                <div class="w-5 h-5 rounded-full border-2 border-white bg-[#000000] -ml-2.5"></div>
-                                <div class="w-5 h-5 rounded-full border-2 border-white bg-[#FF0000] -ml-2.5"></div>
-                                <div class="w-5 h-5 rounded-full border-2 border-white bg-gray-300 text-xs flex items-center justify-center font-bold -ml-2.5">
-                                    +2
-                                </div>
-                            </div>
-                        </div>
+                <!-- Beden Seçimi -->
+                <div>
+                    <label class="block font-medium mb-2">Beden</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="sizes" value="XS" class="size-checkbox">
+                            <span>XS</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="sizes" value="S" class="size-checkbox">
+                            <span>S</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="sizes" value="M" class="size-checkbox">
+                            <span>M</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="sizes" value="L" class="size-checkbox">
+                            <span>L</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="sizes" value="XL" class="size-checkbox">
+                            <span>XL</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="sizes" value="2XL" class="size-checkbox">
+                            <span>2XL</span>
+                        </label>
                     </div>
+                </div>
 
-                    <!-- Sepete Ekle Butonu -->
-                    <button class="mt-4 w-full border-2 border-gray-600 text-black py-2 rounded hover:bg-zinc-100 transition duration-200 ease-in-out">
-                        <i class="fa-solid fa-cart-shopping mr-2"></i> Sepete Ekle
-                    </button>
+                <!-- Renk Seçimi -->
+                <div class="mt-4">
+                    <label class="block font-medium mb-2">Renk</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="colors" value="black" class="color-checkbox">
+                            <span>Siyah</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="colors" value="white" class="color-checkbox">
+                            <span>Beyaz</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="colors" value="red" class="color-checkbox">
+                            <span>Kırmızı</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="colors" value="yellow" class="color-checkbox">
+                            <span>Sarı</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="colors" value="green" class="color-checkbox">
+                            <span>Yeşil</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="colors" value="blue" class="color-checkbox">
+                            <span>Mavi</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Fiyat Aralığı -->
+                <div class="mt-4">
+                    <label class="block font-medium">Fiyat</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="number" name="minPrice" class="border p-1 w-20 text-center" placeholder="Min">
+                        <span>-</span>
+                        <input type="number" name="maxPrice" class="border p-1 w-20 text-center" placeholder="Max">
+                    </div>
+                </div>
+
+                <!-- Filtrele Butonu -->
+                <button type="submit" class="mt-4 bg-blue-600 text-white px-4 py-2 w-full rounded-md">
+                    Filtrele
+                </button>
+            </form>
+        </aside>
+
+
+        <!-- Ürün Listesi -->
+        <div id="product-list" class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 px-2 py-10 md:col-span-3">
+            <!-- Ürünler buraya listelenecek -->
+        </div>
+    </div>
+
+    <!-- Mobil Filtreleme Menüsü (Modal) -->
+    <div id="mobile-filter" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-white p-6 w-3/4 rounded-lg relative">
+            <button id="close-filter" class="absolute top-4 right-4 text-xl">&times;</button>
+            <h2 class="font-semibold text-lg mb-2">Filtreleme</h2>
+            <div>
+                <label class="block font-medium">Beden</label>
+                <select class="w-full p-2 border rounded-md">
+                    <option>Small</option>
+                    <option>Medium</option>
+                    <option>Large</option>
+                </select>
+            </div>
+            <div class="mt-4">
+                <label class="block font-medium">Renk</label>
+                <select class="w-full p-2 border rounded-md">
+                    <option>Siyah</option>
+                    <option>Beyaz</option>
+                    <option>Kırmızı</option>
+                </select>
+            </div>
+            <div class="mt-4">
+                <label class="block font-medium">Fiyat</label>
+                <div class="flex items-center space-x-2">
+                    <input type="number" id="mobile-min-price" class="w-16 p-1 border rounded-md text-center" value="0">
+                    <input type="range" id="mobile-price-range" class="w-full bg-black" min="0" max="1000" step="10">
+                    <input type="number" id="mobile-max-price" class="w-16 p-1 border rounded-md text-center" value="1000">
                 </div>
             </div>
-        }
-    </div> *@
+            <button class="mt-4 bg-blue-600 text-white px-4 py-2 w-full rounded-md">Filtrele</button>
+        </div>
+    </div>
 </section>
+
+<script>
+    document.getElementById('filter-btn').addEventListener('click', function() {
+        document.getElementById('mobile-filter').classList.remove('hidden');
+    });
+    document.getElementById('close-filter').addEventListener('click', function() {
+        document.getElementById('mobile-filter').classList.add('hidden');
+    });
+</script>
+
+
+
+
 
 
 <script src="~/js/home.js" defer></script>

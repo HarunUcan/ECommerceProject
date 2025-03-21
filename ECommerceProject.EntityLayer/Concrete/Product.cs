@@ -12,7 +12,8 @@ namespace ECommerceProject.EntityLayer.Concrete
         public int ProductId { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
-        public string? Color { get; set; }
+        public string? Color { get; set; } // HEX
+        public string? NearestColor { get; set; } // En yakın renk
         public bool IsFeatured { get; set; }
         public int? ProductGroupId { get; set; }
         public ProductGroup? ProductGroup { get; set; }

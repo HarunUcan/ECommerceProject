@@ -1,4 +1,5 @@
 using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.BusinessLayer.Helpers;
 using ECommerceProject.DataAccessLayer.Concrete;
 using ECommerceProject.DtoLayer.Dtos.ProductDtos;
 using ECommerceProject.EntityLayer.Concrete;
@@ -38,10 +39,32 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPagedProductsByCategory(int page = 1, int pageSize = 10, int categoryId=0)
+        public IActionResult HexColorTester(string hex)
         {
-            List<Product> products = await _productService.TGetPagedProductsByCategoryAsync(page, pageSize, categoryId);
+            hex = Regex.Replace(hex, "[^0-9A-Fa-f]", ""); // Geçersiz karakterleri temizle
+            var hexCode = $"#{hex}";
+            return Content(ColorHelper.GetNearestColor(hexCode));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPagedProductsByCategory(int page = 1, int pageSize = 10, int categoryId = 0, string[]? sizes = null, string[]? colors = null, int minPrice = 0, int maxPrice = int.MaxValue)
+        {
+            List<Product> products = await _productService.TGetPagedProductsByCategoryAsync(page, pageSize, categoryId, sizes, colors, minPrice, maxPrice);
             List<ProductDto> productDtos = new List<ProductDto>();
+
+            //// Filtreleme Testi
+            //if (sizes != null && sizes.Length > 0)
+            //{
+            //    return Json(sizes);
+            //}
+            //else if (colors != null && colors.Length > 0)
+            //{
+            //    return Json(colors);
+            //}
+            //else if (minPrice > 0 && maxPrice < int.MaxValue)
+            //{
+            //    return Json(minPrice + " - " + maxPrice);
+            //}
 
             foreach (var product in products)
             {
@@ -62,7 +85,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CategoryAsync(string slug)
+        public async Task<IActionResult> CategoryAsync(string slug, string[]? sizes = null, string[]? colors = null, int? minPrice = 0, int? maxPrice = int.MaxValue)
         {
             try
             {

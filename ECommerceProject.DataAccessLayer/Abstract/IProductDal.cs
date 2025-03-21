@@ -12,7 +12,7 @@ namespace ECommerceProject.DataAccessLayer.Abstract
         Task<Product> GetBySlugWithAllFeaturesAsync(string slug);
         Task<List<Product>> GetAllProductsWithCategoriesImagesAsync();
         Task<List<Product>> GetPagedProductsAsync(int currentPage, int pageSize);
-        Task<List<Product>> GetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId);
+        Task<List<Product>> GetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId, string[]? sizes, string[]? colors, int minPrice = 0, int maxPrice = int.MaxValue);
         Task<List<Product>> GetListByCategorySlugAsync(string slug);
         Task<List<Product>> GetFeaturedProductsAsync(int maxProductCount = 15);
         Task<List<Product>> GetFeaturedCategoryProductsAsync(int maxProductCountPerCategory = 15);
