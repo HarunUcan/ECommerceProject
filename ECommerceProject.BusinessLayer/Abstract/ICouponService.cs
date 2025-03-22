@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ECommerceProject.BusinessLayer.Abstract
 {
-    internal interface ICouponService : IGenericService<Coupon>
+    public interface ICouponService : IGenericService<Coupon>
     {
     }
 }

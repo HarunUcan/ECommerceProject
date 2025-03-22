@@ -53,6 +53,9 @@ namespace ECommerceProject.PresentationLayer
             builder.Services.AddScoped<IProductGroupService, ProductGroupManager>();
             builder.Services.AddScoped<IProductGroupDal, EfProductGroupDal>();
 
+            builder.Services.AddScoped<ICouponService, CouponManager>();
+            builder.Services.AddScoped<ICouponDal, EfCouponDal>();
+
             builder.Services.AddScoped<IMailSenderService, MailSenderManager>();
 
             builder.Services.ConfigureApplicationCookie(options =>

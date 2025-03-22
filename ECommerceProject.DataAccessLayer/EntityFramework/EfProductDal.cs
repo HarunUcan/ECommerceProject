@@ -122,6 +122,35 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                 .ToListAsync();
         }
 
+        //public async Task<List<Product>> GetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId, string[]? sizes, string[]? colors, int minPrice = 0, int maxPrice = int.MaxValue)
+        //{
+        //    using var context = new Context();
+
+        //    // Ana kategori + tüm alt kategorileri al
+        //    var categoryIds = await GetSubCategoryIdsAsync(categoryId);
+        //    categoryIds.Add(categoryId); // Ana kategoriyi de ekle
+
+        //    //Renklerin ilk harflerini büyük yap
+        //    if (colors != null)
+        //    {
+        //        for (int i = 0; i < colors.Length; i++)
+        //        {
+        //            colors[i] = colors[i].ToUpper();
+        //        }
+        //    }
+
+        //    return await context.Products
+        //        .Where(p => categoryIds.Contains(p.CategoryId)) // Kategori ID'leri listede olanları getir
+        //        .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
+        //        .Where(p => colors == null || colors.Length == 0 || colors.Contains(p.NearestColor))
+        //        .OrderByDescending(p => p.ProductId)
+        //        .Skip((currentPage - 1) * pageSize)
+        //        .Take(pageSize)
+        //        .Include(p => p.Category)
+        //        .Include(p => p.ProductImages.Where(img => img.IsMain)) // Sadece IsMain olanları getir
+        //        .ToListAsync();
+        //}
+
         public async Task<List<Product>> GetPagedProductsByCategoryAsync(int currentPage, int pageSize, int categoryId, string[]? sizes, string[]? colors, int minPrice = 0, int maxPrice = int.MaxValue)
         {
             using var context = new Context();
@@ -130,7 +159,7 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             var categoryIds = await GetSubCategoryIdsAsync(categoryId);
             categoryIds.Add(categoryId); // Ana kategoriyi de ekle
 
-            //Renklerin ilk harflerini büyük yap
+            // Renklerin ilk harflerini büyük yap
             if (colors != null)
             {
                 for (int i = 0; i < colors.Length; i++)
@@ -139,17 +168,35 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                 }
             }
 
-            return await context.Products
+            // String olarak gelen bedenleri enum değerlerine çevir
+            List<ProductSize> sizeEnums = new();
+            if (sizes != null && sizes.Length > 0)
+            {
+                foreach (var size in sizes)
+                {
+                    if (Enum.TryParse(size, true, out ProductSize parsedSize))
+                    {
+                        sizeEnums.Add(parsedSize);
+                    }
+                }
+            }
+
+            var query = context.Products
                 .Where(p => categoryIds.Contains(p.CategoryId)) // Kategori ID'leri listede olanları getir
                 .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
                 .Where(p => colors == null || colors.Length == 0 || colors.Contains(p.NearestColor))
+                .Where(p => sizeEnums.Count == 0 || p.ProductVariants.Any(v => sizeEnums.Contains(v.Size))) // Enum olarak filtreleme
                 .OrderByDescending(p => p.ProductId)
                 .Skip((currentPage - 1) * pageSize)
                 .Take(pageSize)
                 .Include(p => p.Category)
                 .Include(p => p.ProductImages.Where(img => img.IsMain)) // Sadece IsMain olanları getir
+                .Include(p => p.ProductVariants) // Beden filtresi için gerekli
                 .ToListAsync();
+
+            return await query;
         }
+
         private async Task<List<int>> GetSubCategoryIdsAsync(int categoryId)
         {
             using var context = new Context();

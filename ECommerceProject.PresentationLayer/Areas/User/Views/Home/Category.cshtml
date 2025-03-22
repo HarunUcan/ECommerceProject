@@ -28,6 +28,40 @@
             text-overflow: ellipsis; /* Kesilen yere '...' ekler */
             width: 100%; /* Genişliği ayarla (gerekirse değiştir) */
         }
+
+        .size-checkbox,
+        .color-checkbox {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #999;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-block;
+            position: relative;
+        }
+
+            .size-checkbox:checked,
+            .color-checkbox:checked {
+                background-color: black;
+                border-color: black;
+            }
+
+                /* Tik işareti SVG stili */
+                .size-checkbox:checked::after,
+                .color-checkbox:checked::after {
+                    content: "";
+                    position: absolute;
+                    width: 5px;
+                    height: 10px;
+                    border: solid white;
+                    border-width: 0 3px 3px 0;
+                    transform: translate(-50%, -65%) rotate(45deg);
+                    left: 50%;
+                    top: 50%;
+                }
+
+
     </style>
 
     <script>
@@ -183,6 +217,14 @@
                     <label class="block font-medium mb-2">Beden</label>
                     <div class="space-y-2">
                         <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="sizes" value="STD" class="size-checkbox">
+                            <span>STD</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="sizes" value="XXS" class="size-checkbox">
+                            <span>2XS</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
                             <input type="checkbox" name="sizes" value="XS" class="size-checkbox">
                             <span>XS</span>
                         </label>
@@ -203,7 +245,7 @@
                             <span>XL</span>
                         </label>
                         <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="sizes" value="2XL" class="size-checkbox">
+                            <input type="checkbox" name="sizes" value="XXL" class="size-checkbox">
                             <span>2XL</span>
                         </label>
                     </div>
@@ -251,7 +293,7 @@
                 </div>
 
                 <!-- Filtrele Butonu -->
-                <button type="submit" class="mt-4 bg-blue-600 text-white px-4 py-2 w-full rounded-md">
+                <button type="submit" class="mt-4 bg-black text-white px-4 py-2 w-full rounded-md">
                     Filtrele
                 </button>
             </form>
