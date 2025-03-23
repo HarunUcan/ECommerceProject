@@ -18,7 +18,25 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var coupons = _couponService.TGetList();
+            List<CouponDto> couponDtos = new List<CouponDto>();
+            foreach (var coupon in coupons)
+            {
+                CouponDto couponDto = new CouponDto
+                {
+                    Id = coupon.CouponId,
+                    Code = coupon.Code,
+                    Discount = coupon.DiscountAmount ?? coupon.DiscountPercentage,
+                    MinOrderAmount = coupon.MinOrderAmount,
+                    ExpirationDate = coupon.ExpirationDate,
+                    MaxUsageCount = coupon.MaxUsageCount,
+                    CouponType = coupon.DiscountAmount != null ? "amount" : "percentage",
+                    RemainingUsageCount = coupon.MaxUsageCount - coupon.CurrentUsageCount,
+                    IsActive = coupon.IsActive
+                };
+                couponDtos.Add(couponDto);
+            }
+            return View(couponDtos);
         }
 
         [HttpGet]
@@ -59,6 +77,23 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                 }
             }
             return View(couponDto);
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            var coupon = _couponService.TGetById(id);
+            _couponService.TDelete(coupon);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult ChangeStatus(int id)
+        {
+            var coupon = _couponService.TGetById(id);
+            coupon.IsActive = !coupon.IsActive;
+            _couponService.TUpdate(coupon);
+            return RedirectToAction("Index");
         }
     }
 }

@@ -70,7 +70,8 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                     Stock = product.Stock,
                     CategoryName = product.Category.Name,
                     MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", ""),
-                    IsFeatured = product.IsFeatured
+                    IsFeatured = product.IsFeatured,
+                    Slug = product.Slug
                 });
             }
             return Json(productDtos);

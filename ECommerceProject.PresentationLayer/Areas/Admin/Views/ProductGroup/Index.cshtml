@@ -34,7 +34,7 @@
                                 <i class="fas fa-edit"></i>
                             </a>
                             <button onclick="confirmDeleteGroup(@productGroup.ProductGroupId)" class="text-red-600 hover:text-red-800 transition" title="Sil">
-                                <i class="fas fa-trash"></i>
+                                <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
                     </div>
@@ -66,10 +66,18 @@
                                     {
                                         <tr class="">
                                             <td class="border-b py-4 px-4">@product.ProductId</td>
+                                            
                                             <td class="border-b py-4 px-4">
-                                                <img src="@product.ProductImages?.FirstOrDefault(img => img.IsMain)?.Url.Replace("wwwroot","")" alt="@product.Name" class="w-12 h-12 rounded-md object-cover">
+                                                <a href="/urun/@product.Slug">
+                                                    <img src="@product.ProductImages?.FirstOrDefault(img => img.IsMain)?.Url.Replace("wwwroot","")" alt="@product.Name" class="w-12 h-12 rounded-md object-cover">
+                                                </a>
                                             </td>
-                                            <td class="border-b py-4 px-4">@product.Name</td>
+
+                                            <td class="border-b py-4 px-4 underline">
+                                                <a href="/urun/@product.Slug">
+                                                    @product.Name
+                                                </a>
+                                            </td>
                                             <td class="border-b py-4 px-4">@product.Price</td>
                                             <td class="border-b py-4 px-4">@product.ProductVariants?.Sum(v => v.Stock)</td>
                                             <td class="border-b py-4 px-4">
@@ -77,7 +85,7 @@
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <button onclick="confirmDelete(@product.ProductId)" class="text-red-600 hover:text-red-800 transition" title="Sil">
-                                                    <i class="fas fa-trash"></i>
+                                                    <i class="fa-solid fa-trash-can"></i>
                                                 </button>
                                             </td>
                                         </tr>

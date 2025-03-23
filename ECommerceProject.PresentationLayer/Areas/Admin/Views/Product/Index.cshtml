@@ -6,8 +6,7 @@
 }
 
 <head>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script>
         function filterProducts() {
             const input = document.getElementById('search-bar');
@@ -40,10 +39,12 @@
                             <tr>
                                         <td class="border-b py-4">${product.id}</td>
                                 <td class="border-b py-4">
-                                            <img src="${product.mainImageUrl}" alt="Ürün Resmi"
-                                                 class="w-12 h-12 rounded-md object-cover">
+                                    <a href="/urun/${product.slug}">
+                                                <img src="${product.mainImageUrl}" alt="Ürün Resmi"
+                                                     class="w-12 h-12 rounded-md object-cover">
+                                    </a>
                                 </td>
-                                        <td class="border-b py-4">${product.name}</td>
+                                        <td class="border-b py-4 underline"><a href="/urun/${product.slug}">${product.name}</a></td>
                                         <td class="border-b py-4">${product.price} ₺</td>
                                         <td class="border-b py-4">${product.categoryName}</td>
                                 <td class="border-b py-4">
@@ -56,7 +57,7 @@
                                     <a href="/urun-duzenle/${product.id}"
                                                        class="text-yellow-600 hover:text-yellow-800 transition"><i class="fas fa-edit" title="Düzenle"></i></a>
 
-                                            <button onclick="confirmDelete(${product.id})" class="text-red-600 hover:text-red-800 transition" title="Sil"><i class="fas fa-trash"></i></button>
+                                            <button onclick="confirmDelete(${product.id})" class="text-red-600 hover:text-red-800 transition" title="Sil"><i class="fa-solid fa-trash-can"></i></button>
                                 </td>
                             </tr>
                             `);

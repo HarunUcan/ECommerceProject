@@ -30,6 +30,7 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                 {
                     ProductId = p.ProductId,
                     Name = p.Name,
+                    Slug = p.Slug,
                     Stock = p.Stock,
                     Price = p.Price,
                     ProductImages = p.ProductImages
