@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="customerPayPage.css">
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Ödeme</title>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="sticky top-0  shadow-md z-10">
+        <div class="flex justify-between items-center px-6 py-6 bg-white text-black w-full">
+            <!-- Menü İkonu -->
+            <div class="menu-icon">
+                <button id="menu-button" class="lg:hidden text-black">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Site Adı -->
+            <a href="/">
+                <div class="text-2xl font-bold text-center flex-grow md:text-xl">ECommerce App</div>
+            </a>
+            <!-- Sepet ve Giriş Yap İkonları -->
+            <div class="header-icons flex justify-between items-center gap-6">
+                <!-- Sepet Iconu -->
+                <div class="header-cart">
+                    <a class="hover:text-gray-400" href="/User/Cart">
+                        <i class="fa-solid fa-bag-shopping text-black text-xl"></i>
+                        <span class="absolute flex justify-center items-center w-[15px] h-[15px] bg-red-700 top-7 right-14 rounded-full text-white text-xs">3</span>
+                        <!-- Örnek olarak 3 ürün var -->
+                    </a>
+                </div>
+
+                <!-- Giriş Yap Iconu -->
+                <a class="hover:text-gray-400" href="/User/CustomerProfile">
+                    <i class="fa-regular fa-user text-black text-xl"></i> <!-- Giriş yap ikonunu ekledik -->
+                </a>
+            </div>
+        </div>
+
+        <nav class="hidden lg:block w-full px-2 pb-2 bg-white">
+            <div class="flex justify-center container mx-auto h-6">
+                <div class="flex items-center justify-center gap-8">
+                    <ul class="flex items-center justify-center gap-8">
+                        <li class="cursor-pointer hover:border-b-2 border-red-700">Yeni Gelenler</li>
+                        <li class="cursor-pointer hover:border-b-2 border-red-700 text-red-500">Fırsat Ürünleri</li>
+                        <li class="cursor-pointer hover:border-b-2 border-red-700">Çok Satanlar</li>
+                        <li id="categories-btn" class="flex items-center justify-center cursor-pointer hover:border-b-2 border-red-700">
+                            <span>Kategoriler</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div id="dropdown-categories" class="absolute top-full left-0 w-full border-t border-gray-200 bg-white hidden z-50">
+
+            <!-- Kategori Menüsü -->
+            <div class="flex justify-stretch bg-white px-12 py-6 rounded-lg shadow-md">
+                        <ul class="space-y-3 inline-block align-top mr-6">
+                            <!-- Yan yana sıralamak için inline-block kullanıyoruz -->
+                            
+
+
+<li class="relative ">
+        <a class="flex items-center space-x-2 ml-0 text-gray-700 hover:text-black text-lg font-semibold mb-2" onmouseover="openSubmenu(1, 0)" onmouseleave="closeSubmenu(1, 0)" href="/kadin-giyim">
+           <div class="flex justify-center items-center gap-2">
+               
+               <img src="/uploads/urun25.jpg" alt="Kategori Resmi" class="w-6 h-6 rounded-md object-cover">
+
+               <span>Kadın Giyim</span>
+               
+
+                
+           </div>
+            
+        </a>
+        <ul id="submenu-1" class="text-sm text-gray-600 space-y-2 transition-all duration-300 " onmouseover="cancelClose(1)" onmouseleave="closeSubmenu(1, 0)">
+
+
+
+<li class="relative ">
+        <a class="flex items-center space-x-2 text-gray-700 hover:text-black text-base font-medium " onmouseover="openSubmenu(3, 1)" onmouseleave="closeSubmenu(3, 1)" href="/tisort">
+            <div class="flex justify-center items-center gap-2">
+                
+                
+                <span class="pl-8">Tişört</span>
+                
+
+
+            </div>
+
+                <svg class="w-4 h-4 transition-transform duration-300" id="arrow-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+        </a>
+        <ul id="submenu-3" class="text-sm text-gray-600 space-y-2 transition-all duration-300 hidden" onmouseover="cancelClose(3)" onmouseleave="closeSubmenu(3, 1)">
+
+
+
+<li class="relative pl-4">
+        <a class="flex items-center space-x-2 text-gray-700 hover:text-black text-sm " onmouseover="openSubmenu(6, 2)" onmouseleave="closeSubmenu(6, 2)" href="/basic-tisort">
+            <div class="flex justify-center items-center gap-2">
+                
+                
+                <span class="pl-8">Basic Tişört</span>
+                
+
+
+            </div>
+
+        </a>
+</li>
+
+
+
+<li class="relative pl-4">
+        <a class="flex items-center space-x-2 text-gray-700 hover:text-black text-sm " onmouseover="openSubmenu(7, 2)" onmouseleave="closeSubmenu(7, 2)" href="/tasarim-tisort">
+            <div class="flex justify-center items-center gap-2">
+                
+                
+                <span class="pl-8">Tasarım Tişört</span>
+                
+
+
+            </div>
+
+                <svg class="w-4 h-4 transition-transform duration-300" id="arrow-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+        </a>
+        <ul id="submenu-7" class="text-sm text-gray-600 space-y-2 transition-all duration-300 hidden" onmouseover="cancelClose(7)" onmouseleave="closeSubmenu(7, 2)">
+
+
+
+<li class="relative pl-4">
+        <a class="flex items-center space-x-2 text-gray-700 hover:text-black text-sm " onmouseover="openSubmenu(1015, 3)" onmouseleave="closeSubmenu(1015, 3)" href="/tasarim-tisort-child">
+            <div class="flex justify-center items-center gap-2">
+                
+                
+                <span class="pl-8">Tasarım Tişört Child</span>
+                
+
+
+            </div>
+
+        </a>
+</li>
+        </ul>
+</li>
+        </ul>
+</li>
+
+
+
+<li class="relative ">
+        <a class="flex items-center space-x-2 text-gray-700 hover:text-black text-base font-medium " onmouseover="openSubmenu(8, 1)" onmouseleave="closeSubmenu(8, 1)" href="/elbise">
+            <div class="flex justify-center items-center gap-2">
+                
+                
+                <span class="pl-8">Elbise</span>
+                
+
+
+            </div>
+
+        </a>
+</li>
+
+
+
+<li class="relative ">
+        <a class="flex items-center space-x-2 text-gray-700 hover:text-black text-base font-medium " onmouseover="openSubmenu(9, 1)" onmouseleave="closeSubmenu(9, 1)" href="/etek">
+            <div class="flex justify-center items-center gap-2">
+                
+                
+                <span class="pl-8">Etek</span>
+                
+
+
+            </div>
+
+        </a>
+</li>
+        </ul>
+</li>
+
+                        </ul>
+                        <ul class="space-y-3 inline-block align-top mr-6">
+                            <!-- Yan yana sıralamak için inline-block kullanıyoruz -->
+                            
+
+
+<li class="relative ">
+        <a class="flex items-center space-x-2 ml-0 text-gray-700 hover:text-black text-lg font-semibold mb-2" onmouseover="openSubmenu(2, 0)" onmouseleave="closeSubmenu(2, 0)" href="/erkek-giyim">
+           <div class="flex justify-center items-center gap-2">
+               
+               <img src="/uploads/5d9ad170-55bb-4474-b066-7273f30a958a.jpg" alt="Kategori Resmi" class="w-6 h-6 rounded-md object-cover">
+
+               <span>Erkek Giyim</span>
+               
+
+                
+           </div>
+            
+        </a>
+        <ul id="submenu-2" class="text-sm text-gray-600 space-y-2 transition-all duration-300 " onmouseover="cancelClose(2)" onmouseleave="closeSubmenu(2, 0)">
+
+
+
+<li class="relative ">
+        <a class="flex items-center space-x-2 ml-8 text-gray-700 hover:text-black text-base font-medium " onmouseover="openSubmenu(4, 1)" onmouseleave="closeSubmenu(4, 1)" href="/tisort-4">
+           <div class="flex justify-center items-center gap-2">
+               
+               <img src="/uploads/a31516a1-4eec-4894-8021-bc61a4439579.jpg" alt="Kategori Resmi" class="w-6 h-6 rounded-md object-cover">
+
+               <span>Tişört</span>
+               
+
+                
+           </div>
+            
+        </a>
+</li>
+
+
+
+<li class="relative ">
+        <a class="flex items-center space-x-2 ml-8 text-gray-700 hover:text-black text-base font-medium " onmouseover="openSubmenu(5, 1)" onmouseleave="closeSubmenu(5, 1)" href="/gomlek">
+           <div class="flex justify-center items-center gap-2">
+               
+               <img src="/uploads/5633d527-b79a-446d-83fd-d97cca8fe2f8.jpg" alt="Kategori Resmi" class="w-6 h-6 rounded-md object-cover">
+
+               <span>Gömlek</span>
+               
+
+                
+           </div>
+            
+        </a>
+</li>
+
+
+
+<li class="relative ">
+        <a class="flex items-center space-x-2 ml-8 text-gray-700 hover:text-black text-base font-medium " onmouseover="openSubmenu(1010, 1)" onmouseleave="closeSubmenu(1010, 1)" href="/kapusonlular">
+           <div class="flex justify-center items-center gap-2">
+               
+               <img src="/uploads/1111adad-4d44-45ac-8d1a-5cd146478861.jpg" alt="Kategori Resmi" class="w-6 h-6 rounded-md object-cover">
+
+               <span>Kapüşonlular</span>
+               
+
+                
+           </div>
+            
+                <svg class="w-4 h-4 transition-transform duration-300" id="arrow-1010" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+        </a>
+        <ul id="submenu-1010" class="text-sm text-gray-600 space-y-2 transition-all duration-300 hidden" onmouseover="cancelClose(1010)" onmouseleave="closeSubmenu(1010, 1)">
+
+
+
+<li class="relative pl-4">
+        <a class="flex items-center space-x-2 text-gray-700 hover:text-black text-sm " onmouseover="openSubmenu(1016, 2)" onmouseleave="closeSubmenu(1016, 2)" href="/tasarim-kapusonlular">
+            <div class="flex justify-center items-center gap-2">
+                
+                
+                <span class="pl-8">Tasarım Kapüşonlular</span>
+                
+
+
+            </div>
+
+        </a>
+</li>
+
+
+
+<li class="relative pl-4">
+        <a class="flex items-center space-x-2 ml-8 text-gray-700 hover:text-black text-sm " onmouseover="openSubmenu(1017, 2)" onmouseleave="closeSubmenu(1017, 2)" href="/basic-kapusonlular">
+           <div class="flex justify-center items-center gap-2">
+               
+               <img src="/uploads/5d9ad170-55bb-4474-b066-7273f30a958a.jpg" alt="Kategori Resmi" class="w-6 h-6 rounded-md object-cover">
+
+               <span>Basic Kapüşonlular</span>
+               
+
+                
+           </div>
+            
+                <svg class="w-4 h-4 transition-transform duration-300" id="arrow-1017" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+        </a>
+        <ul id="submenu-1017" class="text-sm text-gray-600 space-y-2 transition-all duration-300 hidden" onmouseover="cancelClose(1017)" onmouseleave="closeSubmenu(1017, 2)">
+
+
+
+<li class="relative pl-4">
+        <a class="flex items-center space-x-2 ml-8 text-gray-700 hover:text-black text-sm " onmouseover="openSubmenu(1018, 3)" onmouseleave="closeSubmenu(1018, 3)" href="/basic-kapusonlular-child1">
+           <div class="flex justify-center items-center gap-2">
+               
+               <img src="/uploads/a31516a1-4eec-4894-8021-bc61a4439579.jpg" alt="Kategori Resmi" class="w-6 h-6 rounded-md object-cover">
+
+               <span>Basic Kapüşonlular Child1</span>
+               
+
+                
+           </div>
+            
+        </a>
+</li>
+
+
+
+<li class="relative pl-4">
+        <a class="flex items-center space-x-2 ml-8 text-gray-700 hover:text-black text-sm " onmouseover="openSubmenu(1019, 3)" onmouseleave="closeSubmenu(1019, 3)" href="/basic-kapusonlular-child2">
+           <div class="flex justify-center items-center gap-2">
+               
+               <img src="/uploads/36c47885-a249-456a-bc13-ca2d080b41df.jpg" alt="Kategori Resmi" class="w-6 h-6 rounded-md object-cover">
+
+               <span>Basic Kapüşonlular Child2</span>
+               
+
+                
+           </div>
+            
+                <svg class="w-4 h-4 transition-transform duration-300" id="arrow-1019" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+        </a>
+        <ul id="submenu-1019" class="text-sm text-gray-600 space-y-2 transition-all duration-300 hidden" onmouseover="cancelClose(1019)" onmouseleave="closeSubmenu(1019, 3)">
+
+
+
+<li class="relative pl-4">
+        <a class="flex items-center space-x-2 text-gray-700 hover:text-black text-sm " onmouseover="openSubmenu(1020, 4)" onmouseleave="closeSubmenu(1020, 4)" href="/basic-kapusonlular-grandchild">
+            <div class="flex justify-center items-center gap-2">
+                
+                
+                <span class="pl-8">Basic Kapüşonlular Grandchild</span>
+                
+
+
+            </div>
+
+        </a>
+</li>
+        </ul>
+</li>
+        </ul>
+</li>
+        </ul>
+</li>
+
+
+
+<li class="relative ">
+        <a class="flex items-center space-x-2 ml-8 text-gray-700 hover:text-black text-base font-medium " onmouseover="openSubmenu(1023, 1)" onmouseleave="closeSubmenu(1023, 1)" href="/pantolon">
+           <div class="flex justify-center items-center gap-2">
+               
+               <img src="/uploads/57a8173a-c390-4afc-b0e2-f5ab890087f3.jpg" alt="Kategori Resmi" class="w-6 h-6 rounded-md object-cover">
+
+               <span>Pantolon</span>
+               
+
+                
+           </div>
+            
+        </a>
+</li>
+        </ul>
+</li>
+
+                        </ul>
+                        <ul class="space-y-3 inline-block align-top mr-6">
+                            <!-- Yan yana sıralamak için inline-block kullanıyoruz -->
+                            
+
+
+<li class="relative ">
+        <a class="flex items-center space-x-2 ml-0 text-gray-700 hover:text-black text-lg font-semibold mb-2" onmouseover="openSubmenu(1027, 0)" onmouseleave="closeSubmenu(1027, 0)" href="/deneme-kategori">
+           <div class="flex justify-center items-center gap-2">
+               
+               <img src="/uploads/cd04f2bd-e811-490d-be68-ca1d1ca8aa5f.jpg" alt="Kategori Resmi" class="w-6 h-6 rounded-md object-cover">
+
+               <span>Deneme Kategori</span>
+               
+
+                
+           </div>
+            
+        </a>
+</li>
+
+                        </ul>
+            </div>
+
+
+            <!-- Menü -->
+            
+
+    </div></header>
+
+    <div class="mx-auto px-6 py-6 flex flex-col md:flex-row gap-6">
+        <!-- Ödeme Bilgileri -->
+        <div class="basis-2/3 bg-gray-100 px-6 pt-8 pb-4 shadow-md rounded-lg w-full h-full self-start">
+            <h2 class="text-xl font-semibold mb-4">Kart Bilgileri</h2>
+            <form>
+                <div class="mb-4">
+                    <label for="card-name" class="block text-sm font-medium text-gray-700">Kart Üzerindeki İsim</label>
+                    <input type="text" id="card-name" class="block w-full border-b bg-transparent h-8 px-2 border-gray-400 shadow-sm transition ease-in-out duration-400 focus:border-gray-500 sm:text-sm" placeholder="Ad Soyad">
+                </div>
+                <div class="mb-4">
+                    <label for="card-number" class="block text-sm font-medium text-gray-700">Kart Numarası</label>
+                    <input type="text" id="card-number" class="block w-full border-b bg-transparent h-8 px-2 border-gray-400 shadow-sm transition ease-in-out duration-400 focus:border-gray-500 sm:text-sm" placeholder="1234 5678 9012 3456">
+                </div>
+                <div class="flex gap-4 mb-4">
+                    <div class="w-1/2">
+                        <label for="expiry-date" class="block text-sm font-medium text-gray-700">Son Kullanma Tarihi</label>
+                        <input type="text" id="expiry-date" class="block w-full border-b bg-transparent h-8 px-2 border-gray-400 shadow-sm transition ease-in-out duration-400 focus:border-gray-500 sm:text-sm" placeholder="MM/YY">
+                    </div>
+                    <div class="w-1/2">
+                        <label for="cvv" class="block text-sm font-medium text-gray-700">CVV</label>
+                        <input type="text" id="cvv" class="block w-full border-b bg-transparent h-8 px-2 border-gray-400 shadow-sm transition ease-in-out duration-400 focus:border-gray-500 sm:text-sm" placeholder="123">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-black text-white py-2 mt-4 rounded hover:bg-gray-800">
+                    Ödemeyi Tamamla
+                </button>
+            </form>
+        </div>
+
+        <!-- Sipariş Özeti -->
+        <div class="bg-gray-100 px-6 pt-8 pb-4 shadow-md rounded-lg w-full h-full md:w-1/3 sticky top-[150px] self-end">
+            <h2 class="text-xl font-semibold mb-4">Sipariş Özeti</h2>
+            <div class="flex justify-between mb-2">
+                <span>Ara Toplam:</span>
+                <span>₺2.499,97</span>
+            </div>
+            <div class="flex justify-between mb-2">
+                <span>KDV:</span>
+                <span>₺499,99</span>
+            </div>
+            <div class="flex justify-between mb-2">
+                <span>Kargo:</span>
+                <span>Ücretsiz</span>
+            </div>
+            <hr class="my-2 h-px bg-gray-300 border-0">
+            <div class="flex justify-between font-bold text-lg">
+                <span>Toplam:</span>
+                <span>₺2.999,96</span>
+            </div>
+
+            <!-- İndirim Kodu Butonu -->
+            <div class="mt-4 flex justify-center">
+                <button id="discount-button" class="w-auto font-semibold hover:underline text-gray-800 py-2 rounded">
+                    Kupon Kodu +
+                </button>
+
+                <!-- Kupon Kodu Alanı (Başlangıçta Gizli) -->
+                <div id="coupon-section" class="hidden my-4">
+                    <div class="flex gap-2">
+                        <input type="text" id="coupon-code" class="block w-full border-b bg-transparent h-8 px-2 border-gray-400 shadow-sm transition ease-in-out duration-400 focus:border-gray-500 sm:text-sm" placeholder="Kupon kodunuzu girin">
+                        <button id="apply-coupon" class="px-4 bg-green-700 font-semibold text-gray-50 rounded h-8 transition ease-in-out duration-300 hover:bg-green-800">
+                            Uygula
+                        </button>
+                    </div>
+                    <p id="coupon-message" class="text-sm text-green-600 mt-2 hidden">Kupon başarıyla uygulandı!</p>
+                    <p id="error-message" class="text-sm text-red-600 mt-2 hidden">Geçersiz kupon kodu.</p>
+                </div>
+            </div>
+
+            
+
+            <div class="flex justify-center font-bold mt-3 gap-x-1">
+                <i class="fa-brands fa-cc-mastercard"></i>
+                <i class="fa-brands fa-cc-visa"></i>
+                <i class="fa-brands fa-paypal"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="mx-auto px-6 py-6 flex flex-col md:flex-row gap-6"></div>
+        <!-- Adres Bilgileri -->
+        <div class="basis-2/3 bg-gray-100 px-6 pt-8 pb-4 shadow-md rounded-lg">
+            <h2 class="text-xl font-semibold mb-4">Adres Bilgileri</h2>
+            <!-- Kayıtlı Adresler -->
+            <h3 class="text-lg font-medium text-gray-700 mb-2">Kayıtlı Adresler</h3>
+            <ul class="space-y-4 mb-4">
+                <li class="p-4 bg-white shadow rounded-lg">
+                    <p class="text-sm text-gray-700">Adres 1: İstanbul, Kadıköy, Örnek Mahallesi</p>
+                    <button class="text-sm text-blue-600 hover:underline mt-2">Düzenle</button>
+                </li>
+                <li class="p-4 bg-white shadow rounded-lg">
+                    <p class="text-sm text-gray-700">Adres 2: Ankara, Çankaya, Kızılay</p>
+                    <button class="text-sm text-blue-600 hover:underline mt-2">Düzenle</button>
+                </li>
+            </ul>
+            <!-- Yeni Adres Ekleme Formu -->
+            <form>
+                <div class="mb-4">
+                    <label for="address" class="block text-sm font-medium text-gray-700">Yeni Adres</label>
+                    <textarea id="address" class="block w-full border-b bg-transparent px-2 border-gray-400 shadow-sm transition ease-in-out duration-400 focus:border-gray-500 sm:text-sm" rows="3" placeholder="Adresinizi girin"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="city" class="block text-sm font-medium text-gray-700">Şehir</label>
+                    <input type="text" id="city" class="block w-full border-b bg-transparent h-8 px-2 border-gray-400 shadow-sm transition ease-in-out duration-400 focus:border-gray-500 sm:text-sm" placeholder="Şehir">
+                </div>
+                <div class="mb-4">
+                    <label for="postal-code" class="block text-sm font-medium text-gray-700">Posta Kodu</label>
+                    <input type="text" id="postal-code" class="block w-full border-b bg-transparent h-8 px-2 border-gray-400 shadow-sm transition ease-in-out duration-400 focus:border-gray-500 sm:text-sm" placeholder="Posta Kodu">
+                </div>
+                <button type="submit" class="w-full bg-black text-white py-2 mt-4 rounded hover:bg-gray-800">
+                    Adresi Kaydet
+                </button>
+            </form>
+        </div>
+
+        <!-- Sözleşme -->
+        <div class="basis-1/3 bg-gray-100 px-6 pt-8 pb-4 shadow-md rounded-lg flex flex-col items-center text-center">
+            <h2 class="text-xl font-semibold mb-4">Sözleşme</h2>
+            <p class="text-sm text-gray-600 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel nisi id libero tincidunt tincidunt. Vivamus vehicula, justo at tincidunt tincidunt, nulla lorem vehicula eros, non tincidunt justo lorem a eros.</p>
+            <div class="mt-4">
+                <input type="checkbox" id="agreement" class="mr-2">
+                <label for="agreement" class="text-sm text-gray-700">Sözleşmeyi okudum ve kabul ediyorum.</label>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
