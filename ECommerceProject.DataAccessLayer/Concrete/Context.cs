@@ -36,6 +36,13 @@ namespace ECommerceProject.DataAccessLayer.Concrete
                 .HasForeignKey(c => c.ParentCategoryId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<Cart>()
+                .HasOne(c => c.AppUser)  // Cart, bir AppUser ile ilişkilidir
+                .WithOne(a => a.Cart)     // AppUser da bir Cart'a sahiptir
+                .HasForeignKey<Cart>(c => c.AppUserId)  // Cart tablosunda AppUserId Foreign Key olarak kullanılacak
+                .OnDelete(DeleteBehavior.Cascade); // Kullanıcı silinirse sepette silinsin
+
+
             // Adress ile Sales arasındaki ilişki için Cascade Delete kaldırılıyor
             //modelBuilder.Entity<Sale>()
             //    .HasOne(s => s.Adress)

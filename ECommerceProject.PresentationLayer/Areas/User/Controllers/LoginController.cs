@@ -1,4 +1,5 @@
-﻿using ECommerceProject.DtoLayer.Dtos.AppUserDtos;
+﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.DtoLayer.Dtos.AppUserDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,13 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
 
-        public LoginController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+        private readonly ICartService _cartService;
+
+        public LoginController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, ICartService cartService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _cartService = cartService;
         }
 
         [HttpGet]
@@ -36,6 +40,20 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     {
                         if (!user.EmailConfirmed)
                             return Content("Lütfen mailinizi onaylayınız.");
+                        if(Request.Cookies["TempUserId"] != null)
+                        {
+                            // TODO: Geçici Sepet içeriğini kullanıcının sepetine aktar
+                            string tempUserId = Request.Cookies["TempUserId"];
+                            bool isTransferSuccess = _cartService.TTransferCart(tempUserId, user.Id);
+
+                            // Geçici Sepeti sil
+                            if (isTransferSuccess)
+                                _cartService.TDeleteByTempUserId(tempUserId);
+
+                            // Cookie yi sil
+                            if (isTransferSuccess)
+                                Response.Cookies.Delete("TempUserId");
+                        }
                         return RedirectToAction("Index", "CustomerProfile");
                         //return RedirectToAction("Index", "Home");
                     }

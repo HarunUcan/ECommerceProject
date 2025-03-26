@@ -4,6 +4,7 @@ using ECommerceProject.DataAccessLayer.Abstract;
 using ECommerceProject.DataAccessLayer.Concrete;
 using ECommerceProject.DataAccessLayer.EntityFramework;
 using ECommerceProject.EntityLayer.Concrete;
+using ECommerceProject.PresentationLayer.Middlewares;
 using ECommerceProject.PresentationLayer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
@@ -56,6 +57,9 @@ namespace ECommerceProject.PresentationLayer
             builder.Services.AddScoped<ICouponService, CouponManager>();
             builder.Services.AddScoped<ICouponDal, EfCouponDal>();
 
+            builder.Services.AddScoped<ICartService, CartManager>();
+            builder.Services.AddScoped<ICartDal, EfCartDal>();
+
             builder.Services.AddScoped<IMailSenderService, MailSenderManager>();
 
             builder.Services.ConfigureApplicationCookie(options =>
@@ -91,6 +95,9 @@ namespace ECommerceProject.PresentationLayer
             app.UseAuthentication();    
             app.UseAuthorization();
 
+            // Middleware’i ekle
+            app.UseMiddleware<CheckUserMiddleware>();
+
             //app.UseEndpoints(endpoints =>
             //{
 
@@ -99,15 +106,15 @@ namespace ECommerceProject.PresentationLayer
             //});
 
             //Admin Routes
-            app.MapControllerRoute(
-                name: "admin_default",
-                pattern: "admin",
-                defaults: new { area = "Admin", controller = "Dashboard", action = "Index" });
+            //app.MapControllerRoute(
+            //    name: "admin_default",
+            //    pattern: "admin",
+            //    defaults: new { area = "Admin", controller = "Dashboard", action = "Index" });
 
-            app.MapControllerRoute(
-                name: "admin_route",
-                pattern: "admin/{controller}/{action}/{id?}",
-                defaults: new { area = "Admin", controller = "Dashboard", action = "Index" });
+            //app.MapControllerRoute(
+            //    name: "admin_route",
+            //    pattern: "admin/{controller}/{action}/{id?}",
+            //    defaults: new { area = "Admin", controller = "Dashboard", action = "Index" });
 
             //User Routes
             app.MapControllerRoute(

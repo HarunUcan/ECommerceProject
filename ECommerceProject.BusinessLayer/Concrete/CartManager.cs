@@ -23,6 +23,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
             _cartDal.Delete(t);
         }
 
+        public bool TDeleteByTempUserId(string tempUserId)
+        {
+            return _cartDal.DeleteByTempUserId(tempUserId);
+        }
+
         public Cart TGetById(int id)
         {
             return _cartDal.GetById(id);
@@ -36,6 +41,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
         public void TInsert(Cart t)
         {
             _cartDal.Insert(t);
+        }
+
+        public bool TTransferCart(string tempUserId, int appUserId)
+        {
+            return _cartDal.TransferCart(tempUserId, appUserId);
         }
 
         public void TUpdate(Cart t)

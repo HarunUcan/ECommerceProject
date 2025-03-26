@@ -9,5 +9,7 @@ namespace ECommerceProject.DataAccessLayer.Abstract
 {
     public interface ICartDal : IGenericDal<Cart>
     {
+        bool DeleteByTempUserId(string tempUserId);
+        bool TransferCart(string tempUserId, int appUserId);
     }
 }

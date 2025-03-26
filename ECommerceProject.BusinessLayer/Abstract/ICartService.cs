@@ -9,5 +9,7 @@ namespace ECommerceProject.BusinessLayer.Abstract
 {
     public interface ICartService : IGenericService<Cart>
     {
+        bool TDeleteByTempUserId(string tempUserId);
+        bool TTransferCart(string tempUserId, int appUserId);
     }
 }
