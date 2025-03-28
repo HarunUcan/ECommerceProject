@@ -11,5 +11,7 @@ namespace ECommerceProject.BusinessLayer.Abstract
     {
         bool TDeleteByTempUserId(string tempUserId);
         bool TTransferCart(string tempUserId, int appUserId);
+        bool TAddToCart(string? tempUserId, int userId, int productId, int quantity, ProductSize size);
+        Cart TGetCart(string? tempUserId, int userId);
     }
 }

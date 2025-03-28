@@ -18,6 +18,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
             _cartDal = cartDal;
         }
 
+        public bool TAddToCart(string? tempUserId, int userId, int productId, int quantity, ProductSize size)
+        {
+            return _cartDal.AddToCart(tempUserId, userId, productId, quantity, size);
+        }
+
         public void TDelete(Cart t)
         {
             _cartDal.Delete(t);
@@ -31,6 +36,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
         public Cart TGetById(int id)
         {
             return _cartDal.GetById(id);
+        }
+
+        public Cart TGetCart(string? tempUserId, int userId)
+        {
+            return _cartDal.GetCart(tempUserId, userId);
         }
 
         public List<Cart> TGetList()

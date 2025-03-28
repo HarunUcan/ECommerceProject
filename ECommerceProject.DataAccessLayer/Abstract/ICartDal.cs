@@ -11,5 +11,7 @@ namespace ECommerceProject.DataAccessLayer.Abstract
     {
         bool DeleteByTempUserId(string tempUserId);
         bool TransferCart(string tempUserId, int appUserId);
+        bool AddToCart(string? tempUserId, int userId, int productId, int quantity, ProductSize size);
+        Cart GetCart(string? tempUserId, int userId);
     }
 }

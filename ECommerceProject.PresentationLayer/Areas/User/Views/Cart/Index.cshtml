@@ -84,410 +84,96 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Ürün Satırı -->
-                    <tr class="border-b">
-                        <td class="py-4 flex items-center space-x-4">
-                            <img src="~/uploads/11019c2d-55cd-48fb-9cca-49323d34a1e7.jpg" alt="Ürün 1"
-                                 class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
-                            <div>
-                                <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
-                                <div class="text-sm text-gray-500">067153-70722</div>
-                                <div class="text-sm text-gray-500">Beden: M</div>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">
-                            <div>
-                                <div class="line-through text-red-500 text-sm">₺329,99</div>
-                                <div>₺299,99</div>
-                            </div>
-                        </td>
-                        <td class="py-4">
+                    @foreach(var cartItem in Model.Cart.CartItems)
+                    {
+                        <!-- Ürün Satırı -->
+                        <tr class="border-b">
+                            <td class="py-4 flex items-center space-x-4">
+                                <img src="@cartItem.Product.ProductImages.FirstOrDefault().Url.Replace("wwwroot","")" alt="Ürün 1"
+                                     class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
+                                <div>
+                                    <div class="font-semibold">@cartItem.Product.Name</div>
+                                    <div class="text-sm text-gray-500">067153-70722</div>
+                                    <div class="text-sm text-gray-500">Beden: @cartItem.Size</div>
+                                </div>
+                            </td>
 
-                            <div class="flex justify-center items-center quantity-input w-24">
-                                <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                                    -
-                                </button>
-                                <input type="number" class="outline-none bg-gray-50" value="1" min="1">
-                                <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                                    +
-                                </button>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
-                            <a href="#">
-                                <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Ürün Satırı -->
-                    <tr class="border-b">
-                        <td class="py-4 flex items-center space-x-4">
-                            <img src="~/uploads/1111adad-4d44-45ac-8d1a-5cd146478861.jpg" alt="Ürün 1"
-                                 class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
-                            <div>
-                                <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
-                                <div class="text-sm text-gray-500">067153-70722</div>
-                                <div class="text-sm text-gray-500">Beden: M</div>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
+                            <!-- Birim Fİyat -->
+                            <td class="py-4 hidden sm:table-cell">
+                                <div>
+                                    @* <div class="line-through text-red-500 text-sm">₺329,99</div> *@ <!-- İndirim Alanı -->
+                                    <div>₺@cartItem.Product.Price</div>
+                                </div>
+                            </td>
+                            <td class="py-4">
 
-                            <div class="flex justify-center items-center quantity-input w-24">
-                                <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                                    -
-                                </button>
-                                <input type="number" class="outline-none bg-gray-50" value="1" min="1">
-                                <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                                    +
-                                </button>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
-                            <a href="#">
-                                <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Ürün Satırı -->
-                    <tr class="border-b">
-                        <td class="py-4 flex items-center space-x-4">
-                            <img src="~/uploads/40851d80-cf07-40ac-bd91-03c28e2e7afc.jpg" alt="Ürün 1"
-                                 class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
-                            <div>
-                                <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
-                                <div class="text-sm text-gray-500">067153-70722</div>
-                                <div class="text-sm text-gray-500">Beden: M</div>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
+                                <div class="flex justify-center items-center quantity-input w-24">
+                                    <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
+                                        -
+                                    </button>
+                                    <input type="number" class="outline-none bg-gray-50" value="@cartItem.Quantity" min="1">
+                                    <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
+                                        +
+                                    </button>
+                                </div>
+                            </td>
 
-                            <div class="flex justify-center items-center quantity-input w-24">
-                                <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                                    -
-                                </button>
-                                <input type="number" class="outline-none bg-gray-50" value="1" min="1">
-                                <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                                    +
-                                </button>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
-                            <a href="#">
-                                <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Ürün Satırı -->
-                    <tr class="border-b">
-                        <td class="py-4 flex items-center space-x-4">
-                            <img src="~/uploads/4f3e6c15-9b34-403c-8f9c-5731548c7be1.jpg" alt="Ürün 1"
-                                 class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
-                            <div>
-                                <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
-                                <div class="text-sm text-gray-500">067153-70722</div>
-                                <div class="text-sm text-gray-500">Beden: M</div>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
+                            <!-- Toplam Fİyat -->
+                            <td class="py-4 hidden sm:table-cell">₺@(cartItem.Product.Price * cartItem.Quantity)</td>
+                            <td class="py-4">
+                                <a href="#">
+                                    <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
 
-                            <div class="flex justify-center items-center quantity-input w-24">
-                                <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                                    -
-                                </button>
-                                <input type="number" class="outline-none bg-gray-50" value="1" min="1">
-                                <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                                    +
-                                </button>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
-                            <a href="#">
-                                <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Ürün Satırı -->
-                    <tr class="border-b">
-                        <td class="py-4 flex items-center space-x-4">
-                            <img src="~/uploads/2352783d-936b-440b-829a-e4eaf74d8374.jpg" alt="Ürün 2"
-                                 class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
-                            <div>
-                                <div class="font-semibold">Baskılı Siyah Sweatshirt</div>
-                                <div class="text-sm text-gray-500">0510165-900</div>
-                                <div class="text-sm text-gray-500">Beden: XS</div>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺999,99</td>
-                        <td class="py-4">
-
-                            <div class="flex justify-center items-center quantity-input w-24">
-                                <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                                    -
-                                </button>
-                                <input type="number" class="outline-none bg-gray-50" value="1" min="1">
-                                <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                                    +
-                                </button>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺999,99</td>
-                        <td class="py-4">
-                            <a href="#">
-                                <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Ürün Satırı -->
-                    <tr class="border-b">
-                        <td class="py-4 flex items-center space-x-4">
-                            <img src="~/uploads/3a88c635-413c-49ad-a1af-11fc45c6ea6c.jpg" alt="Ürün 1"
-                                 class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
-                            <div>
-                                <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
-                                <div class="text-sm text-gray-500">067153-70722</div>
-                                <div class="text-sm text-gray-500">Beden: M</div>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
-                            <div class="flex items-center">
-                                <button onclick="decreaseQuantity('quantity-1')"
-                                        class="w-8 h-8 bg-gray-200 text-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-300">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                                <input id="quantity-1" type="number" value="1"
-                                       class="w-12 text-center border rounded h-8" readonly>
-                                <button onclick="increaseQuantity('quantity-1')"
-                                        class="w-8 h-8 bg-gray-200 text-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-300">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
-                            <a href="#">
-                                <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Ürün Satırı -->
-                    <tr class="border-b">
-                        <td class="py-4 flex items-center space-x-4">
-                            <img src="urun10.jpg" alt="Ürün 1"
-                                 class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
-                            <div>
-                                <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
-                                <div class="text-sm text-gray-500">067153-70722</div>
-                                <div class="text-sm text-gray-500">Beden: M</div>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
-                            <div class="flex items-center">
-                                <button onclick="decreaseQuantity('quantity-1')"
-                                        class="w-8 h-8 bg-gray-200 text-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-300">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                                <input id="quantity-1" type="number" value="1"
-                                       class="w-12 text-center border rounded h-8" readonly>
-                                <button onclick="increaseQuantity('quantity-1')"
-                                        class="w-8 h-8 bg-gray-200 text-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-300">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
-                            <a href="#">
-                                <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Ürün Satırı -->
-                    <tr class="border-b">
-                        <td class="py-4 flex items-center space-x-4">
-                            <img src="urun10.jpg" alt="Ürün 1"
-                                 class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
-                            <div>
-                                <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
-                                <div class="text-sm text-gray-500">067153-70722</div>
-                                <div class="text-sm text-gray-500">Beden: M</div>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
-                            <div class="flex items-center">
-                                <button onclick="decreaseQuantity('quantity-1')"
-                                        class="w-8 h-8 bg-gray-200 text-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-300">
-                                    <i class="fa-solid fa-minus"></i>
-                                </button>
-                                <input id="quantity-1" type="number" value="1"
-                                       class="w-12 text-center border rounded h-8" readonly>
-                                <button onclick="increaseQuantity('quantity-1')"
-                                        class="w-8 h-8 bg-gray-200 text-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-300">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td class="py-4 hidden sm:table-cell">₺299,99</td>
-                        <td class="py-4">
-                            <a href="#">
-                                <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
-                            </a>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
 
-            <!-- Mobil Görünüm Ürün Kartı -->
-            <div class="border border-gray-400 pt-2 pb-8 rounded-lg sm:hidden">
+            @foreach (var cartItem in Model.Cart.CartItems)
+            {
+                <!-- Mobil Görünüm Ürün Kartı -->
+                <div class="border border-gray-400 pt-2 pb-8 mb-3 rounded-lg sm:hidden">
 
-                <div class="flex justify-between p-3">
-                    <img src="urun13.jpg" alt=""
-                         class="w-24 h-24 rounded object-cover min-w-[64px] min-h-[64px] object-top">
-                    <div class="ml-2">
-                        <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
-                        <div class="text-sm text-gray-500 pt-1">Ürün Kodu: 067153-70722</div>
-                        <div class="text-sm text-gray-500 pt-1">Beden: M</div>
-                        <div class="text-xs text-red-500 pt-1 line-through">₺329,99</div>
-                        <div class="text-sm text-gray-500 ">₺299,99</div>
+                    <div class="flex justify-between p-3">
+                        <img src="@cartItem.Product.ProductImages.FirstOrDefault().Url.Replace("wwwroot","")" alt=""
+                             class="w-24 h-24 rounded object-cover min-w-[64px] min-h-[64px] object-top">
+                        <div class="ml-2">
+                            <div class="font-semibold">@cartItem.Product.Name</div>
+                            <div class="text-sm text-gray-500 pt-1">Ürün Kodu: 067153-70722</div>
+                            <div class="text-sm text-gray-500 pt-1">Beden: @cartItem.Size</div>
+                            @* <div class="text-xs text-red-500 pt-1 line-through">₺329,99</div> *@ <!-- İndirim Alanı -->
+                            <div class="text-sm text-gray-500 ">₺@cartItem.Product.Price</div>
+                        </div>
+                        <div class="">
+                            <a href="#">
+                                <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
+                            </a>
+                        </div>
                     </div>
-                    <div class="">
-                        <a href="#">
-                            <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
-                        </a>
+
+                    <div class="flex items-center justify-between">
+                        <div class="quantity-input w-24 ml-3">
+                            <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
+                                -
+                            </button>
+                            <input type="number" class="outline-none bg-gray-50" value="@cartItem.Quantity" min="1">
+                            <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
+                                +
+                            </button>
+                        </div>
+
+                        <div class="text-sm text-gray-1000 mr-8">Toplam: ₺@(cartItem.Product.Price * cartItem.Quantity)</div>
                     </div>
+
+
                 </div>
+            }
 
-                <div class="flex items-center justify-between">
-                    <div class="quantity-input w-24 ml-3">
-                        <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                            -
-                        </button>
-                        <input type="number" class="outline-none bg-gray-50" value="1" min="1">
-                        <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                            +
-                        </button>
-                    </div>
-
-                    <div class="text-sm text-gray-1000 mr-8">Toplam: ₺299,99</div>
-                </div>
-
-
-            </div>
-            <!-- Mobil Görünüm Ürün Kartı -->
-            <div class="border border-gray-400 pt-2 pb-8 rounded-lg sm:hidden mt-4">
-
-                <div class="flex justify-between p-3">
-                    <img src="urun6.jpg" alt=""
-                         class="w-24 h-24 rounded object-cover min-w-[64px] min-h-[64px] object-top">
-                    <div class="ml-2">
-                        <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
-                        <div class="text-sm text-gray-500 pt-1">Ürün Kodu: 067153-70722</div>
-                        <div class="text-sm text-gray-500 pt-1">Beden: M</div>
-                        <div class="text-sm text-gray-500 pt-1">₺299,99</div>
-                    </div>
-                    <div class="">
-                        <a href="#">
-                            <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <div class="quantity-input w-24 ml-3">
-                        <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                            -
-                        </button>
-                        <input type="number" class="outline-none bg-gray-50" value="2" min="1">
-                        <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                            +
-                        </button>
-                    </div>
-
-                    <div class="text-sm text-gray-1000 mr-8">Toplam: ₺599,98</div>
-                </div>
-
-
-            </div>
+            
         </div>
-        <!-- Mobil Görünüm Ürün Kartı -->
-        <div class="border border-gray-400 pt-2 pb-8 rounded-lg sm:hidden">
-
-            <div class="flex justify-between p-3">
-                <img src="urun9.jpg" alt=""
-                     class="w-24 h-24 rounded object-cover min-w-[64px] min-h-[64px] object-top">
-                <div class="ml-2">
-                    <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
-                    <div class="text-sm text-gray-500 pt-1">Ürün Kodu: 067153-70722</div>
-                    <div class="text-sm text-gray-500 pt-1">Beden: M</div>
-                    <div class="text-sm text-gray-500 pt-1">₺299,99</div>
-                </div>
-                <div class="">
-                    <a href="#">
-                        <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-between">
-                <div class="quantity-input w-24 ml-3">
-                    <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                        -
-                    </button>
-                    <input type="number" class="outline-none bg-gray-50" value="1" min="1">
-                    <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                        +
-                    </button>
-                </div>
-
-                <div class="text-sm text-gray-1000 mr-8">Toplam: ₺299,99</div>
-            </div>
-
-
-        </div>
-        <!-- Mobil Görünüm Ürün Kartı -->
-        <div class="border border-gray-400 pt-2 pb-8 rounded-lg sm:hidden">
-
-            <div class="flex justify-between p-3">
-                <img src="urun11.jpg" alt=""
-                     class="w-24 h-24 rounded object-cover min-w-[64px] min-h-[64px] object-top">
-                <div class="ml-2">
-                    <div class="font-semibold">Mavi Baskılı Lacivert Tişört</div>
-                    <div class="text-sm text-gray-500 pt-1">Ürün Kodu: 067153-70722</div>
-                    <div class="text-sm text-gray-500 pt-1">Beden: M</div>
-                    <div class="text-sm text-gray-500 pt-1">₺299,99</div>
-                </div>
-                <div class="">
-                    <a href="#">
-                        <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-between">
-                <div class="quantity-input w-24 ml-3">
-                    <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                        -
-                    </button>
-                    <input type="number" class="outline-none bg-gray-50" value="1" min="1">
-                    <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                        +
-                    </button>
-                </div>
-
-                <div class="text-sm text-gray-1000 mr-8">Toplam: ₺299,99</div>
-            </div>
-
-
-        </div>
+        
 
         <!-- Sipariş Özeti -->
         <div class="bg-gray-100 px-6 pt-8 pb-4 shadow-md rounded-lg w-full h-full md:w-1/3 sticky top-[150px] self-start">
