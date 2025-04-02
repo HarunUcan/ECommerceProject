@@ -5,197 +5,107 @@
 }
 
 <head>
+    <!-- Swiper JS ve CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
     <style>
-        .product-image {
-            border-radius: 12px;
-        }
-
-        .related-product {
-            transition: transform 0.3s ease;
-        }
-
-        .related-product:hover {
-            transform: scale(1.05);
-        }
-
-        .details-container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 20px;
-        }
-
-        .price {
-            font-size: 1.75rem;
-            color: #333;
-        }
-
-        .btn-add-to-cart {
-            background-color: black;
-            color: white;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-add-to-cart:hover {
-            background-color: gray;
-        }
-
-        .size-option {
-            padding: 10px 20px;
-            border: 2px solid #333;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .size-option:hover {
-            background-color: #f0f0f0;
-        }
-
-        .size-option.selected {
-            background-color: #007104;
-            color: white;
-        }
-
-        .size-option.disabled {
-            background-color: #e0e0e0;
-            cursor: not-allowed;
-            color: #999;
-        }
-
-        .out-of-stock {
-            color: #999;
-            position: relative;
-        }
-
-        .out-of-stock .fa-times {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            color: red;
-            font-size: 18px;
-            background-color: white;
-            border-radius: 50%;
-            border-color: black;
-            border-width: 1px;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0;
-        }
-
-        /* .stock-status {
-            font-size: 0.875rem;
-            color: #333;
-            margin-top: 5px;
-        }
-
-        .stock-status.in-stock {
-            color: #4CAF50;
-        }
-
-        .stock-status.out-of-stock {
-            color: #F44336;
-        } */
-
-        .stock-quantity {
-            font-size: 0.875rem;
-            color: #555;
-            margin-top: 3px;
-        }
-
-        .quantity-input {
-            display: flex;
-            align-items: center;
-            border: 2px solid #333;
-            padding: 5px 10px;
-            border-radius: 8px;
-        }
-
-        .quantity-input input {
-            width: 40px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        #slider {
-            display: flex;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-        }
-
-        /* Hide default scrollbar for the carousel */
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            /* Internet Explorer 10+ */
-            scrollbar-width: none;
-            /* Firefox */
-        }
-
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-            /* WebKit */
-        }
-
-        @@layer base {
-
-            input[type="number"]::-webkit-inner-spin-button,
-            input[type="number"]::-webkit-outer-spin-button {
-                -webkit-appearance: none;
-                margin: 0;
-            }
+        .swiper-button-next:after, .swiper-button-prev:after {
+            font-size: 24px; /* İkonların boyutunu ayarlamak için */
+            font-weight: 900; /* İkonların kalınlığını ayarlamak için */
+            color:black; /* İkon rengini ayarlamak için */
         }
     </style>
 </head>
 
 <!-- Ürün Detay Bölümü -->
-<div class="details-container bg-white p-6 rounded-lg shadow-lg mt-8">
-
+<div class="mx-2 bg-white p-6 rounded-lg shadow-lg mt-8">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Ürün Resmi -->
         <div>
-            <img src="@Model.ProductDto.MainImageUrl" alt="Ürün Resmi" class="product-image w-full h-auto">
+            <img id="mainImage" src="@Model.ProductDto.MainImageUrl" alt="Ürün Resmi" class="w-full h-auto rounded-xl">
+
+            <!-- Diğer Görseller Swiper Slider -->
+            <div class="swiper my-4">
+                <div class="swiper-wrapper">
+
+                    <div class="swiper-slide">
+                        <img src="@Model.ProductDto.MainImageUrl" alt="Ürün Görseli" class="w-24 h-24 rounded-lg object-cover cursor-pointer" onclick="changeMainImage(this)">
+                    </div>
+
+                    @foreach (var imageUrl in Model.ProductDto.OtherImageUrls)
+                    {
+                        <div class="swiper-slide">
+                            <img src="@imageUrl" alt="Ürün Görseli" class="w-24 h-24 rounded-lg object-cover cursor-pointer" onclick="changeMainImage(this)">
+                        </div>
+                    }
+                </div>
+                <!-- Swiper Navigasyon Butonları -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
         </div>
 
         <!-- Ürün Bilgileri -->
         <div>
             <h1 class="text-3xl font-semibold mb-2">@Model.ProductDto.Name</h1>
-            <p class="text-gray-600 mb-4">
-                @Model.ProductDto.Description
-            </p>
-            <div class="price font-bold mb-4">₺@Model.ProductDto.Price</div>
+            <p class="text-gray-600 mb-4">@Model.ProductDto.Description</p>
+            <div class="text-2xl font-bold text-gray-900 mb-4">₺@Model.ProductDto.Price</div>
 
-            <!-- Beden Seçimi -->
-            <label class="block mb-2 text-gray-700 font-medium">Beden Seçimi</label>
-            <div class="flex space-x-4 mb-4">
-                <button class="size-option" onclick="selectSize(this)">S</button>
-                <button class="size-option" onclick="selectSize(this)">M</button>
-                <button class="size-option out-of-stock disabled relative" onclick="selectSize(this)">
-                    L <i class="fa-solid fa-times"></i>
+            <form action="/" method="get">
+                <!-- Beden Seçimi -->
+                <label class="block mb-2 text-gray-700 font-medium">Beden Seçimi</label>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    @foreach (var size in new[] { "STD", "2XS", "XS", "S", "M", "L", "XL", "2XL" })
+                    {
+                        var isDisabled = size == "L"; // Örnek olarak "L" stokta yok
+                        <label class="flex items-center relative cursor-pointer">
+                            <input type="radio" name="size" value="@size" class="hidden" onclick="selectSize(this)" @(isDisabled ? "disabled" : "")>
+                            <span class="px-5 py-2 border-2 border-gray-800 rounded-lg transition-colors @(isDisabled ? "bg-gray-300 text-gray-500 cursor-not-allowed relative" : "hover:bg-gray-100")">
+                                @size
+                                @if (isDisabled)
+                                {
+                                    <span class="absolute top-0 right-0 -mt-2 -mr-2 w-5 h-5 bg-white border border-black text-red-600 flex items-center justify-center rounded-full text-xs">
+                                        ✕
+                                    </span>
+                                }
+                            </span>
+                        </label>
+                    }
+                </div>
+
+                <!-- Adet Seçimi -->
+                <label class="block mb-2 text-gray-700 font-medium">Adet Seçimi</label>
+                <div class="flex items-center border-2 border-gray-800 p-2 rounded-lg w-28">
+                    <button type="button" class="w-7 h-7 bg-white text-lg rounded-full transition hover:bg-gray-300">-</button>
+                    <input type="number" class="w-10 text-center text-lg outline-none" value="1" min="1">
+                    <button type="button" class="w-7 h-7 bg-white text-lg rounded-full transition hover:bg-gray-300">+</button>
+                </div>
+
+                <!-- Stok Adedi -->
+                <div class="text-sm text-gray-600 mt-2">Stok Adedi: 20</div>
+
+                <!-- Sepete Ekle Butonu -->
+                <button class="w-full py-3 mt-4 bg-black text-white rounded-lg text-lg font-semibold transition hover:bg-gray-700">
+                    <i class="fa-solid fa-bag-shopping mr-2"></i> Sepete Ekle
                 </button>
-                <button class="size-option" onclick="selectSize(this)">XL</button>
-            </div>
 
-            <!-- Adet Seçimi -->
-            <label class="block mb-2 text-gray-700 font-medium">Adet Seçimi</label>
-            <div class="flex justify-center items-center quantity-input w-28">
-                <button class="flex justify-center items-center bg-white w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                    -
-                </button>
-                <input type="number" class="outline-none" value="1" min="1">
-                <button class="flex justify-center items-center bg-white w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
-                    +
-                </button>
-            </div>
-
-            <!-- Stok Adedi -->
-            <div class="stock-quantity mb-4">Stok Adedi: 20</div>
-
-            <!-- Sepete Ekle Butonu -->
-            <button class="btn-add-to-cart w-full py-3 rounded-lg text-lg font-semibold">
-                <i class="fa-solid fa-bag-shopping mr-2"></i> Sepete Ekle
-            </button>
+                <!-- Grup Ürünleri -->
+                @if (Model.ProductDto.GroupProducts != null && Model.ProductDto.GroupProducts.Any())
+                {
+                    <div class="mt-6">
+                        <h2 class="text-lg font-semibold mb-2">Renk Seçenekleri</h2>
+                        <div class="flex flex-wrap gap-4 overflow-x-auto">
+                            @foreach (var groupProduct in Model.ProductDto.GroupProducts)
+                            {
+                                <a asp-controller="Home" asp-action="ProductDetail" asp-route-slug="@groupProduct.Slug" class="flex flex-col items-center w-12 md:w-16 text-center">
+                                    <img src="@groupProduct.ImageUrl" alt="" class="w-full h-12 md:h-16 rounded-lg object-cover shadow">
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+            </form>
         </div>
     </div>
 
@@ -205,9 +115,57 @@
         <ul class="list-disc pl-6 text-gray-600">
             <li>Malzeme: %100 Pamuk</li>
             <li>Renk: Beyaz</li>
-            <li>Boyut: S, M, L, XL</li>
+            <li>Boyut: STD, 2XS, XS, S, M, L, XL, 2XL</li>
             <li>Yıkama Talimatları: 30°C’de yıkanabilir.</li>
         </ul>
     </div>
 </div>
 
+
+<script>
+    function selectSize(element) {
+        document.querySelectorAll('input[name="size"] + span').forEach(span => {
+            span.classList.remove('bg-green-600', 'text-white', 'hover:bg-gray-100');
+            span.classList.add('border-gray-800', 'text-black');
+        });
+        if (!element.disabled) {
+            element.nextElementSibling.classList.add('bg-green-600', 'text-white');
+            element.nextElementSibling.classList.remove('border-gray-800', 'text-black');
+        }
+    }
+
+    function changeMainImage(element) {
+        document.getElementById('mainImage').src = element.src;
+    }
+
+    var swiper = new Swiper('.swiper', {
+        slidesPerView: 4,
+        spaceBetween: 5,
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        breakpoints: {
+            640: {
+                slidesPerView: 2,
+                spaceBetween: 10,
+            },
+            768: {
+                slidesPerView: 3,
+                spaceBetween: 15,
+            },
+            1024: {
+                slidesPerView: 4,
+                spaceBetween: 20,
+            },
+            1200: {
+                slidesPerView: 5,
+                spaceBetween: 25,
+            }
+        }
+    });
+</script>

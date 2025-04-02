@@ -122,7 +122,13 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     Stock = product.Stock,
                     CategoryName = product.Category.Name,
                     MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", ""),
-                    IsFeatured = product.IsFeatured
+                    OtherImageUrls = product.ProductImages.Where(x => !x.IsMain).Select(x => x.Url.Replace("wwwroot", "")).ToArray(),
+                    IsFeatured = product.IsFeatured,
+                    GroupProducts = product.ProductGroup?.Products.Select(x => new GroupProductDto
+                    {
+                        ImageUrl = x.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", ""),
+                        Slug = x.Slug
+                    }).ToList()
                 };
                 var productDetailViewModel = new ProductDetailViewModel
                 {

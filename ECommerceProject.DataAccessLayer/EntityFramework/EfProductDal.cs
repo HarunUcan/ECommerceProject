@@ -240,13 +240,26 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
         public async Task<Product> GetBySlugWithAllFeaturesAsync(string slug)
         {
             using var context = new Context();
+
             var product = await context.Products
                 .Include(p => p.Category)
                 .Include(p => p.ProductImages)
+                .Include(p => p.ProductGroup) // Ürün grubunu da getiriyoruz
                 .FirstOrDefaultAsync(p => p.Slug == slug);
+
             if (product == null)
                 throw new Exception("Ürün bulunamadı");
+
+            if (product.ProductGroupId != null)
+            {
+                product.ProductGroup.Products = await context.Products
+                    .Where(p => p.ProductGroupId == product.ProductGroupId && p.ProductId != product.ProductId) // Aynı gruptaki ürünler (kendisi hariç)
+                    .Include(p => p.ProductImages)
+                    .ToListAsync();
+            }
+
             return product;
         }
+
     }
 }
