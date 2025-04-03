@@ -36,22 +36,51 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             return View(homeViewModel);
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> AddToCartAsync(int productId, int quantity, string size)
         {
             var user = await _userManager.GetUserAsync(User);
 
             if (user != null)
-                _cartService.TAddToCart(null, user.Id, productId, quantity, (ProductSize)int.Parse(size));
+            {
+                if (Enum.TryParse<ProductSize>(size, out var productSizeEnum))
+                {
+                    _cartService.TAddToCart(null, user.Id, productId, quantity, productSizeEnum);
+                }
+            }
             
             else
             {
                 var tempUserId = Request.Cookies["tempUserId"];
                 if(tempUserId != null)
-                    _cartService.TAddToCart(tempUserId, 0, productId, quantity, (ProductSize)int.Parse(size));
+                {
+                    if (Enum.TryParse<ProductSize>(size, out var productSizeEnum))
+                    {
+                        _cartService.TAddToCart(tempUserId, 0, productId, quantity, productSizeEnum);
+                    }
+                }
                 
             }
-            return Content("Sepete eklendi");
+            return RedirectToAction("Index", "Cart");
+        }
+
+        [HttpGet]
+        public IActionResult DeleteProductFromCart(int productId, string size)
+        {
+            var user = _userManager.GetUserAsync(User).Result;
+            if (user != null)
+            {
+                _cartService.TDeleteCartItem(null, user.Id, productId, Enum.Parse<ProductSize>(size));
+            }
+            else
+            {
+                var tempUserId = Request.Cookies["tempUserId"];
+                if (tempUserId != null)
+                {
+                    _cartService.TDeleteCartItem(tempUserId, 0, productId, Enum.Parse<ProductSize>(size));
+                }
+            }
+            return RedirectToAction("Index", "Cart");
         }
     }
 }

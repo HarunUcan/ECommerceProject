@@ -157,7 +157,7 @@
         <div><a href="">Bildirimler</a></div>
         <div><a href="">Destek</a></div>
         <div class="text-red-500">
-            <a href=""><i class="fa-solid fa-right-from-bracket mr-1 text-red-500"></i>Çıkış</a>
+            <a asp-controller="Account" asp-action="Logout"><i class="fa-solid fa-right-from-bracket mr-1 text-red-500"></i>Çıkış</a>
         </div>
     </aside>
 
@@ -194,7 +194,7 @@
                class="block font-medium text-gray-200 py-2 px-4 rounded-lg text-gray-800 hover:bg-gray-200 transition duration-300">
                 <i class="fa-solid fa-handshake-angle mr-2"></i>Destek
             </a>
-            <a href="#settings"
+            <a asp-controller="Account" asp-action="Logout"
                class="block font-medium text-gray-200 py-2 px-4 rounded-lg text-red-500 hover:bg-red-200 transition duration-300">
                 <i class="fa-solid fa-right-from-bracket mr-2"></i><span class="font-semibold text-red-500">Çıkış Yap</span>
             </a>

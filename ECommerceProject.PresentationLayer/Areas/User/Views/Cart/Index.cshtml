@@ -3,6 +3,14 @@
     ViewData["Title"] = "Index";
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
 }
+@{
+    decimal totalPrice = 0;
+    foreach (var cartItem in Model.Cart.CartItems)
+        totalPrice += cartItem.Product.Price * cartItem.Quantity;
+
+    decimal kdv = totalPrice * 0.1m; // KDV oranı %10
+    
+}
 
 <head>
     <script>
@@ -121,7 +129,7 @@
                             <!-- Toplam Fİyat -->
                             <td class="py-4 hidden sm:table-cell">₺@(cartItem.Product.Price * cartItem.Quantity)</td>
                             <td class="py-4">
-                                <a href="#">
+                                <a asp-controller="Cart" asp-action="DeleteProductFromCart" asp-route-productId="@cartItem.ProductId" asp-route-size="@cartItem.Size">
                                     <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
                                 </a>
                             </td>
@@ -147,7 +155,7 @@
                             <div class="text-sm text-gray-500 ">₺@cartItem.Product.Price</div>
                         </div>
                         <div class="">
-                            <a href="#">
+                            <a asp-controller="Cart" asp-action="DeleteProductFromCart" asp-route-productId="@cartItem.ProductId" asp-route-size="@cartItem.Size">
                                 <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
                             </a>
                         </div>
@@ -181,11 +189,11 @@
             <h2 class="text-xl font-semibold mb-4">Sipariş Özeti</h2>
             <div class="flex justify-between mb-2">
                 <span>Ara Toplam:</span>
-                <span>₺2.499,97</span>
+                <span>₺@(totalPrice-kdv)</span>
             </div>
             <div class="flex justify-between mb-2">
-                <span>KDV:</span>
-                <span>₺499,99</span>
+                <span>KDV(%10):</span>
+                <span>₺@kdv</span>
             </div>
             <div class="flex justify-between mb-2">
                 <span>Kargo:</span>
@@ -194,7 +202,7 @@
             <hr class="my-2 h-px bg-gray-300 border-0">
             <div class="flex justify-between font-bold text-lg">
                 <span>Toplam:</span>
-                <span>₺2.999,96</span>
+                <span>₺@totalPrice</span>
             </div>
 
             <!-- İndirim Kodu Butonu -->
@@ -236,7 +244,7 @@
 
 <script>
 
-    // "İndirim Kodu" butonuna tıklandığında kod alanını göster
+    @*"İndirim Kodu" butonuna tıklandığında kod alanını göster*@
     document.getElementById('discount-button').addEventListener('click', () => {
         const couponSection = document.getElementById('coupon-section');
         couponSection.classList.toggle('hidden'); // Alanı görünür yap veya gizle

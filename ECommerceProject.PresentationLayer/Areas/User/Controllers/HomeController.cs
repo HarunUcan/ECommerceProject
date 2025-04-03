@@ -2,10 +2,12 @@ using ECommerceProject.BusinessLayer.Abstract;
 using ECommerceProject.BusinessLayer.Helpers;
 using ECommerceProject.DataAccessLayer.Concrete;
 using ECommerceProject.DtoLayer.Dtos.ProductDtos;
+using ECommerceProject.DtoLayer.Dtos.ProductVariantDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.Models;
 using ECommerceProject.PresentationLayer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -17,11 +19,15 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
     {
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
+        private readonly ICartService _cartService;
+        private readonly UserManager<AppUser> _userManager;
 
-        public HomeController(IProductService productService, ICategoryService categoryService)
+        public HomeController(IProductService productService, ICategoryService categoryService, ICartService cartService, UserManager<AppUser> userManager)
         {
             _productService = productService;
             _categoryService = categoryService;
+            _cartService = cartService;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
@@ -29,11 +35,18 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             var featuredProducts = await _productService.TGetFeaturedProductsAsync(); // Default olarak max 15 ürün getirir
             var featuredCategoryProducts = await _productService.TGetFeaturedCategoryProductsAsync(); // Default olarak kategori baþýna max 15 ürün getirir
             var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
             var homeViewModel = new HomeViewModel
             {
                 FeaturedProducts = featuredProducts,
                 Categories = categories,
-                FeaturedCategoryProducts = featuredCategoryProducts
+                FeaturedCategoryProducts = featuredCategoryProducts,
+                Cart = cart
             };
             return View(homeViewModel);
         }
@@ -92,11 +105,21 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 var products = await _productService.TGetListByCategorySlugAsync(slug); // Kategoriyi arar, bulamazsa hata fýrlatýr
                 var currentCategory = _categoryService.TGetBySlug(slug);
                 var categories = _categoryService.TGetList();
+
+                var user = await _userManager.GetUserAsync(User);
+                Cart cart = null;
+
+                if (user != null)
+                    cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                else
+                    cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+
                 var homeViewModel = new HomeViewModel
                 {
                     Categories = categories,
                     Products = products,
-                    CurrentCategory = currentCategory.CategoryId
+                    CurrentCategory = currentCategory.CategoryId,
+                    Cart = cart
                 };
                 return View(homeViewModel);
             } catch {
@@ -113,6 +136,13 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 var product = await _productService.TGetBySlugWithAllFeaturesAsync(slug);
                 var categories = _categoryService.TGetList();
 
+                var user = await _userManager.GetUserAsync(User);
+                Cart cart = null;
+                if (user != null)
+                    cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                else
+                    cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+
                 var productDto = new ProductDto
                 {
                     Id = product.ProductId,
@@ -126,14 +156,21 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     IsFeatured = product.IsFeatured,
                     GroupProducts = product.ProductGroup?.Products.Select(x => new GroupProductDto
                     {
+                        Name = x.Name,
                         ImageUrl = x.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", ""),
                         Slug = x.Slug
+                    }).ToList(),
+                    ProductVariants = product.ProductVariants.Select(x => new ProductVariantDto
+                    {
+                        Stock = x.Stock,
+                        Size = x.Size.ToString()
                     }).ToList()
                 };
                 var productDetailViewModel = new ProductDetailViewModel
                 {
                     ProductDto = productDto,
-                    Categories = categories
+                    Categories = categories,
+                    Cart = cart,
                 };
                 return View(productDetailViewModel);
             }

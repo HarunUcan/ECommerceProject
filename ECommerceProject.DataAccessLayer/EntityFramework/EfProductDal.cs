@@ -244,6 +244,7 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             var product = await context.Products
                 .Include(p => p.Category)
                 .Include(p => p.ProductImages)
+                .Include(p => p.ProductVariants)
                 .Include(p => p.ProductGroup) // Ürün grubunu da getiriyoruz
                 .FirstOrDefaultAsync(p => p.Slug == slug);
 

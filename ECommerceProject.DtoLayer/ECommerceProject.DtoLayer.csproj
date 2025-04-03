@@ -25,7 +25,6 @@
     <Folder Include="Dtos\CartItemDtos\" />
     <Folder Include="Dtos\SaleItemDtos\" />
     <Folder Include="Dtos\SaleDtos\" />
-    <Folder Include="Dtos\ProductVariantDtos\" />
   </ItemGroup>
 
 </Project>

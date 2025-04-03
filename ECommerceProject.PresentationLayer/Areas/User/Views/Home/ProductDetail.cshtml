@@ -8,6 +8,7 @@
     <!-- Swiper JS ve CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .swiper-button-next:after, .swiper-button-prev:after {
             font-size: 24px; /* İkonların boyutunu ayarlamak için */
@@ -28,9 +29,12 @@
             <div class="swiper my-4">
                 <div class="swiper-wrapper">
 
-                    <div class="swiper-slide">
-                        <img src="@Model.ProductDto.MainImageUrl" alt="Ürün Görseli" class="w-24 h-24 rounded-lg object-cover cursor-pointer" onclick="changeMainImage(this)">
-                    </div>
+                    @if(Model.ProductDto.OtherImageUrls != null && Model.ProductDto.OtherImageUrls.Any())
+                    {
+                        <div class="swiper-slide">
+                            <img src="@Model.ProductDto.MainImageUrl" alt="Ürün Görseli" class="w-24 h-24 rounded-lg object-cover cursor-pointer" onclick="changeMainImage(this)">
+                        </div>
+                    }
 
                     @foreach (var imageUrl in Model.ProductDto.OtherImageUrls)
                     {
@@ -48,24 +52,34 @@
 
         <!-- Ürün Bilgileri -->
         <div>
-            <h1 class="text-3xl font-semibold mb-2">@Model.ProductDto.Name</h1>
+            <h1 class="text-4xl font-semibold mb-2">@Model.ProductDto.Name</h1>
             <p class="text-gray-600 mb-4">@Model.ProductDto.Description</p>
-            <div class="text-2xl font-bold text-gray-900 mb-4">₺@Model.ProductDto.Price</div>
+            <div class="text-3xl font-bold text-gray-900 mb-4">₺@Model.ProductDto.Price</div>
 
-            <form action="/" method="get">
+            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                <input type="hidden" name="productId" value="@Model.ProductDto.Id"/>
                 <!-- Beden Seçimi -->
                 <label class="block mb-2 text-gray-700 font-medium">Beden Seçimi</label>
                 <div class="flex flex-wrap gap-2 mb-4">
-                    @foreach (var size in new[] { "STD", "2XS", "XS", "S", "M", "L", "XL", "2XL" })
+                    @foreach (var size in new[] { "STD", "XXS", "XS", "S", "M", "L", "XL", "XXL" })
                     {
-                        var isDisabled = size == "L"; // Örnek olarak "L" stokta yok
-                        <label class="flex items-center relative cursor-pointer">
-                            <input type="radio" name="size" value="@size" class="hidden" onclick="selectSize(this)" @(isDisabled ? "disabled" : "")>
+                        bool isContains = Model.ProductDto.ProductVariants.Any(p => p.Size == size);
+                        bool isDisabled = true;
+
+                        if (isContains)
+                        {
+                            var stock = Model.ProductDto.ProductVariants.FirstOrDefault(p => p.Size == size).Stock;
+                            isDisabled = !(stock > 0);
+                        }
+                        else continue;
+
+                        <label class="flex items-center relative cursor-pointer" title="@(isDisabled ? "Stokta Yok" : "")">
+                            <input type="radio" name="size" value="@size" class="hidden" onclick="selectSize(this)" @(isDisabled ? "disabled" : "") required>
                             <span class="px-5 py-2 border-2 border-gray-800 rounded-lg transition-colors @(isDisabled ? "bg-gray-300 text-gray-500 cursor-not-allowed relative" : "hover:bg-gray-100")">
                                 @size
                                 @if (isDisabled)
                                 {
-                                    <span class="absolute top-0 right-0 -mt-2 -mr-2 w-5 h-5 bg-white border border-black text-red-600 flex items-center justify-center rounded-full text-xs">
+                                    <span class="absolute top-0 right-0 -mt-2 -mr-2 w-5 h-5 bg-white border border-black text-red-600 flex items-center justify-center rounded-full font-bold text-xs">
                                         ✕
                                     </span>
                                 }
@@ -78,7 +92,7 @@
                 <label class="block mb-2 text-gray-700 font-medium">Adet Seçimi</label>
                 <div class="flex items-center border-2 border-gray-800 p-2 rounded-lg w-28">
                     <button type="button" class="w-7 h-7 bg-white text-lg rounded-full transition hover:bg-gray-300">-</button>
-                    <input type="number" class="w-10 text-center text-lg outline-none" value="1" min="1">
+                    <input type="number" name="quantity" class="w-10 text-center text-lg outline-none" value="1" min="1">
                     <button type="button" class="w-7 h-7 bg-white text-lg rounded-full transition hover:bg-gray-300">+</button>
                 </div>
 
@@ -86,7 +100,7 @@
                 <div class="text-sm text-gray-600 mt-2">Stok Adedi: 20</div>
 
                 <!-- Sepete Ekle Butonu -->
-                <button class="w-full py-3 mt-4 bg-black text-white rounded-lg text-lg font-semibold transition hover:bg-gray-700">
+                <button type="button" onclick="validateSelection()" class="w-full py-3 mt-4 bg-black text-white rounded-lg text-lg font-semibold transition hover:bg-gray-700">
                     <i class="fa-solid fa-bag-shopping mr-2"></i> Sepete Ekle
                 </button>
 
@@ -99,7 +113,7 @@
                             @foreach (var groupProduct in Model.ProductDto.GroupProducts)
                             {
                                 <a asp-controller="Home" asp-action="ProductDetail" asp-route-slug="@groupProduct.Slug" class="flex flex-col items-center w-12 md:w-16 text-center">
-                                    <img src="@groupProduct.ImageUrl" alt="" class="w-full h-12 md:h-16 rounded-lg object-cover shadow">
+                                    <img src="@groupProduct.ImageUrl" alt="@groupProduct.Name" title="@groupProduct.Name" class="w-full h-12 md:h-16 rounded-lg object-cover shadow">
                                 </a>
                             }
                         </div>
@@ -168,4 +182,20 @@
             }
         }
     });
+
+    function validateSelection() {
+        let selectedSize = document.querySelector('input[name="size"]:checked'); // Seçili beden var mı kontrol et
+
+        if (!selectedSize) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Beden Seçimi Yapmadınız!',
+                text: 'Bir beden seçmeden sepete ekleme işlemi yapamazsınız.',
+                confirmButtonText: 'Tamam'
+            });
+        } else {
+            // Formu gönder
+            document.querySelector('form').submit();
+        }
+    }
 </script>

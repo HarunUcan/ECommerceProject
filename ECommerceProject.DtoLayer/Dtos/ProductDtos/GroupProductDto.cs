@@ -8,6 +8,7 @@ namespace ECommerceProject.DtoLayer.Dtos.ProductDtos
 {
     public class GroupProductDto
     {
+        public string? Name { get; set; }
         public string? ImageUrl { get; set; }
         public string? Slug { get; set; }
     }

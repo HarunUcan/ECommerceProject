@@ -5,7 +5,8 @@ namespace ECommerceProject.PresentationLayer.ViewModels
 {
     public class ProductDetailViewModel
     {
-        public List<Category>? Categories { get; set; }
         public ProductDto? ProductDto { get; set; }
+        public List<Category>? Categories { get; set; }
+        public Cart? Cart { get; set; }
     }
 }

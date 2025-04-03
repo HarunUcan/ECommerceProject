@@ -102,7 +102,7 @@
             sizeStockDiv.classList.add("flex", "gap-2", "items-center", "mt-4");
 
             sizeStockDiv.innerHTML = `
-                <select name="Variants[0].Sizes[${sizeStockIndex}].Size"
+                        <select name="Variants[${sizeStockIndex}].Size"
                         class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
                     <option value="NOSIZE">Hiçbiri</option>
                     <option value="STD">Standart</option>
@@ -117,7 +117,7 @@
                     <option value="XXXL">XXXL</option>
                 </select>
 
-                <input type="number" name="Variants[0].Sizes[${sizeStockIndex}].Stock"
+                        <input type="number" name="Variants[${sizeStockIndex}].Stock"
                        placeholder="Stok Miktarı"
                        class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
 
@@ -201,7 +201,7 @@
                     <label class="block text-sm font-medium text-gray-600">Beden ve Stok Miktarları</label>
                     <div id="sizeStockContainer" class="">
                         <div class="flex gap-2 items-center mt-4">
-                            <select name="Variants[0].Sizes[0].Size"
+                            <select name="Variants[0].Size"
                                     class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
                                 <option value="NOSIZE">Hiçbiri</option>
                                 <option value="STD">Standart</option>
@@ -216,7 +216,7 @@
                                 <option value="XXXL">XXXL</option>
                             </select>
 
-                            <input type="number" name="Variants[0].Sizes[0}].Stock"
+                            <input type="number" name="Variants[0].Stock"
                                    placeholder="Stok Miktarı"
                                    class="w-1/4 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50">
 

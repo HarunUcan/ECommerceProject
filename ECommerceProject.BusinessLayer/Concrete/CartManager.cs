@@ -33,6 +33,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
             return _cartDal.DeleteByTempUserId(tempUserId);
         }
 
+        public bool TDeleteCartItem(string? tempUserId, int userId, int productId, ProductSize size)
+        {
+            return _cartDal.DeleteCartItem(tempUserId, userId, productId, size);
+        }
+
         public Cart TGetById(int id)
         {
             return _cartDal.GetById(id);

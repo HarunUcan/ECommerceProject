@@ -97,6 +97,34 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             }
         }
 
+        public bool DeleteCartItem(string? tempUserId, int userId, int productId, ProductSize size)
+        {
+            using (Context context = new())
+            {
+                Cart cart;
+                if (tempUserId != null)
+                {
+                    cart = context.Carts.FirstOrDefault(x => x.TempUserId == tempUserId);
+                }
+                else
+                {
+                    cart = context.Carts.FirstOrDefault(x => x.AppUserId == userId);
+                }
+
+                if (cart != null)
+                {
+                    var cartItem = context.CartItems.FirstOrDefault(x => x.CartId == cart.CartId && x.ProductId == productId && x.Size == size);
+                    if (cartItem != null)
+                    {
+                        context.CartItems.Remove(cartItem);
+                        context.SaveChanges();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
         public Cart GetCart(string? tempUserId, int userId)
         {
             using (Context context = new())

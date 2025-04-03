@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ECommerceProject.DtoLayer.Dtos.ProductVariantDtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,5 +20,6 @@ namespace ECommerceProject.DtoLayer.Dtos.ProductDtos
         public string CategoryName { get; set; }
         public bool IsFeatured { get; set; }
         public List<GroupProductDto>? GroupProducts { get; set; }
+        public List<ProductVariantDto>? ProductVariants { get; set; }
     }
 }
