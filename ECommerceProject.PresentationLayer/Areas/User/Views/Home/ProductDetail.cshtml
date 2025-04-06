@@ -15,6 +15,23 @@
             font-weight: 900; /* İkonların kalınlığını ayarlamak için */
             color:black; /* İkon rengini ayarlamak için */
         }
+
+        /* Chrome, Safari, Edge, Opera */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        input[readonly] {
+            background-color: transparent;
+            cursor: default;
+        }
     </style>
 </head>
 
@@ -23,32 +40,60 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Ürün Resmi -->
         <div>
-            <img id="mainImage" src="@Model.ProductDto.MainImageUrl" alt="Ürün Resmi" class="w-full h-auto rounded-xl">
-
-            <!-- Diğer Görseller Swiper Slider -->
-            <div class="swiper my-4">
+            <!-- Büyük Görsel Swiper -->
+            <div class="swiper main-image-swiper w-full xl:w-5/6 rounded-xl mb-4">
                 <div class="swiper-wrapper">
-
-                    @if(Model.ProductDto.OtherImageUrls != null && Model.ProductDto.OtherImageUrls.Any())
+                    <div class="swiper-slide">
+                        <img src="@Model.ProductDto.MainImageUrl" alt="Ürün Resmi" class="w-full h-auto object-contain rounded-xl" />
+                    </div>
+                    @foreach (var imageUrl in Model.ProductDto.OtherImageUrls)
                     {
                         <div class="swiper-slide">
-                            <img src="@Model.ProductDto.MainImageUrl" alt="Ürün Görseli" class="w-24 h-24 rounded-lg object-cover cursor-pointer" onclick="changeMainImage(this)">
+                            <img src="@imageUrl" alt="Ürün Resmi" class="w-full h-auto object-contain rounded-xl" />
                         </div>
+                    }
+                </div>
+                <!-- Büyük slider navigasyon -->
+                <div class="swiper-button-next main-image-next"></div>
+                <div class="swiper-button-prev main-image-prev"></div>
+            </div>
+
+            <!-- Diğer Görseller Swiper Slider -->
+            <div class="swiper w-full xl:w-5/6 my-4">
+                <div class="swiper-wrapper">
+                    @{
+                        var imageIndex = 0;
+                    }
+
+                    @if (Model.ProductDto.OtherImageUrls != null && Model.ProductDto.OtherImageUrls.Any())
+                    {
+                        <div class="swiper-slide">
+                            <img src="@Model.ProductDto.MainImageUrl"
+                                 alt="Ürün Görseli"
+                                 class="w-24 h-24 rounded-lg object-cover cursor-pointer"
+                                 onclick="goToSlide(@imageIndex)">
+                        </div>
+                        imageIndex++;
                     }
 
                     @foreach (var imageUrl in Model.ProductDto.OtherImageUrls)
                     {
                         <div class="swiper-slide">
-                            <img src="@imageUrl" alt="Ürün Görseli" class="w-24 h-24 rounded-lg object-cover cursor-pointer" onclick="changeMainImage(this)">
+                            <img src="@imageUrl"
+                                 alt="Ürün Görseli"
+                                 class="w-24 h-24 rounded-lg object-cover cursor-pointer"
+                                 onclick="goToSlide(@imageIndex)">
                         </div>
+                        imageIndex++;
                     }
                 </div>
-                <!-- Swiper Navigasyon Butonları -->
+                <!-- Küçük slider navigasyon -->
                 <div class="swiper-button-next"></div>
                 <div class="swiper-button-prev"></div>
                 <div class="swiper-pagination"></div>
             </div>
         </div>
+
 
         <!-- Ürün Bilgileri -->
         <div>
@@ -90,10 +135,10 @@
 
                 <!-- Adet Seçimi -->
                 <label class="block mb-2 text-gray-700 font-medium">Adet Seçimi</label>
-                <div class="flex items-center border-2 border-gray-800 p-2 rounded-lg w-28">
-                    <button type="button" class="w-7 h-7 bg-white text-lg rounded-full transition hover:bg-gray-300">-</button>
-                    <input type="number" name="quantity" class="w-10 text-center text-lg outline-none" value="1" min="1">
-                    <button type="button" class="w-7 h-7 bg-white text-lg rounded-full transition hover:bg-gray-300">+</button>
+                <div id="quantity-container" class="flex items-center border-2 border-gray-800 p-2 rounded-lg w-28">
+                    <button type="button" id="decrease" class="w-7 h-7 bg-white text-lg rounded-full xl:transition xl:hover:bg-gray-300">-</button>
+                    <input type="text" id="quantity" name="quantity" class="w-10 text-center text-lg outline-none pointer-events-none" value="1" readonly>
+                    <button type="button" id="increase" class="w-7 h-7 bg-white text-lg rounded-full xl:transition xl:hover:bg-gray-300">+</button>
                 </div>
 
                 <!-- Stok Adedi -->
@@ -120,39 +165,69 @@
                     </div>
                 }
             </form>
+
+            <!-- Ürün Özellikleri -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-semibold mb-4">Ürün Özellikleri</h2>
+                <ul class="list-disc pl-6 text-gray-600">
+                    <li>Malzeme: %100 Pamuk</li>
+                    <li>Renk: Beyaz</li>
+                    <li>Boyut: STD, 2XS, XS, S, M, L, XL, 2XL</li>
+                    <li>Yıkama Talimatları: 30°C’de yıkanabilir.</li>
+                </ul>
+            </div>
         </div>
     </div>
 
-    <!-- Ürün Özellikleri -->
-    <div class="mt-8">
-        <h2 class="text-2xl font-semibold mb-4">Ürün Özellikleri</h2>
-        <ul class="list-disc pl-6 text-gray-600">
-            <li>Malzeme: %100 Pamuk</li>
-            <li>Renk: Beyaz</li>
-            <li>Boyut: STD, 2XS, XS, S, M, L, XL, 2XL</li>
-            <li>Yıkama Talimatları: 30°C’de yıkanabilir.</li>
-        </ul>
-    </div>
 </div>
+
+
 
 
 <script>
     function selectSize(element) {
         document.querySelectorAll('input[name="size"] + span').forEach(span => {
-            span.classList.remove('bg-green-600', 'text-white', 'hover:bg-gray-100');
+            span.classList.remove('bg-black', 'text-white', 'hover:bg-gray-100');
             span.classList.add('border-gray-800', 'text-black');
         });
         if (!element.disabled) {
-            element.nextElementSibling.classList.add('bg-green-600', 'text-white');
+            element.nextElementSibling.classList.add('bg-black', 'text-white');
             element.nextElementSibling.classList.remove('border-gray-800', 'text-black');
         }
     }
 
-    function changeMainImage(element) {
-        document.getElementById('mainImage').src = element.src;
+    function validateSelection() {
+        let selectedSize = document.querySelector('input[name="size"]:checked'); // Seçili beden var mı kontrol et
+
+        if (!selectedSize) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Beden Seçimi Yapmadınız!',
+                text: 'Bir beden seçmeden sepete ekleme işlemi yapamazsınız.',
+                confirmButtonText: 'Tamam'
+            });
+        } else {
+            // Formu gönder
+            document.querySelector('form').submit();
+        }
     }
 
-    var swiper = new Swiper('.swiper', {
+    // Büyük resimler için swiper
+    var mainImageSwiper = new Swiper('.main-image-swiper', {
+        navigation: {
+            nextEl: '.main-image-next',
+            prevEl: '.main-image-prev',
+        },
+        loop: true,
+    });
+
+    // Küçük resme tıklayınca büyük swiper'ı güncelle
+    function goToSlide(index) {
+        mainImageSwiper.slideToLoop(index);
+    }
+
+    // Küçük resimler için mevcut Swiper (senin eski kodun zaten burada çalışıyor)
+    var swiper = new Swiper('.swiper:not(.main-image-swiper)', {
         slidesPerView: 4,
         spaceBetween: 5,
         navigation: {
@@ -183,19 +258,21 @@
         }
     });
 
-    function validateSelection() {
-        let selectedSize = document.querySelector('input[name="size"]:checked'); // Seçili beden var mı kontrol et
+    document.addEventListener("DOMContentLoaded", function () {
+        const decreaseBtn = document.getElementById("decrease");
+        const increaseBtn = document.getElementById("increase");
+        const quantityInput = document.getElementById("quantity");
 
-        if (!selectedSize) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Beden Seçimi Yapmadınız!',
-                text: 'Bir beden seçmeden sepete ekleme işlemi yapamazsınız.',
-                confirmButtonText: 'Tamam'
-            });
-        } else {
-            // Formu gönder
-            document.querySelector('form').submit();
-        }
-    }
+        decreaseBtn.addEventListener("click", () => {
+            let current = parseInt(quantityInput.value);
+            if (current > 1) {
+                quantityInput.value = current - 1;
+            }
+        });
+
+        increaseBtn.addEventListener("click", () => {
+            let current = parseInt(quantityInput.value);
+            quantityInput.value = current + 1;
+        });
+    });
 </script>

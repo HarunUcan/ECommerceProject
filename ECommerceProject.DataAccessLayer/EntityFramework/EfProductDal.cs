@@ -103,10 +103,13 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             var isSlugExists = await context.Categories.AnyAsync(c => c.Slug == slug);
             if (!isSlugExists)
                 throw new Exception("Kategori bulunamadı");
+
             return await context.Products
                 .Where(p => p.Category.Slug == slug)
                 .Include(p => p.Category)
-                .Include(p => p.ProductImages.Where(img => img.IsMain)) // Sadece IsMain olanları getir
+                .Include(p => p.ProductImages.Where(img => img.IsMain)) // Sadece ana resmi al
+                .Include(p => p.ProductGroup)
+                    .ThenInclude(pg => pg.Products) // ProductGroup içindeki Products
                 .ToListAsync();
         }
 
@@ -192,6 +195,8 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                 .Include(p => p.Category)
                 .Include(p => p.ProductImages.Where(img => img.IsMain)) // Sadece IsMain olanları getir
                 .Include(p => p.ProductVariants) // Beden filtresi için gerekli
+                .Include(p => p.ProductGroup)
+                    .ThenInclude(pg => pg.Products) // ProductGroup içindeki Products
                 .ToListAsync();
 
             return await query;

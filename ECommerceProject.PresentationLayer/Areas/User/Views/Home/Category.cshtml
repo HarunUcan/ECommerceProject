@@ -138,16 +138,20 @@
                                             <p class="text-black font-bold mt-2">₺${product.price}</p>
 
                                     <!-- Renk Seçenekleri -->
-                                    <div class="relative flex justify-start items-center mt-2">
-                                        <div id="colorContainer" class="relative flex items-center">
-                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[#8B5E3B]"></div>
-                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[#000000] -ml-2.5"></div>
-                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[#FF0000] -ml-2.5"></div>
-                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-gray-300 text-xs flex items-center justify-center font-bold -ml-2.5">
-                                                +2
-                                            </div>
+                                    <div class="relative flex items-center gap-1 bg-white px-2 py-1 rounded-xl shadow-md w-fit ${product.groupProductsCount <= 0 ? 'hidden' : ''}">
+                                        <!-- Gradyan Daireler -->
+                                        <div class="relative flex items-center">
+                                          <!-- Soldaki: Üstte ve border-2 -->
+                                          <div class="w-5 h-5 rounded-full border-2 border-white bg-[linear-gradient(90deg,_#2B2BBE,_#4FAAFD,_#C7F75C)] z-10"></div>
+                                          <!-- Sağdaki: Arkada, hafif sol kaydırılmış -->
+                                          <div class="w-5 h-5 rounded-full border-2 border-white bg-[linear-gradient(90deg,_#FBA1D6,_#FDF57F)] -ml-2 z-0"></div>
                                         </div>
+
+                                        <!-- Sayı -->
+                                        <div class="text-sm font-medium text-black">${product.groupProductsCount}</div>
                                     </div>
+
+
                                 </div>
 
                                 <!-- Sepete Ekle Butonu -->
@@ -197,10 +201,84 @@
 }
 
 <section class="pb-16 md:px-3 w-full">
+
+
     <!-- Mobilde Görünecek Filtre Butonu -->
     <div class="md:hidden py-2">
-        <button id="filter-btn" class="bg-gray-800 text-white px-4 py-2 w-full">Filtrele<i class="fa-solid fa-filter ml-1"></i></button>
+        <button id="filter-btn" class="bg-gray-800 text-white px-4 py-2 w-full flex justify-center items-center">
+            Filtrele <i class="fa-solid fa-filter ml-1"></i>
+        </button>
+
+        <!-- Aşağı Doğru Açılan Filtre Kutusu -->
+        <div id="mobile-filter-dropdown" class="hidden bg-white p-4 mt-2 rounded-md shadow transition-all duration-700">
+            <form id="mobile-filter-form" action="@categorySlug" method="GET">
+
+                <!-- Beden Seçimi -->
+                <div class="mb-4">
+                    <p class="font-medium mb-2">Beden</p>
+                    <div class="flex gap-3 flex-wrap items-center">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="sizes" value="STD" class="mr-1">
+                            <span> STD</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="sizes" value="XXS" class="mr-1">
+                            <span> 2XS</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="sizes" value="XS" class="mr-1">
+                            <span> XS</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="sizes" value="S" class="mr-1">
+                            <span> S</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="sizes" value="M" class="mr-1">
+                            <span> M</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="sizes" value="L" class="mr-1">
+                            <span> L</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="sizes" value="XL" class="mr-1">
+                            <span> XL</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="sizes" value="XXL" class="mr-1">
+                            <span> 2XL</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Renk Seçimi -->
+                <div class="mb-4">
+                    <p class="font-medium mb-2">Renk</p>
+                    <div class="flex gap-3 flex-wrap">
+                        <label><input type="checkbox" name="colors" value="black" class="mr-1"> Siyah</label>
+                        <label><input type="checkbox" name="colors" value="white" class="mr-1"> Beyaz</label>
+                        <label><input type="checkbox" name="colors" value="red" class="mr-1"> Kırmızı</label>
+                        <label><input type="checkbox" name="colors" value="blue" class="mr-1"> Mavi</label>
+                    </div>
+                </div>
+
+                <!-- Fiyat Seçimi -->
+                <div class="mb-4">
+                    <p class="font-medium mb-2">Fiyat</p>
+                    <div class="flex gap-2">
+                        <input type="number" name="minPrice" placeholder="Min" class="w-1/2 border p-2 rounded-md text-center">
+                        <input type="number" name="maxPrice" placeholder="Max" class="w-1/2 border p-2 rounded-md text-center">
+                    </div>
+                </div>
+
+                <!-- Filtrele Butonu -->
+                <button type="submit" class="w-full bg-black text-white py-2 rounded-md mt-2">Filtrele</button>
+            </form>
+        </div>
     </div>
+
+
 
     <div id="container" class="grid grid-cols-1 md:grid-cols-4 md:gap-4">
         <!-- Filtreleme Alanı (PC'de Sidebar, Mobilde Gizli) -->
@@ -306,46 +384,16 @@
         </div>
     </div>
 
-    <!-- Mobil Filtreleme Menüsü (Modal) -->
-    <div id="mobile-filter" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
-        <div class="bg-white p-6 w-3/4 rounded-lg relative">
-            <button id="close-filter" class="absolute top-4 right-4 text-xl">&times;</button>
-            <h2 class="font-semibold text-lg mb-2">Filtreleme</h2>
-            <div>
-                <label class="block font-medium">Beden</label>
-                <select class="w-full p-2 border rounded-md">
-                    <option>Small</option>
-                    <option>Medium</option>
-                    <option>Large</option>
-                </select>
-            </div>
-            <div class="mt-4">
-                <label class="block font-medium">Renk</label>
-                <select class="w-full p-2 border rounded-md">
-                    <option>Siyah</option>
-                    <option>Beyaz</option>
-                    <option>Kırmızı</option>
-                </select>
-            </div>
-            <div class="mt-4">
-                <label class="block font-medium">Fiyat</label>
-                <div class="flex items-center space-x-2">
-                    <input type="number" id="mobile-min-price" class="w-16 p-1 border rounded-md text-center" value="0">
-                    <input type="range" id="mobile-price-range" class="w-full bg-black" min="0" max="1000" step="10">
-                    <input type="number" id="mobile-max-price" class="w-16 p-1 border rounded-md text-center" value="1000">
-                </div>
-            </div>
-            <button class="mt-4 bg-blue-600 text-white px-4 py-2 w-full rounded-md">Filtrele</button>
-        </div>
-    </div>
+    
+
 </section>
 
 <script>
-    document.getElementById('filter-btn').addEventListener('click', function() {
-        document.getElementById('mobile-filter').classList.remove('hidden');
-    });
-    document.getElementById('close-filter').addEventListener('click', function() {
-        document.getElementById('mobile-filter').classList.add('hidden');
+    const filterBtn = document.getElementById("filter-btn");
+    const dropdown = document.getElementById("mobile-filter-dropdown");
+
+    filterBtn.addEventListener("click", () => {
+        dropdown.classList.toggle("hidden");
     });
 </script>
 

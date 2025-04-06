@@ -81,6 +81,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 
             foreach (var product in products)
             {
+                var groupProductsCount = product.ProductGroup?.Products.Count == null ? 0 : product.ProductGroup.Products.Count <= 1 ? 0 : product.ProductGroup.Products.Count - 1;
                 productDtos.Add(new ProductDto
                 {
                     Id = product.ProductId,
@@ -91,13 +92,15 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     Stock = product.Stock,
                     CategoryName = product.Category.Name,
                     MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", ""),
-                    IsFeatured = product.IsFeatured
+                    IsFeatured = product.IsFeatured,
+                    GroupProductsCount = groupProductsCount
                 });
             }
             return Json(productDtos);
         }
 
         [HttpGet]
+        // Bu metot layout un çalýþmasý için kullanýlýyor, listenecek ürünler GetPagedProductsByCategory metodundan ajax ile çekiliyor
         public async Task<IActionResult> CategoryAsync(string slug, string[]? sizes = null, string[]? colors = null, int? minPrice = 0, int? maxPrice = int.MaxValue)
         {
             try
@@ -117,7 +120,6 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 var homeViewModel = new HomeViewModel
                 {
                     Categories = categories,
-                    Products = products,
                     CurrentCategory = currentCategory.CategoryId,
                     Cart = cart
                 };

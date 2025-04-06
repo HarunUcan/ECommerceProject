@@ -21,5 +21,6 @@ namespace ECommerceProject.DtoLayer.Dtos.ProductDtos
         public bool IsFeatured { get; set; }
         public List<GroupProductDto>? GroupProducts { get; set; }
         public List<ProductVariantDto>? ProductVariants { get; set; }
+        public int GroupProductsCount { get; set; } 
     }
 }
