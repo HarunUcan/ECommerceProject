@@ -42,7 +42,6 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                             return Content("Lütfen mailinizi onaylayınız.");
                         if(Request.Cookies["TempUserId"] != null)
                         {
-                            // TODO: Geçici Sepet içeriğini kullanıcının sepetine aktar
                             string tempUserId = Request.Cookies["TempUserId"];
                             bool isTransferSuccess = _cartService.TTransferCart(tempUserId, user.Id);
 
@@ -54,7 +53,16 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                             if (isTransferSuccess)
                                 Response.Cookies.Delete("TempUserId");
                         }
-                        return RedirectToAction("Index", "CustomerProfile");
+
+                        if(await _userManager.IsInRoleAsync(user, "Admin"))
+                            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                        
+                        else if (await _userManager.IsInRoleAsync(user, "User"))
+                            return Redirect("/");
+                        
+                        else
+                            return Redirect("/");
+                        
                         //return RedirectToAction("Index", "Home");
                     }
                 }

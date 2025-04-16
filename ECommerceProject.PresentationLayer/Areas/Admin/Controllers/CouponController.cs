@@ -1,11 +1,13 @@
 ﻿using ECommerceProject.BusinessLayer.Abstract;
 using ECommerceProject.DtoLayer.Dtos.CouponDtos;
 using ECommerceProject.EntityLayer.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
 
     public class CouponController : Controller
     {

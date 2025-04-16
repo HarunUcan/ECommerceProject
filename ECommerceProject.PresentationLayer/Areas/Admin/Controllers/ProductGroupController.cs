@@ -2,11 +2,14 @@
 using ECommerceProject.DtoLayer.Dtos.ProductImageDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
+
     public class ProductGroupController : Controller
     {
         private readonly IProductGroupService _productGroupService;

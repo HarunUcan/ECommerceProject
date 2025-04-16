@@ -82,6 +82,43 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             }
         }
 
+        public async Task<bool> ApplyCoupon(string? tempUserId, int userId, string couponCode)
+        {
+            using (Context context = new())
+            {
+                var coupon = await context.Coupons.FirstOrDefaultAsync(x => x.Code == couponCode);
+                if (coupon == null) return false; // Coupon not found
+
+                if(!coupon.IsActive) return false; // Coupon is not active
+
+                Cart cart;
+                if (tempUserId != null)
+                    cart = await context.Carts
+                .Include(c => c.CartCoupons)
+                .FirstOrDefaultAsync(c => c.TempUserId == tempUserId);
+
+                else
+                    cart = await context.Carts
+                .Include(c => c.CartCoupons)
+                .FirstOrDefaultAsync(c => c.AppUserId == userId);
+
+                if (cart == null) return false;
+
+                // Sepette aynı kupon zaten var mı kontrol et
+                bool alreadyApplied = cart.CartCoupons?.Any(cc => cc.CouponId == coupon.CouponId) ?? false;
+                if (alreadyApplied) return false;
+                // Kuponu sepete ekle
+                var cartCoupon = new CartCoupon
+                {
+                    CartId = cart.CartId,
+                    CouponId = coupon.CouponId
+                };
+                context.CartCoupons.Add(cartCoupon);
+                await context.SaveChangesAsync();
+                return true;
+            }
+        }
+
         public bool DeleteByTempUserId(string tempUserId)
         {
             using (Context context = new())
@@ -127,30 +164,85 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
 
         public Cart GetCart(string? tempUserId, int userId)
         {
+
             using (Context context = new())
             {
+                IQueryable<Cart> query = context.Carts
+                    .Include(c => c.CartItems)
+                        .ThenInclude(ci => ci.Product)
+                            .ThenInclude(p => p.ProductImages)
+                    .Include(c => c.CartItems)
+                        .ThenInclude(ci => ci.Product)
+                            .ThenInclude(p => p.ProductVariants)
+                    .Include(c => c.CartCoupons) // Kupon ilişkisini getir
+                        .ThenInclude(cc => cc.Coupon); // Kuponun kendisini de getir
+
                 if (tempUserId != null)
                 {
-                    return context.Carts
-                        .Include(c => c.CartItems)
-                            .ThenInclude(ci => ci.Product) // CartItem içindeki Product'ı getir
-                                .ThenInclude(p => p.ProductImages) // Product içindeki resimleri getir
-                        .Include(c => c.CartItems)
-                            .ThenInclude(ci => ci.Product)
-                                .ThenInclude(p => p.ProductVariants) // Varyantları da getir
-                        .FirstOrDefault(x => x.TempUserId == tempUserId);
+                    return query.FirstOrDefault(x => x.TempUserId == tempUserId);
                 }
                 else
                 {
-                    return context.Carts
-                        .Include(c => c.CartItems)
-                            .ThenInclude(ci => ci.Product)
-                                .ThenInclude(p => p.ProductImages)
-                        .Include(c => c.CartItems)
-                            .ThenInclude(ci => ci.Product)
-                                .ThenInclude(p => p.ProductVariants)
-                        .FirstOrDefault(x => x.AppUserId == userId);
+                    return query.FirstOrDefault(x => x.AppUserId == userId);
                 }
+            }
+
+            //using (Context context = new())
+            //{
+            //    if (tempUserId != null)
+            //    {
+            //        return context.Carts
+            //            .Include(c => c.CartItems)
+            //                .ThenInclude(ci => ci.Product) // CartItem içindeki Product'ı getir
+            //                    .ThenInclude(p => p.ProductImages) // Product içindeki resimleri getir
+            //            .Include(c => c.CartItems)
+            //                .ThenInclude(ci => ci.Product)
+            //                    .ThenInclude(p => p.ProductVariants) // Varyantları da getir
+            //            .FirstOrDefault(x => x.TempUserId == tempUserId);
+            //    }
+            //    else
+            //    {
+            //        return context.Carts
+            //            .Include(c => c.CartItems)
+            //                .ThenInclude(ci => ci.Product)
+            //                    .ThenInclude(p => p.ProductImages)
+            //            .Include(c => c.CartItems)
+            //                .ThenInclude(ci => ci.Product)
+            //                    .ThenInclude(p => p.ProductVariants)
+            //            .FirstOrDefault(x => x.AppUserId == userId);
+            //    }
+            //}
+
+        }
+
+        public async Task<bool> RemoveCouponFromCart(string? tempUserId, int userId, string couponCode)
+        {
+            using (Context context = new())
+            {
+                var coupon = await context.Coupons.FirstOrDefaultAsync(x => x.Code == couponCode);
+                if (coupon == null) return false; // Kupon bulunamadı
+
+                Cart cart;
+                if (tempUserId != null)
+                    cart = await context.Carts
+                .Include(c => c.CartCoupons)
+                .FirstOrDefaultAsync(c => c.TempUserId == tempUserId);
+
+                else
+                    cart = await context.Carts
+                .Include(c => c.CartCoupons)
+                .FirstOrDefaultAsync(c => c.AppUserId == userId);
+
+                if (cart == null) return false;
+
+                // Sepette aynı kupon zaten var mı kontrol et
+                var cartCoupon = cart.CartCoupons?.FirstOrDefault(cc => cc.CouponId == coupon.CouponId);
+                if (cartCoupon == null) return false;
+
+                // Kuponu sepetten çıkar
+                context.CartCoupons.Remove(cartCoupon);
+                await context.SaveChangesAsync();
+                return true;
             }
         }
 

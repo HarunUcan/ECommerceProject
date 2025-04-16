@@ -6,6 +6,7 @@ using ECommerceProject.DataAccessLayer.EntityFramework;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.Middlewares;
 using ECommerceProject.PresentationLayer.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
@@ -14,7 +15,7 @@ namespace ECommerceProject.PresentationLayer
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -62,12 +63,47 @@ namespace ECommerceProject.PresentationLayer
 
             builder.Services.AddScoped<IMailSenderService, MailSenderManager>();
 
+
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/User/Login/Index";
-                options.LogoutPath = "/Login/Logout";
-                options.AccessDeniedPath = "/Login/AccessDenied";
+                options.LogoutPath = "/Account/Logout";
+                options.AccessDeniedPath = "/User/Home/NotFound";
+
+                options.Events = new CookieAuthenticationEvents
+                {
+                    // Giriþ yapmamýþ kullanýcý admin sayfasýna eriþmeye çalýþýrsa
+                    OnRedirectToLogin = context =>
+                    {
+                        if (context.Request.Path.StartsWithSegments("/Admin"))
+                        {
+                            context.Response.Redirect("/User/Home/NotFound");
+                            return Task.CompletedTask;
+                        }
+
+                        // Diðer sayfalar için normal login yönlendirmesi
+                        context.Response.Redirect(context.RedirectUri);
+                        return Task.CompletedTask;
+                    },
+
+                    // Giriþ yapmýþ ama yetkisi olmayan kullanýcý admin sayfasýna eriþmeye çalýþýrsa
+                    OnRedirectToAccessDenied = context =>
+                    {
+                        if (context.Request.Path.StartsWithSegments("/Admin"))
+                        {
+                            // admin sayfalarýnýn ifþa olmamasý için returnUrl olmadan yönlendirme
+                            context.Response.Redirect("/User/Home/NotFound");
+                            return Task.CompletedTask;
+                        }
+
+                        // Diðer eriþim reddi yönlendirmeleri
+                        context.Response.Redirect(context.RedirectUri);
+                        return Task.CompletedTask;
+                    }
+                };
             });
+
+
             var app = builder.Build();
 
             // Kültürü HTTP isteðine göre zorla
@@ -134,9 +170,52 @@ namespace ECommerceProject.PresentationLayer
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{area=User}/{controller=Home}/{action=Index}/{id?}");            
+                pattern: "{area=User}/{controller=Home}/{action=Index}/{id?}");
 
-            
+
+
+            // Roller ve admin kullanýcýsýný oluþtur
+            using (var scope = app.Services.CreateScope())
+            {
+                var serviceProvider = scope.ServiceProvider;
+                var roleManager = serviceProvider.GetRequiredService<RoleManager<AppRole>>();
+                var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
+
+                // 1. Roller varsa oluþtur
+                foreach (var role in Enum.GetValues(typeof(UserRoles)))
+                {
+                    string roleName = role.ToString();
+                    if (!await roleManager.RoleExistsAsync(roleName))
+                    {
+                        await roleManager.CreateAsync(new AppRole { Name = roleName });
+                    }
+                }
+
+                // 2. Admin kullanýcýyý oluþtur
+                string adminEmail = "admin@example.com";
+                string adminPassword = "Admin123!";
+
+                var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
+                if (existingAdmin == null)
+                {
+                    var adminUser = new AppUser
+                    {
+                        Name = "Admin",
+                        Surname = "1",
+                        UserName = adminEmail,
+                        Email = adminEmail,
+                        EmailConfirmed = true
+                    };
+
+                    var result = await userManager.CreateAsync(adminUser, adminPassword);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(adminUser, UserRoles.Admin.ToString());
+                    }
+                }
+            }
+
+
             app.Run();
         }
     }

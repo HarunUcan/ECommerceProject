@@ -56,6 +56,8 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(appUser, "User");
+
                     var mailConfToken = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);
 
                     var confirmationLink = Url.Action("Index", "ConfirmMail", new

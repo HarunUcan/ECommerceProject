@@ -48,18 +48,18 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     _cartService.TAddToCart(null, user.Id, productId, quantity, productSizeEnum);
                 }
             }
-            
+
             else
             {
                 var tempUserId = Request.Cookies["tempUserId"];
-                if(tempUserId != null)
+                if (tempUserId != null)
                 {
                     if (Enum.TryParse<ProductSize>(size, out var productSizeEnum))
                     {
                         _cartService.TAddToCart(tempUserId, 0, productId, quantity, productSizeEnum);
                     }
                 }
-                
+
             }
             return RedirectToAction("Index", "Cart");
         }
@@ -78,6 +78,55 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 if (tempUserId != null)
                 {
                     _cartService.TDeleteCartItem(tempUserId, 0, productId, Enum.Parse<ProductSize>(size));
+                }
+            }
+            return RedirectToAction("Index", "Cart");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ApplyCoupon(string couponCode)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            bool isValid = false;
+
+            if (user != null)
+            {
+                isValid = await _cartService.TApplyCoupon(null, user.Id, couponCode);
+            }
+            else
+            {
+                var tempUserId = Request.Cookies["tempUserId"];
+                if (tempUserId != null)
+                {
+                    isValid = await _cartService.TApplyCoupon(tempUserId, 0, couponCode);
+                }
+            }
+            if (!isValid)
+                ModelState.AddModelError("", "Kupon Eklenemedi!");
+
+
+            return View("Index", new HomeViewModel
+            {
+                Categories = _categoryService.TGetList(),
+                Cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user?.Id ?? 0)
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveCouponFromCart(string couponCode)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user != null)
+            {
+                await _cartService.TRemoveCouponFromCart(null, user.Id, couponCode);
+            }
+            else
+            {
+                var tempUserId = Request.Cookies["tempUserId"];
+                if (tempUserId != null)
+                {
+                    await _cartService.TRemoveCouponFromCart(tempUserId, 0, couponCode);
                 }
             }
             return RedirectToAction("Index", "Cart");

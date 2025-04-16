@@ -10,7 +10,7 @@ namespace ECommerceProject.EntityLayer.Concrete
     {
         public int CartId { get; set; }
         public DateTime UpdatedDate { get; set; }
-        public string? DiscountCode { get; set; }
+        public ICollection<CartCoupon>? CartCoupons { get; set; }
         public ICollection<CartItem>? CartItems { get; set; }
         public int? AppUserId { get; set; }
         public AppUser? AppUser { get; set; }

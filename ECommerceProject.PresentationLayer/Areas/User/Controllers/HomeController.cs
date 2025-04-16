@@ -125,7 +125,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 };
                 return View(homeViewModel);
             } catch {
-                return Content("404, Sayfa Bulunamadý");
+                return RedirectToAction("NotFound", "Home");
             }
             
         }
@@ -178,8 +178,14 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             }
             catch
             {
-                return Content("404, Sayfa Bulunamadý");
+                return RedirectToAction("NotFound", "Home");
             }
+        }
+
+        [HttpGet]
+        public IActionResult NotFound()
+        {
+            return View();
         }
 
         public IActionResult Privacy()

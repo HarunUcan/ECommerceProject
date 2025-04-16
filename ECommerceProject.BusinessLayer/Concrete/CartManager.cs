@@ -23,6 +23,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
             return _cartDal.AddToCart(tempUserId, userId, productId, quantity, size);
         }
 
+        public async Task<bool> TApplyCoupon(string? tempUserId, int userId, string couponCode)
+        {
+            return await _cartDal.ApplyCoupon(tempUserId, userId, couponCode);
+        }
+
         public void TDelete(Cart t)
         {
             _cartDal.Delete(t);
@@ -56,6 +61,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
         public void TInsert(Cart t)
         {
             _cartDal.Insert(t);
+        }
+
+        public async Task<bool> TRemoveCouponFromCart(string? tempUserId, int userId, string couponCode)
+        {
+            return await _cartDal.RemoveCouponFromCart(tempUserId, userId, couponCode);
         }
 
         public bool TTransferCart(string tempUserId, int appUserId)

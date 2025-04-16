@@ -214,19 +214,45 @@
 
                 <!-- Kupon Kodu Alanı (Başlangıçta Gizli) -->
                 <div id="coupon-section" class="hidden my-4">
-                    <div class="flex gap-2">
-                        <input type="text" id="coupon-code"
-                               class="block w-full border-b bg-transparent h-8 px-2 border-gray-400 shadow-sm transition ease-in-out duration-400 focus:border-gray-500 sm:text-sm"
-                               placeholder="Kupon kodunuzu girin">
-                        <button id="apply-coupon"
-                                class="px-4 bg-green-700 font-semibold text-gray-50 rounded h-8 transition ease-in-out duration-300 hover:bg-green-800">
-                            Uygula
-                        </button>
+                    <div>
+                        <form asp-controller="Cart" asp-action="ApplyCoupon" method="post" class="inline flex gap-2">
+                            <input type="text" id="coupon-code" name="couponCode"
+                                   class="block w-full border-b bg-transparent h-8 px-2 border-gray-400 shadow-sm transition ease-in-out duration-400 focus:border-gray-500 sm:text-sm"
+                                   placeholder="Kupon kodunuzu girin">
+                            <button id="apply-coupon" type="submit"
+                                    class="px-4 bg-green-700 font-semibold text-gray-50 rounded h-8 transition ease-in-out duration-300 hover:bg-green-800">
+                                Uygula
+                            </button>
+                        </form>
+                        
                     </div>
                     <p id="coupon-message" class="text-sm text-green-600 mt-2 hidden">Kupon başarıyla uygulandı!</p>
                     <p id="error-message" class="text-sm text-red-600 mt-2 hidden">Geçersiz kupon kodu.</p>
                 </div>
             </div>
+            <div class="text-red-500" asp-validation-summary="ModelOnly"></div>
+
+            @if (Model.Cart.CartCoupons != null && Model.Cart.CartCoupons.Any())
+            {
+                <div class="mt-4">
+                    <h3 class="text-md font-semibold mb-2">Aktif Kuponlar</h3>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (var cartCoupon in Model.Cart.CartCoupons)
+                        {
+                            <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center">
+                                <span class="mr-2">@cartCoupon.Coupon.Code</span>
+                                <form asp-controller="Cart" asp-action="RemoveCouponFromCart" method="post" class="inline">
+                                    <input type="hidden" name="couponCode" value="@cartCoupon.Coupon.Code" />
+                                    <button type="submit" class="text-red-500 hover:text-red-700 ml-1">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
 
             <button class="w-full bg-black text-white py-2 mt-4 rounded hover:bg-gray-800">
                 Satın Al
@@ -250,5 +276,13 @@
         couponSection.classList.toggle('hidden'); // Alanı görünür yap veya gizle
         document.getElementById('discount-button').classList.toggle('hidden'); // Butonu gizle
     });
+
+    // document.getElementById('apply-coupon').addEventListener('click', function () {
+    //     const couponCode = document.getElementById('coupon-code').value.trim();
+    //     if (couponCode !== "") {
+    //         // GET isteği atıp sayfayı yönlendir
+    //         window.location.href = `/User/Cart/ApplyCoupon?couponCode=${encodeURIComponent(couponCode)}`;
+    //     }
+    // });
 </script>
 

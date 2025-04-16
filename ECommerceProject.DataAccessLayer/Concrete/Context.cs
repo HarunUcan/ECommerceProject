@@ -43,6 +43,21 @@ namespace ECommerceProject.DataAccessLayer.Concrete
                 .OnDelete(DeleteBehavior.Cascade); // Kullanıcı silinirse sepette silinsin
 
 
+            modelBuilder.Entity<CartCoupon>()
+                .HasKey(cc => new { cc.CartId, cc.CouponId });
+
+            modelBuilder.Entity<CartCoupon>()
+                .HasOne(cc => cc.Cart)
+                .WithMany(c => c.CartCoupons)
+                .HasForeignKey(cc => cc.CartId);
+
+            modelBuilder.Entity<CartCoupon>()
+                .HasOne(cc => cc.Coupon)
+                .WithMany(c => c.CartCoupons)
+                .HasForeignKey(cc => cc.CouponId);
+
+
+
             // Adress ile Sales arasındaki ilişki için Cascade Delete kaldırılıyor
             //modelBuilder.Entity<Sale>()
             //    .HasOne(s => s.Adress)
@@ -57,6 +72,7 @@ namespace ECommerceProject.DataAccessLayer.Concrete
         public DbSet<ProductGroup> ProductGroups { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartCoupon> CartCoupons { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Coupon> Coupons { get; set; }
         public DbSet<Sale> Sales { get; set; }

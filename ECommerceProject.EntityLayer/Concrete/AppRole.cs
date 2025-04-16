@@ -10,4 +10,10 @@ namespace ECommerceProject.EntityLayer.Concrete
     public class AppRole : IdentityRole<int>
     {
     }
+
+    public enum UserRoles
+    {
+        Admin,
+        User
+    }
 }

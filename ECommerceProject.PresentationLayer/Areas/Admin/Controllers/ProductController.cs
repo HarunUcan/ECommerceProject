@@ -4,6 +4,7 @@ using ECommerceProject.DtoLayer.Dtos.ProductDtos;
 using ECommerceProject.DtoLayer.Dtos.ProductImageDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
@@ -11,6 +12,7 @@ using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
 
     public class ProductController : Controller
     {

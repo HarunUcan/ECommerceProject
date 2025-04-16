@@ -5,10 +5,12 @@ using ECommerceProject.EntityLayer.Concrete;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ECommerceProject.DtoLayer.Dtos.ProductImageDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
 
     public class CategoryController : Controller
     {

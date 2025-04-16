@@ -1,0 +1,129 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>404 - Sayfa Bulunamadı</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+            background: linear-gradient(to bottom, #0e3dc1, #020c27);
+      overflow: hidden;
+    }
+
+        .snowflake {
+            position: absolute;
+            top: -15px;
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+            animation: fall linear infinite;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+    @@keyframes fall {
+      0% {
+        transform: translateY(-10px);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
+
+    .tree-bg {
+      position: absolute;
+      left: -60px;
+      bottom: 0;
+      width: 300px;
+      opacity: 0.2;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body class="relative min-h-screen flex items-center justify-center text-white text-center">
+    @* <!-- Zemindeki Kar Örtüsü -->
+    <div class="absolute bottom-0 w-[1500px] h-40 bg-white rounded-t-[100%] z-0 opacity-60"></div>
+
+    <!-- Çam Ağacı Gölgesi -->
+    <div class="absolute left-0 bottom-0 z-[1] opacity-50 pointer-events-none scale-[1.5] origin-bottom-left">
+        <svg width="400" height="350" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="shadowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:black; stop-opacity:0.5"></stop>
+                    <stop offset="100%" style="stop-color:black; stop-opacity:0"></stop>
+                </linearGradient>
+            </defs>
+            <polygon points="160,260 -40,400 120,340" fill="url(#shadowGradient)"></polygon>
+        </svg>
+    </div>
+
+
+  <!-- Çam Ağacı SVG -->
+    <div class="absolute left-0 bottom-0 z-[5] scale-[2.5]">
+        <svg height="350" width="400" xmlns="http://www.w3.org/2000/svg">
+            <!-- Gövde -->
+            <rect width="30" height="80" x="138" y="200" style="fill:rgb(73,50,0);stroke-width:3;"></rect>
+
+            <!-- Alt Dal Katmanı -->
+            <path d="M150 100 L85 200 L225 200 Z" style="fill:#003800;stroke:#003800;stroke-width:3"></path>
+
+            <!-- Orta Dal Katmanı -->
+            <path d="M150 60 L80 160 L220 163 Z" style="fill:#005D00;stroke:#005D00;stroke-width:3"></path>
+
+            <!-- Üst Dal Katmanı -->
+            <path d="M160 5 L75 125 L225 120 Z" style="fill:green;stroke:green;stroke-width:3"></path>
+            <!-- Kar Katmanı 3 -->
+            <path d="M160 5 L117 60 L193 55 Z" style="fill:white;stroke:white;stroke-width:2;"></path>
+        </svg>
+    </div> *@
+
+
+
+  <!-- Kar Taneleri -->
+  <div id="snowflakes"></div>
+
+  <!-- 404 İçerik -->
+  <div class="z-10">
+    <h1 class="text-9xl font-bold">404</h1>
+        <p class="text-2xl mt-4">Sayfa Bulunamadı.</p>
+        <p class="mt-2 text-gray-200">Görünüşe göre buralarda kayboldun...</p>
+    <a href="/" class="mt-6 inline-block bg-white text-blue-800 px-6 py-2 rounded-full font-semibold hover:bg-gray-200 transition">
+      Anasayfaya Dön
+    </a>
+  </div>
+
+  <!-- Kar Yağma Animasyonu -->
+  <script>
+    const snowContainer = document.getElementById('snowflakes');
+    const snowflakeCount = 50;
+
+        for (let i = 0; i < snowflakeCount; i++) {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+
+            const size = 5 + Math.random() * 10;
+            snowflake.style.width = size + 'px';
+            snowflake.style.height = size + 'px';
+
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.animationDuration = (5 + Math.random() * 5) + 's';
+            snowflake.style.animationDelay = Math.random() * 5 + 's'; // 🆕 GECİKME EKLENDİ
+
+            snowContainer.appendChild(snowflake);
+        }
+
+  </script>
+
+</body>
+</html>
+
+
