@@ -1,6 +1,63 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
-}
-<h1>@ViewData["Title"]</h1>
+﻿@model StaticPageViewModel
 
-<p>Use this page to detail your site's privacy policy.</p>
+@{
+    ViewData["Title"] = "Gizlilik Politikası";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+<section class="max-w-4xl mx-auto py-16 px-4 text-gray-800">
+    <h1 class="text-3xl font-bold border-b pb-2">@Model.StaticPageDto.Title</h1>
+
+    <div class="ql-editor p-0">
+        @Html.Raw(Model.StaticPageDto.Content)
+    </div>
+
+
+    <p class="mt-8 text-sm text-gray-500">
+        Son Güncellenme Tarihi: @(Model.StaticPageDto.UpdatedDate?.ToString("dd/MM/yyyy") ?? "Belirtilmemiş")
+    </p>
+
+    @* <p class="mb-4">
+        Bu gizlilik politikası, web sitemizi ziyaret ettiğinizde kişisel verilerinizin nasıl toplandığı, kullanıldığı ve korunduğu hakkında sizi bilgilendirmek amacıyla hazırlanmıştır.
+    </p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-2">1. Toplanan Bilgiler</h2>
+    <p class="mb-4">
+        Sitemiz üzerinden ad, soyad, e-posta adresi, telefon numarası gibi kişisel bilgiler yalnızca sizin onayınızla toplanır.
+    </p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-2">2. Bilgilerin Kullanımı</h2>
+    <p class="mb-4">
+        Toplanan bilgiler:
+        <ul class="list-disc ml-6">
+            <li>Hizmet sunmak ve iletişime geçmek,</li>
+            <li>Kampanya ve bilgilendirme mesajları göndermek,</li>
+            <li>Sistem güvenliğini sağlamak</li>
+        </ul>
+        amacıyla kullanılmaktadır.
+    </p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-2">3. Üçüncü Taraflarla Paylaşım</h2>
+    <p class="mb-4">
+        Kişisel bilgileriniz hiçbir şekilde üçüncü kişilerle paylaşılmaz, satılmaz veya kiralanmaz. Yasal zorunluluklar dışında hiçbir kurumla paylaşılmaz.
+    </p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-2">4. Çerezler (Cookies)</h2>
+    <p class="mb-4">
+        Web sitemiz, kullanıcı deneyimini geliştirmek için çerez kullanmaktadır. Tarayıcı ayarlarınızdan çerezleri reddedebilirsiniz.
+    </p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-2">5. Bilgi Güvenliği</h2>
+    <p class="mb-4">
+        Kişisel verilerinizin güvenliği bizim için önemlidir. Gerekli teknik ve idari önlemler alınarak bilgileriniz korunur.
+    </p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-2">6. Haklarınız</h2>
+    <p class="mb-4">
+        KVKK kapsamında; verilerinize erişme, düzeltme, silme ve işlenmesini sınırlandırma hakkına sahipsiniz. Bu haklarınızı kullanmak için bizimle iletişime geçebilirsiniz.
+    </p>
+
+    <p class="mt-8 text-sm text-gray-500">
+        Bu politika, zaman zaman güncellenebilir. Güncellemeleri bu sayfadan takip edebilirsiniz.
+    </p> *@
+</section>

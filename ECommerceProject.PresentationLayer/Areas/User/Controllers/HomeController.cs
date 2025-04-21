@@ -3,6 +3,7 @@ using ECommerceProject.BusinessLayer.Helpers;
 using ECommerceProject.DataAccessLayer.Concrete;
 using ECommerceProject.DtoLayer.Dtos.ProductDtos;
 using ECommerceProject.DtoLayer.Dtos.ProductVariantDtos;
+using ECommerceProject.DtoLayer.Dtos.StaticPageDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.Models;
 using ECommerceProject.PresentationLayer.ViewModels;
@@ -20,14 +21,16 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
         private readonly ICartService _cartService;
+        private readonly IStaticPageService _staticPageService;
         private readonly UserManager<AppUser> _userManager;
 
-        public HomeController(IProductService productService, ICategoryService categoryService, ICartService cartService, UserManager<AppUser> userManager)
+        public HomeController(IProductService productService, ICategoryService categoryService, ICartService cartService, UserManager<AppUser> userManager, IStaticPageService staticPageService)
         {
             _productService = productService;
             _categoryService = categoryService;
             _cartService = cartService;
             _userManager = userManager;
+            _staticPageService = staticPageService;
         }
 
         public async Task<IActionResult> Index()
@@ -188,9 +191,187 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        [HttpGet]
+        [Route("hakkimizda")]
+        public async Task<IActionResult> About()
         {
-            return View();
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+            HomeViewModel homeViewModel = new HomeViewModel
+            {
+                Categories = categories,
+                Cart = cart
+            };
+            return View(homeViewModel);
+        }
+
+        [HttpGet]
+        [Route("iletisim")]
+        public async Task<IActionResult> Contact()
+        {
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+            HomeViewModel homeViewModel = new HomeViewModel
+            {
+                Categories = categories,
+                Cart = cart
+            };
+            return View(homeViewModel);
+        }
+
+        [HttpGet]
+        [Route("uyelik-sozlesmesi")]
+        public async Task<IActionResult> MembershipAgreement()
+        {
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+            HomeViewModel homeViewModel = new HomeViewModel
+            {
+                Categories = categories,
+                Cart = cart
+            };
+            return View(homeViewModel);
+        }
+
+        [HttpGet]
+        [Route("gizlilik-politikasi")]
+        public async Task<IActionResult> Privacy()
+        {
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+
+            StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.PrivacyPolicy);
+
+            StaticPageDto staticPageDto = new StaticPageDto
+            {
+                Title = staticPage.Title,
+                Content = staticPage.Content,
+                UpdatedDate = staticPage.UpdatedDate
+            };
+
+            StaticPageViewModel staticPageViewModel = new StaticPageViewModel
+            {
+                Categories = categories,
+                Cart = cart,
+                StaticPageDto = staticPageDto
+            };
+            return View(staticPageViewModel);
+        }
+
+        [HttpGet]
+        [Route("mesafeli-satis-sozlesmesi")]
+        public async Task<IActionResult> SalesContract()
+        {
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+            HomeViewModel homeViewModel = new HomeViewModel
+            {
+                Categories = categories,
+                Cart = cart
+            };
+            return View(homeViewModel);
+        }
+
+        [HttpGet]
+        [Route("kvkk-aydinlatma-metni")]
+        public async Task<IActionResult> Kvkk()
+        {
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+            HomeViewModel homeViewModel = new HomeViewModel
+            {
+                Categories = categories,
+                Cart = cart
+            };
+            return View(homeViewModel);
+        }
+
+        [HttpGet]
+        [Route("iade-ve-iptal-kosullari")]
+        public async Task<IActionResult> ReturnAndCancellationPolicy()
+        {
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+            HomeViewModel homeViewModel = new HomeViewModel
+            {
+                Categories = categories,
+                Cart = cart
+            };
+            return View(homeViewModel);
+        }
+
+        [HttpGet]
+        [Route("cerez-politikasi")]
+        public async Task<IActionResult> CookiePolicy()
+        {
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+            HomeViewModel homeViewModel = new HomeViewModel
+            {
+                Categories = categories,
+                Cart = cart
+            };
+            return View(homeViewModel);
+        }
+
+        [HttpGet]
+        [Route("siparis-takip")]
+        public async Task<IActionResult> OrderTrack()
+        {
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+            HomeViewModel homeViewModel = new HomeViewModel
+            {
+                Categories = categories,
+                Cart = cart
+            };
+            return View(homeViewModel);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

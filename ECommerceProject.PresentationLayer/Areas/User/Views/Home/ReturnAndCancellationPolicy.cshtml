@@ -1,0 +1,43 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "İade ve İptal Koşulları";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-semibold text-gray-800 mb-6 border-b pb-2">İade ve İptal Koşulları</h1>
+
+    <p class="mb-4 text-gray-700">
+        [Firma Adı], müşteri memnuniyetini ön planda tutar ve aşağıda belirtilen koşullar çerçevesinde iade ve iptal işlemlerini yürütür.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-800 mt-8 mb-2">Sipariş İptali</h2>
+    <p class="mb-4 text-gray-700">
+        Siparişiniz, kargoya verilmeden önce müşteri hizmetleri ile iletişime geçerek iptal edilebilir. Kargoya verilen siparişlerin iptali mümkün değildir.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-800 mt-8 mb-2">İade Koşulları</h2>
+    <p class="mb-4 text-gray-700">
+        Satın aldığınız ürünleri, teslimat tarihinden itibaren 14 gün içerisinde kullanılmamış, tekrar satılabilir durumda ve orijinal ambalajı bozulmamış şekilde iade edebilirsiniz.
+    </p>
+    <ul class="list-disc list-inside text-gray-700 mb-4">
+        <li>Ürün ile birlikte fatura ve iade formu gönderilmelidir.</li>
+        <li>Kozmetik ve kişisel bakım ürünlerinde ambalaj açıldıysa iade kabul edilmez.</li>
+        <li>İade kargo ücreti müşteriye aittir, aksi belirtilmediği sürece.</li>
+    </ul>
+
+    <h2 class="text-xl font-semibold text-gray-800 mt-8 mb-2">İade Süreci</h2>
+    <p class="mb-4 text-gray-700">
+        İade edilen ürün tarafımıza ulaştıktan sonra gerekli incelemeler yapılır. Onaylanması halinde ücret iadesi 7 iş günü içerisinde ödeme yaptığınız yöntemle gerçekleştirilir.
+    </p>
+
+    <h2 class="text-xl font-semibold text-gray-800 mt-8 mb-2">Değişim</h2>
+    <p class="mb-4 text-gray-700">
+        Değişim talepleri için ürünün kullanılmamış olması ve talebin 14 gün içerisinde yapılması gerekmektedir. Stok durumu uygun ise değişim işlemi gerçekleştirilir.
+    </p>
+
+    <p class="mt-8 text-gray-600 text-sm">
+        Bu koşullar, [Firma Adı] tarafından zaman zaman güncellenebilir. Güncel metin web sitemiz üzerinden yayınlanarak yürürlüğe girer.
+    </p>
+</div>
+

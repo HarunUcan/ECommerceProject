@@ -61,6 +61,9 @@ namespace ECommerceProject.PresentationLayer
             builder.Services.AddScoped<ICartService, CartManager>();
             builder.Services.AddScoped<ICartDal, EfCartDal>();
 
+            builder.Services.AddScoped<IStaticPageService, StaticPageManager>();
+            builder.Services.AddScoped<IStaticPageDal, EfStaticPageDal>();
+
             builder.Services.AddScoped<IMailSenderService, MailSenderManager>();
 
 
@@ -133,6 +136,7 @@ namespace ECommerceProject.PresentationLayer
 
             // Middleware’i ekle
             app.UseMiddleware<CheckUserMiddleware>();
+            app.UseMiddleware<RateLimitMiddleware>();
 
             //app.UseEndpoints(endpoints =>
             //{

@@ -109,6 +109,26 @@
                     </div>
                 </div>
 
+                <!-- STATİK SAYFALAR -->
+                <div class="relative">
+                    <button onclick="toggleSubmenu('legalpages-submenu', 'legalpages-icon')"
+                            class="w-full py-3 px-6 text-white flex items-center justify-between">
+                        <span>Statik Sayfalar</span>
+                        <svg id="legalpages-icon" class="w-4 h-4 transition-transform duration-300"
+                             fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="legalpages-submenu" class="@(ViewData["ActivePage"]?.ToString() == "StaticPages" ? "" : "hidden")">
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="PrivacyPolicy" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "PrivacyPolicy" ? "bg-pink-700" : "hover:bg-gray-700")">Gizlilik Politikası</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="Edit" asp-route-slug="cerez-politikasi" class="block py-2 pl-10 text-sm hover:bg-gray-700">Çerez Politikası</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="Edit" asp-route-slug="mesafeli-satis-sozlesmesi" class="block py-2 pl-10 text-sm hover:bg-gray-700">Mesafeli Satış Sözleşmesi</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="Edit" asp-route-slug="kvkk-aydinlatma-metni" class="block py-2 pl-10 text-sm hover:bg-gray-700">KVKK Aydınlatma Metni</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="Edit" asp-route-slug="iade-ipal" class="block py-2 pl-10 text-sm hover:bg-gray-700">İade ve İptal</a>
+                    </div>
+                </div>
+
                 <a href="#" class="block py-3 px-6 hover:bg-gray-700">Siparişler</a>
                 <a href="#" class="block py-3 px-6 hover:bg-gray-700">Kullanıcılar</a>
                 <a href="#" class="block py-3 px-6 hover:bg-gray-700">Ayarlar</a>

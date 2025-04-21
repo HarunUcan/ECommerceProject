@@ -1,0 +1,51 @@
+﻿@model HomeViewModel
+
+@{
+    ViewData["Title"] = "Üyelik Sözleşmesi";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-4xl mx-auto px-6 py-16 text-gray-800 leading-relaxed">
+    <h1 class="text-3xl font-semibold mb-6 text-center">Üyelik Sözleşmesi</h1>
+
+    <p class="mb-4">
+        Bu Üyelik Sözleşmesi ("Sözleşme"), sitemize üye olan kullanıcılar ("Üye") ile [Firma Adı] ("Şirket") arasında, aşağıda belirtilen şartlar dahilinde kurulmuştur.
+    </p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-2">1. Taraflar</h2>
+    <p class="mb-4">
+        a) [Firma Adı]: [Firma adresi ve iletişim bilgileri]
+        b) Üye: Sitede üyelik oluşturmuş, kişisel bilgilerini paylaşmış gerçek veya tüzel kişi.
+    </p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-2">2. Üyelik ve Kullanım Koşulları</h2>
+    <p class="mb-4">
+        Üye, siteye üye olurken verdiği tüm bilgilerin doğru ve eksiksiz olduğunu kabul eder. Şirket, yanlış bilgi verilmesi durumunda üyeliği askıya alma veya sonlandırma hakkını saklı tutar.
+    </p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-2">3. Hak ve Yükümlülükler</h2>
+    <p class="mb-4">
+        Üye, siteyi yalnızca yasal amaçlarla kullanacağını ve yürürlükteki mevzuata aykırı işlem yapmayacağını kabul eder.
+    </p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-2">4. Gizlilik Politikası</h2>
+    <p class="mb-4">
+        Üyenin paylaştığı kişisel bilgiler, Gizlilik Politikası’na uygun olarak korunur ve üçüncü şahıslarla paylaşılmaz.
+    </p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-2">5. Fesih</h2>
+    <p class="mb-4">
+        Şirket, üyelik koşullarına aykırı davranışlarda bulunan üyelerin üyeliğini sona erdirme hakkını saklı tutar. Üye dilediği zaman üyeliğini sonlandırabilir.
+    </p>
+
+    <h2 class="text-xl font-semibold mt-8 mb-2">6. Yürürlük</h2>
+    <p class="mb-4">
+        Bu sözleşme, üyenin online olarak onaylamasıyla yürürlüğe girer.
+    </p>
+
+    <p class="text-sm text-gray-500 mt-8">
+        [Firma Adı] – Tüm hakları saklıdır.
+        Güncelleme Tarihi: @DateTime.Now.ToString("dd.MM.yyyy")
+    </p>
+</div>
+

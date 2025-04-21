@@ -77,5 +77,6 @@ namespace ECommerceProject.DataAccessLayer.Concrete
         public DbSet<Coupon> Coupons { get; set; }
         public DbSet<Sale> Sales { get; set; }
         public DbSet<SaleItem> SaleItems { get; set; }
+        public DbSet<StaticPage> StaticPages { get; set; }
     }
 }
