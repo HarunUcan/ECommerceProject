@@ -19,16 +19,16 @@ namespace ECommerceProject.EntityLayer.Concrete
     public enum StaticPageType
     {
         PrivacyPolicy,
-        AboutUs,
-        ContactUs,
-        FAQ,
-        TermsOfService,
-        ReturnAndRefundPolicy,
-        PaymentOptions,
         CookiePolicy,
-        MembershipAgreement,
         DistanceSalesAgreement,
-        KVKK
+        ReturnAndRefundPolicy,
+        MembershipAgreement,
+        KVKK,
+        AboutUs,
+        Store,
+        FAQ,
+        PaymentOptions,
+        TermsOfUse
     }
 }
 

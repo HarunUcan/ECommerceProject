@@ -1,0 +1,55 @@
+﻿@model StaticPageViewModel
+@{
+    ViewData["Title"] = "Mağaza";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+<section class="max-w-4xl mx-auto py-16 px-4 text-gray-800">
+
+    <h1 class="text-3xl font-bold border-b pb-2">@Model.StaticPageDto.Title</h1>
+
+    <div class="ql-editor p-0">
+        @Html.Raw(Model.StaticPageDto.Content)
+    </div>
+
+
+    <p class="mt-8 text-sm text-gray-500">
+        Son Güncellenme Tarihi: @(Model.StaticPageDto.UpdatedDate?.ToString("dd/MM/yyyy") ?? "Belirtilmemiş")
+    </p>
+
+
+
+
+@* 
+    <h1 class="text-3xl font-bold mb-6 text-center">Mağazamız</h1>
+
+    <p class="mb-4">
+        ECommerce App olarak, Türkiye’nin dört bir yanındaki kullanıcılarımıza kaliteli ve şık ürünleri uygun fiyatlarla sunmak için çalışıyoruz.
+        Her zevke ve ihtiyaca hitap eden ürün çeşitliliğimizle, alışverişi kolay ve keyifli hale getiriyoruz.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">Kategorilerimiz</h2>
+    <p class="mb-4">
+        Mağazamızda giyim, aksesuar, ayakkabı ve daha fazlasını bulabilirsiniz. Ürünlerimizi sürekli olarak güncelliyor, sezon trendlerini yakından takip ediyoruz.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">Alışveriş Deneyimi</h2>
+    <p class="mb-4">
+        Kullanıcı dostu arayüzümüz sayesinde dilediğiniz ürünleri kolayca bulabilir, güvenli ödeme sistemimiz ile alışverişinizi sorunsuz bir şekilde tamamlayabilirsiniz.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">Kampanyalar</h2>
+    <p class="mb-4">
+        Özel indirimler, sezon fırsatları ve sürpriz kampanyalarla alışverişinizi daha avantajlı hale getiriyoruz. Güncel kampanyalarımızı kaçırmamak için bizi takipte kalın!
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">Destek</h2>
+    <p>
+        Siparişleriniz ve mağazamızla ilgili her türlü sorunuz için
+        <a href="mailto:destek@ecommerceapp.com" class="text-blue-600 hover:underline">destek@ecommerceapp.com</a>
+        adresinden bizimle iletişime geçebilirsiniz.
+    </p>
+ *@
+</section>
+
+

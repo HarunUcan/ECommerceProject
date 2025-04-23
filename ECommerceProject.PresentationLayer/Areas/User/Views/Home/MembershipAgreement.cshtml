@@ -1,11 +1,27 @@
-﻿@model HomeViewModel
+﻿@model StaticPageViewModel
 
 @{
     ViewData["Title"] = "Üyelik Sözleşmesi";
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
 }
 
-<div class="max-w-4xl mx-auto px-6 py-16 text-gray-800 leading-relaxed">
+<div class="max-w-4xl mx-auto py-16 px-4 text-gray-800">
+
+    <h1 class="text-3xl font-bold border-b pb-2">@Model.StaticPageDto.Title</h1>
+
+    <div class="ql-editor p-0">
+        @Html.Raw(Model.StaticPageDto.Content)
+    </div>
+
+
+    <p class="mt-8 text-sm text-gray-500">
+        Son Güncellenme Tarihi: @(Model.StaticPageDto.UpdatedDate?.ToString("dd/MM/yyyy") ?? "Belirtilmemiş")
+    </p>
+
+
+
+
+@* 
     <h1 class="text-3xl font-semibold mb-6 text-center">Üyelik Sözleşmesi</h1>
 
     <p class="mb-4">
@@ -47,5 +63,6 @@
         [Firma Adı] – Tüm hakları saklıdır.
         Güncelleme Tarihi: @DateTime.Now.ToString("dd.MM.yyyy")
     </p>
+ *@
 </div>
 

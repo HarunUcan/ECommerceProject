@@ -1,0 +1,58 @@
+﻿@model StaticPageViewModel
+
+@{
+    ViewData["Title"] = "Ödeme Seçenekleri";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+<section class="max-w-4xl mx-auto px-6 py-16 text-gray-800">
+
+    <h1 class="text-3xl font-bold border-b pb-2">@Model.StaticPageDto.Title</h1>
+
+    <div class="ql-editor p-0">
+        @Html.Raw(Model.StaticPageDto.Content)
+    </div>
+
+
+    <p class="mt-8 text-sm text-gray-500">
+        Son Güncellenme Tarihi: @(Model.StaticPageDto.UpdatedDate?.ToString("dd/MM/yyyy") ?? "Belirtilmemiş")
+    </p>
+
+
+
+@* 
+    <h1 class="text-3xl font-bold mb-6 text-center">Ödeme Seçenekleri</h1>
+
+    <p class="mb-4">
+        ECommerce App olarak müşterilerimize güvenli, hızlı ve çeşitli ödeme yöntemleri sunuyoruz. Sipariş verirken aşağıdaki ödeme seçeneklerinden size en uygun olanını tercih edebilirsiniz.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">Kredi/Banka Kartı ile Ödeme</h2>
+    <p class="mb-4">
+        Visa, MasterCard ve Troy logolu tüm kredi ve banka kartları ile ödeme yapabilirsiniz. Tüm işlemler 3D Secure ile güvence altına alınmaktadır.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">Kapıda Ödeme</h2>
+    <p class="mb-4">
+        Siparişinizi teslim alırken ödemenizi nakit olarak gerçekleştirebilirsiniz. Kapıda ödeme hizmeti için ek hizmet bedeli uygulanabilir.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">Havale/EFT</h2>
+    <p class="mb-4">
+        Siparişinizin ardından belirtilen banka hesap bilgilerimize havale veya EFT yoluyla ödeme yapabilirsiniz. Açıklama kısmına sipariş numaranızı eklemeyi unutmayınız.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">Taksitli Ödeme</h2>
+    <p class="mb-4">
+        Anlaşmalı bankalarla yapılan alışverişlerde 12 aya varan taksit seçeneklerinden faydalanabilirsiniz. Taksit seçenekleri ödeme ekranında görüntülenecektir.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">Sorularınız mı Var?</h2>
+    <p>
+        Ödeme yöntemleri hakkında daha fazla bilgi almak isterseniz lütfen
+        <a href="mailto:info@ecommerceapp.com" class="text-blue-600 hover:underline">info@ecommerceapp.com</a> adresine e-posta gönderin.
+    </p>
+ *@
+</section>
+
+

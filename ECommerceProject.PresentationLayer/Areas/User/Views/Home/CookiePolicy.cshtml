@@ -1,10 +1,24 @@
-﻿@model HomeViewModel
+﻿@model StaticPageViewModel
 @{
-    ViewData["Title"] = "CerezPolitikasi";
+    ViewData["Title"] = "Çerez Politikasi";
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
 }
 
-<section class="max-w-4xl mx-auto px-6 py-12 text-gray-800">
+<section class="max-w-4xl mx-auto py-16 px-4 text-gray-800">
+
+    <h1 class="text-3xl font-bold border-b pb-2">@Model.StaticPageDto.Title</h1>
+
+    <div class="ql-editor p-0">
+        @Html.Raw(Model.StaticPageDto.Content)
+    </div>
+
+
+    <p class="mt-8 text-sm text-gray-500">
+        Son Güncellenme Tarihi: @(Model.StaticPageDto.UpdatedDate?.ToString("dd/MM/yyyy") ?? "Belirtilmemiş")
+    </p>
+
+    @* 
+
     <h1 class="text-3xl font-bold mb-6 text-center">Çerez Politikası</h1>
 
     <p class="mb-4">
@@ -35,5 +49,7 @@
     <p>
         Çerezler veya diğer teknolojileri kullanımımız hakkında herhangi bir sorunuz varsa, lütfen
         <a href="mailto:info@ecommerceapp.com" class="text-blue-600 hover:underline">info@ecommerceapp.com</a> adresine e-posta gönderin.
-    </p>
+    </p> 
+    
+    *@
 </section>

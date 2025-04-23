@@ -192,25 +192,6 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         }
 
         [HttpGet]
-        [Route("hakkimizda")]
-        public async Task<IActionResult> About()
-        {
-            var categories = _categoryService.TGetList();
-            var user = await _userManager.GetUserAsync(User);
-            Cart cart = null;
-            if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
-            else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
-            HomeViewModel homeViewModel = new HomeViewModel
-            {
-                Categories = categories,
-                Cart = cart
-            };
-            return View(homeViewModel);
-        }
-
-        [HttpGet]
         [Route("iletisim")]
         public async Task<IActionResult> Contact()
         {
@@ -230,22 +211,129 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         }
 
         [HttpGet]
+        [Route("hakkimizda")]
+        public async Task<IActionResult> About()
+        {
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+
+            StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.AboutUs);
+
+            if (staticPage == null)
+            {
+                staticPage = new StaticPage
+                {
+                    Title = "",
+                    Content = "",
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+            }
+
+            StaticPageDto staticPageDto = new StaticPageDto
+            {
+                Title = staticPage.Title,
+                Content = staticPage.Content,
+                UpdatedDate = staticPage.UpdatedDate
+            };
+
+            StaticPageViewModel staticPageViewModel = new StaticPageViewModel
+            {
+                Categories = categories,
+                Cart = cart,
+                StaticPageDto = staticPageDto
+            };
+            return View(staticPageViewModel);
+        }
+
+        [HttpGet]
+        [Route("magaza")]
+        public async Task<IActionResult> Store()
+        {
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+
+            StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.Store);
+
+            if (staticPage == null)
+            {
+                staticPage = new StaticPage
+                {
+                    Title = "",
+                    Content = "",
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+            }
+
+            StaticPageDto staticPageDto = new StaticPageDto
+            {
+                Title = staticPage.Title,
+                Content = staticPage.Content,
+                UpdatedDate = staticPage.UpdatedDate
+            };
+
+            StaticPageViewModel staticPageViewModel = new StaticPageViewModel
+            {
+                Categories = categories,
+                Cart = cart,
+                StaticPageDto = staticPageDto
+            };
+            return View(staticPageViewModel);
+        }
+
+        [HttpGet]
         [Route("uyelik-sozlesmesi")]
         public async Task<IActionResult> MembershipAgreement()
         {
             var categories = _categoryService.TGetList();
             var user = await _userManager.GetUserAsync(User);
             Cart cart = null;
+
             if (user != null)
                 cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
             else
                 cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
-            HomeViewModel homeViewModel = new HomeViewModel
+
+            StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.MembershipAgreement);
+
+            if (staticPage == null)
+            {
+                staticPage = new StaticPage
+                {
+                    Title = "",
+                    Content = "",
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+            }
+
+            StaticPageDto staticPageDto = new StaticPageDto
+            {
+                Title = staticPage.Title,
+                Content = staticPage.Content,
+                UpdatedDate = staticPage.UpdatedDate
+            };
+
+            StaticPageViewModel staticPageViewModel = new StaticPageViewModel
             {
                 Categories = categories,
-                Cart = cart
+                Cart = cart,
+                StaticPageDto = staticPageDto
             };
-            return View(homeViewModel);
+            return View(staticPageViewModel);
         }
 
         [HttpGet]
@@ -262,6 +350,17 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
 
             StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.PrivacyPolicy);
+
+            if (staticPage == null)
+            {
+                staticPage = new StaticPage
+                {
+                    Title = "",
+                    Content = "",
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+            }
 
             StaticPageDto staticPageDto = new StaticPageDto
             {
@@ -286,16 +385,39 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             var categories = _categoryService.TGetList();
             var user = await _userManager.GetUserAsync(User);
             Cart cart = null;
+
             if (user != null)
                 cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
             else
                 cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
-            HomeViewModel homeViewModel = new HomeViewModel
+
+            StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.DistanceSalesAgreement);
+
+            if (staticPage == null)
+            {
+                staticPage = new StaticPage
+                {
+                    Title = "",
+                    Content = "",
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+            }
+
+            StaticPageDto staticPageDto = new StaticPageDto
+            {
+                Title = staticPage.Title,
+                Content = staticPage.Content,
+                UpdatedDate = staticPage.UpdatedDate
+            };
+
+            StaticPageViewModel staticPageViewModel = new StaticPageViewModel
             {
                 Categories = categories,
-                Cart = cart
+                Cart = cart,
+                StaticPageDto = staticPageDto
             };
-            return View(homeViewModel);
+            return View(staticPageViewModel);
         }
 
         [HttpGet]
@@ -305,16 +427,39 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             var categories = _categoryService.TGetList();
             var user = await _userManager.GetUserAsync(User);
             Cart cart = null;
+
             if (user != null)
                 cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
             else
                 cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
-            HomeViewModel homeViewModel = new HomeViewModel
+
+            StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.KVKK);
+
+            if (staticPage == null)
+            {
+                staticPage = new StaticPage
+                {
+                    Title = "",
+                    Content = "",
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+            }
+
+            StaticPageDto staticPageDto = new StaticPageDto
+            {
+                Title = staticPage.Title,
+                Content = staticPage.Content,
+                UpdatedDate = staticPage.UpdatedDate
+            };
+
+            StaticPageViewModel staticPageViewModel = new StaticPageViewModel
             {
                 Categories = categories,
-                Cart = cart
+                Cart = cart,
+                StaticPageDto = staticPageDto
             };
-            return View(homeViewModel);
+            return View(staticPageViewModel);
         }
 
         [HttpGet]
@@ -324,16 +469,39 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             var categories = _categoryService.TGetList();
             var user = await _userManager.GetUserAsync(User);
             Cart cart = null;
+
             if (user != null)
                 cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
             else
                 cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
-            HomeViewModel homeViewModel = new HomeViewModel
+
+            StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.ReturnAndRefundPolicy);
+
+            if (staticPage == null)
+            {
+                staticPage = new StaticPage
+                {
+                    Title = "",
+                    Content = "",
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+            }
+
+            StaticPageDto staticPageDto = new StaticPageDto
+            {
+                Title = staticPage.Title,
+                Content = staticPage.Content,
+                UpdatedDate = staticPage.UpdatedDate
+            };
+
+            StaticPageViewModel staticPageViewModel = new StaticPageViewModel
             {
                 Categories = categories,
-                Cart = cart
+                Cart = cart,
+                StaticPageDto = staticPageDto
             };
-            return View(homeViewModel);
+            return View(staticPageViewModel);
         }
 
         [HttpGet]
@@ -343,17 +511,125 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             var categories = _categoryService.TGetList();
             var user = await _userManager.GetUserAsync(User);
             Cart cart = null;
+
             if (user != null)
                 cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
             else
                 cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
-            HomeViewModel homeViewModel = new HomeViewModel
+
+            StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.CookiePolicy);
+
+            if (staticPage == null)
+            {
+                staticPage = new StaticPage
+                {
+                    Title = "",
+                    Content = "",
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+            }
+
+            StaticPageDto staticPageDto = new StaticPageDto
+            {
+                Title = staticPage.Title,
+                Content = staticPage.Content,
+                UpdatedDate = staticPage.UpdatedDate
+            };
+
+            StaticPageViewModel staticPageViewModel = new StaticPageViewModel
             {
                 Categories = categories,
-                Cart = cart
+                Cart = cart,
+                StaticPageDto = staticPageDto
             };
-            return View(homeViewModel);
+            return View(staticPageViewModel);
         }
+
+        [HttpGet]
+        [Route("sikca-sorulan-sorular")]
+        public async Task<IActionResult> FAQ()
+        {
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+
+            StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.FAQ);
+
+            if (staticPage == null)
+            {
+                staticPage = new StaticPage
+                {
+                    Title = "",
+                    Content = "",
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+            }
+
+            StaticPageDto staticPageDto = new StaticPageDto
+            {
+                Title = staticPage.Title,
+                Content = staticPage.Content,
+                UpdatedDate = staticPage.UpdatedDate
+            };
+
+            StaticPageViewModel staticPageViewModel = new StaticPageViewModel
+            {
+                Categories = categories,
+                Cart = cart,
+                StaticPageDto = staticPageDto
+            };
+            return View(staticPageViewModel);
+        }
+
+        [HttpGet]
+        [Route("odeme-secenekleri")]
+        public async Task<IActionResult> PaymentOptions()
+        {
+            var categories = _categoryService.TGetList();
+            var user = await _userManager.GetUserAsync(User);
+            Cart cart = null;
+
+            if (user != null)
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+            else
+                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+
+            StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.PaymentOptions);
+
+            if (staticPage == null)
+            {
+                staticPage = new StaticPage
+                {
+                    Title = "",
+                    Content = "",
+                    CreatedDate = DateTime.Now,
+                    UpdatedDate = DateTime.Now
+                };
+            }
+
+            StaticPageDto staticPageDto = new StaticPageDto
+            {
+                Title = staticPage.Title,
+                Content = staticPage.Content,
+                UpdatedDate = staticPage.UpdatedDate
+            };
+
+            StaticPageViewModel staticPageViewModel = new StaticPageViewModel
+            {
+                Categories = categories,
+                Cart = cart,
+                StaticPageDto = staticPageDto
+            };
+            return View(staticPageViewModel);
+        }
+
 
         [HttpGet]
         [Route("siparis-takip")]

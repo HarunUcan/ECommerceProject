@@ -1,44 +1,52 @@
-﻿@model HomeViewModel
+﻿@model StaticPageViewModel
 
 @{
-    ViewData["Title"] = "About";
+    ViewData["Title"] = "Hakkımızda";
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
 }
 
-<div class="max-w-4xl mx-auto px-6 py-16 text-gray-800">
-    <div class="text-center mb-12">
-        <h1 class="text-4xl font-semibold tracking-tight mb-4">Hakkımızda</h1>
-        <p class="text-lg text-gray-500 max-w-2xl mx-auto">
-            Sade, şık ve güvenilir alışverişin adresi.
-        </p>
+<section class="max-w-4xl mx-auto py-16 px-4 text-gray-800">
+
+    <h1 class="text-3xl font-bold border-b pb-2">@Model.StaticPageDto.Title</h1>
+
+    <div class="ql-editor p-0">
+        @Html.Raw(Model.StaticPageDto.Content)
     </div>
 
-    <div class="space-y-12">
-        <div class="border-l-4 border-red-600 pl-6">
-            <h2 class="text-2xl font-semibold mb-2">Biz Kimiz?</h2>
-            <p class="text-gray-600 leading-relaxed">
-                ECommerce App olarak; modayı, kaliteyi ve güveni bir arada sunmak için buradayız.
-                Geniş ürün yelpazemiz, kullanıcı dostu deneyimimiz ve müşteri odaklı yaklaşımımızla
-                Türkiye genelinde hizmet veriyoruz.
-            </p>
-        </div>
 
-        <div class="border-l-4 border-red-600 pl-6">
-            <h2 class="text-2xl font-semibold mb-2">Misyonumuz</h2>
-            <p class="text-gray-600 leading-relaxed">
-                Müşterilerimize sadece alışveriş değil, bir deneyim sunmak istiyoruz.
-                Hızlı, güvenli ve keyifli bir e-ticaret ortamı yaratmak önceliğimiz.
-            </p>
-        </div>
-
-        <div class="border-l-4 border-red-600 pl-6">
-            <h2 class="text-2xl font-semibold mb-2">Vizyonumuz</h2>
-            <p class="text-gray-600 leading-relaxed">
-                Dijital dünyada iz bırakan, yenilikçi ve ilham veren bir marka olmak.
-                Kullanıcı deneyimini her zaman bir adım öteye taşımayı hedefliyoruz.
-            </p>
-        </div>
-    </div>
-</div>
+    <p class="mt-8 text-sm text-gray-500">
+        Son Güncellenme Tarihi: @(Model.StaticPageDto.UpdatedDate?.ToString("dd/MM/yyyy") ?? "Belirtilmemiş")
+    </p>
 
 
+
+
+@* 
+    <h1 class="text-3xl font-bold mb-6 text-center">Hakkımızda</h1>
+
+    <p class="mb-4">
+        ECommerce App olarak; modayı, kaliteyi ve güveni bir arada sunmak için buradayız. Geniş ürün yelpazemiz, kullanıcı dostu deneyimimiz ve müşteri odaklı yaklaşımımızla Türkiye genelinde hizmet veriyoruz.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">Biz Kimiz?</h2>
+    <p class="mb-4">
+        Sade, şık ve güvenilir alışverişin adresi olmayı hedefleyen bir e-ticaret platformuyuz. Her geçen gün daha fazla kullanıcıya ulaşarak memnuniyetinizi artırmayı amaçlıyoruz.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">Misyonumuz</h2>
+    <p class="mb-4">
+        Müşterilerimize sadece alışveriş değil, bir deneyim sunmak istiyoruz. Hızlı, güvenli ve keyifli bir e-ticaret ortamı yaratmak önceliğimizdir.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">Vizyonumuz</h2>
+    <p class="mb-4">
+        Dijital dünyada iz bırakan, yenilikçi ve ilham veren bir marka olmak. Kullanıcı deneyimini her zaman bir adım öteye taşımayı hedefliyoruz.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-8 mb-2">İletişim</h2>
+    <p>
+        Hakkımızda daha fazla bilgi almak veya bize ulaşmak için
+        <a href="mailto:info@ecommerceapp.com" class="text-blue-600 hover:underline">info@ecommerceapp.com</a> adresine e-posta gönderebilirsiniz.
+    </p>
+ *@
+</section>

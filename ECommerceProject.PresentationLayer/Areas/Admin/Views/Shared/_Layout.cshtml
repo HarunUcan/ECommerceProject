@@ -122,10 +122,15 @@
                     </button>
                     <div id="legalpages-submenu" class="@(ViewData["ActivePage"]?.ToString() == "StaticPages" ? "" : "hidden")">
                         <a asp-area="Admin" asp-controller="StaticPage" asp-action="PrivacyPolicy" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "PrivacyPolicy" ? "bg-pink-700" : "hover:bg-gray-700")">Gizlilik Politikası</a>
-                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="Edit" asp-route-slug="cerez-politikasi" class="block py-2 pl-10 text-sm hover:bg-gray-700">Çerez Politikası</a>
-                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="Edit" asp-route-slug="mesafeli-satis-sozlesmesi" class="block py-2 pl-10 text-sm hover:bg-gray-700">Mesafeli Satış Sözleşmesi</a>
-                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="Edit" asp-route-slug="kvkk-aydinlatma-metni" class="block py-2 pl-10 text-sm hover:bg-gray-700">KVKK Aydınlatma Metni</a>
-                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="Edit" asp-route-slug="iade-ipal" class="block py-2 pl-10 text-sm hover:bg-gray-700">İade ve İptal</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="CookiePolicy" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "CookiePolicy" ? "bg-pink-700" : "hover:bg-gray-700")">Çerez Politikası</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="DistanceSalesAgreement" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "DistanceSalesAgreement" ? "bg-pink-700" : "hover:bg-gray-700")">Mesafeli Satış Sözleşmesi</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="ReturnAndRefundPolicy" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "ReturnAndRefundPolicy" ? "bg-pink-700" : "hover:bg-gray-700")">İade ve İptal Politikası</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="MembershipAgreement" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "MembershipAgreement" ? "bg-pink-700" : "hover:bg-gray-700")">Üyelik Sözleşmesi</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="KVKK" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "KVKK" ? "bg-pink-700" : "hover:bg-gray-700")">KVKK Aydınlatma Metni</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="AboutUs" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "AboutUs" ? "bg-pink-700" : "hover:bg-gray-700")">Hakkımızda</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="Store" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "Store" ? "bg-pink-700" : "hover:bg-gray-700")">Mağaza</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="FAQ" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "FAQ" ? "bg-pink-700" : "hover:bg-gray-700")">Sıkça Sorulan Sorular (S.S.S)</a>
+                        <a asp-area="Admin" asp-controller="StaticPage" asp-action="PaymentOptions" class="block py-2 pl-10 text-sm @(ViewData["ActivePage"]?.ToString() == "PaymentOptions" ? "bg-pink-700" : "hover:bg-gray-700")">Ödeme Seçenekleri</a>
                     </div>
                 </div>
 

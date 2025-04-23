@@ -1,0 +1,65 @@
+﻿@model StaticPageViewModel
+@{
+    ViewData["Title"] = "Sıkça Sorulan Sorular";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+<section class="max-w-4xl mx-auto px-6 py-16 text-gray-800">
+
+    <h1 class="text-3xl font-bold border-b pb-2">@Model.StaticPageDto.Title</h1>
+
+    <div class="ql-editor p-0">
+        @Html.Raw(Model.StaticPageDto.Content)
+    </div>
+
+
+    <p class="mt-8 text-sm text-gray-500">
+        Son Güncellenme Tarihi: @(Model.StaticPageDto.UpdatedDate?.ToString("dd/MM/yyyy") ?? "Belirtilmemiş")
+    </p>
+
+
+
+
+@* 
+    <h1 class="text-3xl font-bold mb-8 text-center">Sıkça Sorulan Sorular</h1>
+
+    <div class="space-y-8">
+        <div>
+            <h2 class="text-xl font-semibold mb-2">Siparişimi nasıl takip edebilirim?</h2>
+            <p class="text-gray-600 leading-relaxed">
+                Sipariş takibinizi, hesabınıza giriş yaptıktan sonra "Siparişlerim" bölümünden yapabilirsiniz. Ayrıca kargo takip linki e-posta yoluyla da gönderilir.
+            </p>
+        </div>
+
+        <div>
+            <h2 class="text-xl font-semibold mb-2">İade işlemi nasıl yapılır?</h2>
+            <p class="text-gray-600 leading-relaxed">
+                Ürünü teslim aldıktan sonra 14 gün içinde iade edebilirsiniz. İade talebinizi "Hesabım" > "İade Taleplerim" üzerinden başlatabilirsiniz.
+            </p>
+        </div>
+
+        <div>
+            <h2 class="text-xl font-semibold mb-2">Kargo ücreti ne kadar?</h2>
+            <p class="text-gray-600 leading-relaxed">
+                500 TL ve üzeri alışverişlerde kargo ücretsizdir. Altındaki siparişler için sabit kargo ücreti 39.90 TL’dir.
+            </p>
+        </div>
+
+        <div>
+            <h2 class="text-xl font-semibold mb-2">Üyelik oluşturmak zorunda mıyım?</h2>
+            <p class="text-gray-600 leading-relaxed">
+                Hayır, misafir olarak da sipariş verebilirsiniz. Ancak üyelik oluşturmanız durumunda sipariş takibi, kampanyalar ve daha hızlı alışveriş gibi avantajlardan yararlanabilirsiniz.
+            </p>
+        </div>
+
+        <div>
+            <h2 class="text-xl font-semibold mb-2">Hangi ödeme yöntemlerini kabul ediyorsunuz?</h2>
+            <p class="text-gray-600 leading-relaxed">
+                Kredi kartı, banka kartı ve kapıda ödeme seçenekleriyle güvenli bir şekilde alışveriş yapabilirsiniz.
+            </p>
+        </div>
+    </div>
+ *@
+</section>
+
+
