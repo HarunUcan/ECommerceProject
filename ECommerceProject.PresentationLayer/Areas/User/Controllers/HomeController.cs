@@ -85,6 +85,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             foreach (var product in products)
             {
                 var groupProductsCount = product.ProductGroup?.Products.Count == null ? 0 : product.ProductGroup.Products.Count <= 1 ? 0 : product.ProductGroup.Products.Count - 1;
+                var productTotalStock = product.ProductVariants.Sum(x => x.Stock);
                 productDtos.Add(new ProductDto
                 {
                     Id = product.ProductId,
@@ -92,7 +93,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     Description = product.Description,
                     Slug = product.Slug,
                     Price = product.Price,
-                    Stock = product.Stock,
+                    Stock = productTotalStock,
                     CategoryName = product.Category.Name,
                     MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", ""),
                     IsFeatured = product.IsFeatured,

@@ -77,6 +77,9 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                     .Take(maxProductCountPerCategory)
                     .Include(p => p.Category)
                     .Include(p => p.ProductImages.Where(img => img.IsMain))
+                    .Include(p => p.ProductGroup) // Ürün grubunu da getiriyoruz
+                    .Include(p => p.ProductGroup.Products) // ProductGroup içindeki Products
+                    .Include(p => p.ProductVariants) // Ürün varyantlarını da getiriyoruz
                     .ToListAsync();
 
                 products.AddRange(categoryProducts);
@@ -94,6 +97,9 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                 .Take(maxProductCount)
                 .Include(p => p.Category)
                 .Include(p => p.ProductImages.Where(img => img.IsMain)) // Sadece IsMain olanları getir
+                .Include(p => p.ProductGroup) // Ürün grubunu da getiriyoruz
+                .Include(p => p.ProductGroup.Products) // ProductGroup içindeki Products
+                .Include(p => p.ProductVariants) // Ürün varyantlarını da getiriyoruz
                 .ToListAsync();
         }
 

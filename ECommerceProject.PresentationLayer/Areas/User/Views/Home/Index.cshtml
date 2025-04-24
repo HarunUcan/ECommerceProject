@@ -67,10 +67,15 @@
             @foreach (var product in Model.FeaturedProducts)
             {
                     <div class="swiper-slide bg-white shadow-md relative w-60">
-                    <a asp-area="User" asp-controller="Home" asp-action="ProductDetail" asp-route-slug="@product.Slug">
+                        <!-- Stokta yok etiketi -->
+                        @(product.ProductVariants.Sum(pv => pv.Stock) <= 0
+                            ? Html.Raw(@"<div class=""absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded shadow-lg z-20"">Stokta Yok</div>")
+                            : null)
+
+                        <a asp-area="User" asp-controller="Home" asp-action="ProductDetail" asp-route-slug="@product.Slug">
 
                             <!-- Ürün Resmi -->
-                            <img src="@product.ProductImages.FirstOrDefault(img => img.IsMain == true).Url.Replace("wwwroot","")" alt="Ürün" class="w-full h-60 md:h-72 object-cover">
+                            <img src="@product.ProductImages.FirstOrDefault(img => img.IsMain == true).Url.Replace("wwwroot","")" alt="Ürün" class="w-full h-60 md:h-72 object-cover @(product.ProductVariants.Sum(pv => pv.Stock) <= 0 ? "opacity-50" : "")">
 
                             <div class="pb-3 px-3">
                                 <!-- Ürün Bilgileri -->
@@ -83,15 +88,17 @@
                                     <p class="text-black font-bold mt-2">₺@product.Price</p>
 
                                     <!-- Renk Seçenekleri -->
-                                    <div class="relative flex justify-start items-center mt-2">
-                                        <div id="colorContainer" class="relative flex items-center">
-                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[#8B5E3B]"></div>
-                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[#000000] -ml-2.5"></div>
-                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[#FF0000] -ml-2.5"></div>
-                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-gray-300 text-xs flex items-center justify-center font-bold -ml-2.5">
-                                                +2
-                                            </div>
+                                    <div class="relative flex items-center gap-1 bg-white px-2 py-1 rounded-xl shadow-md w-fit @(product.ProductGroup?.Products == null || product.ProductGroup?.Products.Count <= 1 ? "hidden" : "")">
+                                        <!-- Gradyan Daireler -->
+                                        <div class="relative flex items-center">
+                                            <!-- Soldaki: Üstte ve border-2 -->
+                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[linear-gradient(90deg,_#2B2BBE,_#4FAAFD,_#C7F75C)] z-10"></div>
+                                            <!-- Sağdaki: Arkada, hafif sol kaydırılmış -->
+                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[linear-gradient(90deg,_#FBA1D6,_#FDF57F)] -ml-2 z-0"></div>
                                         </div>
+
+                                        <!-- Sayı -->
+                                        <div class="text-sm font-medium text-black">@(product.ProductGroup?.Products.Count - 1)</div>
                                     </div>
 
                                 </div>
@@ -152,10 +159,16 @@
                     if(product.CategoryId != category.CategoryId) continue;
 
                     <div class="swiper-slide bg-white shadow-md relative w-60">
+
+                        <!-- Stokta yok etiketi -->
+                        @(product.ProductVariants.Sum(pv => pv.Stock) <= 0
+                            ? Html.Raw(@"<div class=""absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded shadow-lg z-20"">Stokta Yok</div>")
+                            : null)
+
                         <a asp-area="User" asp-controller="Home" asp-action="ProductDetail" asp-route-slug="@product.Slug">
 
                             <!-- Ürün Resmi -->
-                            <img src="@product.ProductImages.FirstOrDefault(img => img.IsMain == true)?.Url.Replace("wwwroot","")" alt="Ürün" class="w-full h-60 md:h-72 object-cover">
+                            <img src="@product.ProductImages.FirstOrDefault(img => img.IsMain == true)?.Url.Replace("wwwroot","")" alt="Ürün" class="w-full h-60 md:h-72 object-cover @(product.ProductVariants.Sum(pv => pv.Stock) <= 0 ? "opacity-50" : "")">
                             
                             <div class="pb-3 px-3">
                                 <!-- Ürün Bilgileri -->
@@ -165,8 +178,21 @@
                                 <div id="price-color-group" class="flex items-center justify-between">
                                     <!-- Fiyat -->
                                     <p class="text-black font-bold mt-2">₺@product.Price</p>
+
+                                    <div class="relative flex items-center gap-1 bg-white px-2 py-1 rounded-xl shadow-md w-fit @(product.ProductGroup?.Products == null || product.ProductGroup?.Products.Count <= 1 ? "hidden" : "" )">
+                                        <!-- Gradyan Daireler -->
+                                        <div class="relative flex items-center">
+                                            <!-- Soldaki: Üstte ve border-2 -->
+                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[linear-gradient(90deg,_#2B2BBE,_#4FAAFD,_#C7F75C)] z-10"></div>
+                                            <!-- Sağdaki: Arkada, hafif sol kaydırılmış -->
+                                            <div class="w-5 h-5 rounded-full border-2 border-white bg-[linear-gradient(90deg,_#FBA1D6,_#FDF57F)] -ml-2 z-0"></div>
+                                        </div>
+
+                                        <!-- Sayı -->
+                                        <div class="text-sm font-medium text-black">@(product.ProductGroup?.Products.Count - 1)</div>
+                                    </div>
                             
-                                    <!-- Renk Seçenekleri -->
+                                    @* <!-- Renk Seçenekleri -->
                                     <div class="relative flex justify-start items-center mt-2">
                                         <div id="colorContainer" class="relative flex items-center">
                                             <div class="w-5 h-5 rounded-full border-2 border-white bg-[#8B5E3B]"></div>
@@ -176,7 +202,7 @@
                                                 +2
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> *@
                                 </div>
                             
                                 <!-- Sepete Ekle Butonu -->
