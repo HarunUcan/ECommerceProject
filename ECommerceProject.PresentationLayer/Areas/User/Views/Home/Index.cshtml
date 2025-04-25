@@ -121,15 +121,17 @@
     </div>
 </section>
 
-<!-- 4'lü Resimli Öne Çıkarılan Kategoriler -->
-<section class="container mx-auto px-4 mt-6">
-    <div class="grid grid-cols-2 lg:grid-cols-4">
+<section class="w-full flex justify-center mt-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 mx-8  lg:mx-24">
         @foreach (var category in Model.Categories.Where(c => c.IsTopFourCategory))
         {
             <a asp-area="User" asp-controller="Home" asp-action="Category" asp-route-slug="@category.Slug" class="relative group">
-                <img src="@category.ImageUrl?.Replace("wwwroot","")" alt="@category.Name" class="w-full h-[250px] md:h-[400px] object-cover">
+                <img src="@category.ImageUrl?.Replace("wwwroot","")" alt="@category.Name"
+                     class="w-full aspect-[3/4] object-cover transition-all duration-300">
                 <div class="absolute inset-0 bg-black bg-opacity-10 flex items-center justify-center transition-opacity duration-300 group-hover:bg-opacity-20">
-                    <span class="text-white [text-shadow:_0_4px_4px_rgb(0_0_0_/_0.8)] text-lg font-semibold">@category.Name</span>
+                    <span class="text-white [text-shadow:_0_4px_4px_rgb(0_0_0_/_0.8)] text-lg font-semibold">
+                        @category.Name
+                    </span>
                 </div>
             </a>
         }

@@ -77,5 +77,10 @@ namespace ECommerceProject.BusinessLayer.Concrete
         {
             _cartDal.Update(t);
         }
+
+        public async Task TValidateCartCoupons(string? tempUserId, int userId)
+        {
+            await _cartDal.ValidateCartCoupons(tempUserId, userId);
+        }
     }
 }

@@ -87,26 +87,61 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             using (Context context = new())
             {
                 var coupon = await context.Coupons.FirstOrDefaultAsync(x => x.Code == couponCode);
-                if (coupon == null) return false; // Coupon not found
+                if (coupon == null)
+                {
+                    throw new Exception("Bu kupon kodu geçersiz!"); //return false; // Kupon bulunamadı
+                }
 
-                if(!coupon.IsActive) return false; // Coupon is not active
+                if (!coupon.IsActive)
+                {
+                    throw new Exception("Bu kupon kodu geçersiz!"); //return false; // Kupon aktif değil
+                }
 
-                Cart cart;
-                if (tempUserId != null)
-                    cart = await context.Carts
-                .Include(c => c.CartCoupons)
-                .FirstOrDefaultAsync(c => c.TempUserId == tempUserId);
+                var query = context.Carts
+                                .Include(c => c.CartItems)
+                                    .ThenInclude(ci => ci.Product)
+                                .Include(c => c.CartCoupons)
+                                    .ThenInclude(cc => cc.Coupon);
 
-                else
-                    cart = await context.Carts
-                .Include(c => c.CartCoupons)
-                .FirstOrDefaultAsync(c => c.AppUserId == userId);
+                Cart? cart = tempUserId != null
+                    ? await query.FirstOrDefaultAsync(c => c.TempUserId == tempUserId)
+                    : await query.FirstOrDefaultAsync(c => c.AppUserId == userId);
 
                 if (cart == null) return false;
 
+
+                // Son Kullanım tarihini kontrol et
+                if (coupon.ExpirationDate < DateTime.Now)
+                {
+                    throw new Exception("Bu kuponun son kullanma tarihi geçmiştir!"); //return false; // Kuponun son kullanma tarihi geçmiş
+                }
+
                 // Sepette aynı kupon zaten var mı kontrol et
                 bool alreadyApplied = cart.CartCoupons?.Any(cc => cc.CouponId == coupon.CouponId) ?? false;
-                if (alreadyApplied) return false;
+                if (alreadyApplied)
+                {
+                    throw new Exception("Bu kupon zaten kullanılıyor!"); //return false; // Kupon zaten sepette var
+                }
+
+                bool isCouponTypePercentage = coupon.DiscountPercentage != null && coupon.DiscountPercentage > 0;
+                // Sepette zaten yüzdelik kupon var mı kontrol et
+                if (isCouponTypePercentage && cart.CartCoupons.Any(cc => cc.Coupon.DiscountPercentage != null && cc.Coupon.DiscountPercentage > 0))
+                {
+                    throw new Exception("Sepette maksimum 1 adet yüzdelik indirim sağlayan kupon olabilir!"); //return false; // Yüzde indirimli kupon zaten var
+                }
+
+                // Kuponun kullanım sayısını kontrol et
+                if (coupon.CurrentUsageCount >= coupon.MaxUsageCount)
+                {
+                    throw new Exception("Bu kuponun kullanım limiti dolmuştur!"); //return false; // Kuponun kullanım limiti dolmuş
+                }
+                // Kuponun minimum sipariş tutarını kontrol et
+                var cartTotalPrice = cart.CartItems?.Sum(ci => ci.Quantity * ci.Product.Price);
+                if (cartTotalPrice < coupon.MinOrderAmount)
+                {
+                    throw new Exception("Bu kuponu kullanmak için olan minimum sipariş tutarı sağlanmamıştır!"); //return false; // Minimum sipariş tutarı sağlanmamış
+                }
+                
                 // Kuponu sepete ekle
                 var cartCoupon = new CartCoupon
                 {
@@ -155,6 +190,13 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                     {
                         context.CartItems.Remove(cartItem);
                         context.SaveChanges();
+
+                        // Sepetteki kuponları kontrol et ve geçersiz olanları kaldır
+                        if (tempUserId != null)
+                            ValidateCartCoupons(tempUserId, 0).Wait();
+                        else
+                            ValidateCartCoupons(null, userId).Wait();
+
                         return true;
                     }
                 }
@@ -179,10 +221,12 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
 
                 if (tempUserId != null)
                 {
+                    ValidateCartCoupons(tempUserId, 0).Wait();
                     return query.FirstOrDefault(x => x.TempUserId == tempUserId);
                 }
                 else
                 {
+                    ValidateCartCoupons(null, userId).Wait();
                     return query.FirstOrDefault(x => x.AppUserId == userId);
                 }
             }
@@ -214,6 +258,70 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             //}
 
         }
+
+        // Sepetteki kuponları kontrol et ve geçersiz olanları kaldır
+        public async Task ValidateCartCoupons(string? tempUserId, int userId)
+        {
+            using (Context context = new())
+            {
+                var cartQuery = context.Carts
+                    .Include(c => c.CartItems)
+                        .ThenInclude(ci => ci.Product)
+                    .Include(c => c.CartCoupons)
+                        .ThenInclude(cc => cc.Coupon);
+
+                Cart? cart = tempUserId != null
+                    ? await cartQuery.FirstOrDefaultAsync(c => c.TempUserId == tempUserId)
+                    : await cartQuery.FirstOrDefaultAsync(c => c.AppUserId == userId);
+
+                if (cart == null || cart.CartCoupons == null || !cart.CartCoupons.Any())
+                    return;
+
+                var cartTotalPrice = cart.CartItems.Sum(ci => ci.Quantity * ci.Product.Price);
+
+                var couponsToRemove = new List<CartCoupon>();
+
+                foreach (var cartCoupon in cart.CartCoupons)
+                {
+                    var coupon = cartCoupon.Coupon;
+
+                    // Minimum sipariş tutarı şartını sağlamıyor
+                    if (coupon.MinOrderAmount.HasValue && cartTotalPrice < coupon.MinOrderAmount.Value)
+                    {
+                        couponsToRemove.Add(cartCoupon);
+                        continue;
+                    }
+
+                    // Expired ya da artık aktif değil
+                    if (!coupon.IsActive || coupon.ExpirationDate < DateTime.Now)
+                    {
+                        couponsToRemove.Add(cartCoupon);
+                        continue;
+                    }
+
+                    // Eğer bu kupon yüzdelikse ve sepette başka yüzdelik varsa (gerekiyorsa)
+                    if (coupon.DiscountPercentage.HasValue)
+                    {
+                        bool hasOtherPercentage = cart.CartCoupons
+                            .Where(cc => cc.CouponId != coupon.CouponId)
+                            .Any(cc => cc.Coupon.DiscountPercentage.HasValue);
+
+                        if (hasOtherPercentage)
+                        {
+                            couponsToRemove.Add(cartCoupon);
+                            continue;
+                        }
+                    }
+                }
+
+                if (couponsToRemove.Any())
+                {
+                    context.CartCoupons.RemoveRange(couponsToRemove);
+                    await context.SaveChangesAsync();
+                }
+            }
+        }
+
 
         public async Task<bool> RemoveCouponFromCart(string? tempUserId, int userId, string couponCode)
         {

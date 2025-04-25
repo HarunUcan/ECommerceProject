@@ -91,18 +91,30 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 
             if (user != null)
             {
-                isValid = await _cartService.TApplyCoupon(null, user.Id, couponCode);
+                try
+                {
+                    isValid = await _cartService.TApplyCoupon(null, user.Id, couponCode);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
             else
             {
                 var tempUserId = Request.Cookies["tempUserId"];
                 if (tempUserId != null)
                 {
-                    isValid = await _cartService.TApplyCoupon(tempUserId, 0, couponCode);
+                    try
+                    {
+                        isValid = await _cartService.TApplyCoupon(tempUserId, 0, couponCode);
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError("", ex.Message);
+                    }
                 }
             }
-            if (!isValid)
-                ModelState.AddModelError("", "Kupon Eklenemedi!");
 
 
             return View("Index", new HomeViewModel

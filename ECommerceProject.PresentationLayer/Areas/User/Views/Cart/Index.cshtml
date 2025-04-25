@@ -12,6 +12,30 @@
     
 }
 
+@{
+    decimal subtotal = totalPrice - kdv;
+    decimal discountTotal = 0;
+
+    if (Model.Cart.CartCoupons != null && Model.Cart.CartCoupons.Any())
+    {
+        foreach (var cartCoupon in Model.Cart.CartCoupons)
+        {
+            var coupon = cartCoupon.Coupon;
+
+            if (coupon.DiscountAmount.HasValue)
+            {
+                discountTotal += coupon.DiscountAmount.Value;
+            }
+            else if (coupon.DiscountPercentage.HasValue)
+            {
+                discountTotal += (subtotal * coupon.DiscountPercentage.Value / 100);
+            }
+        }
+    }
+
+    var finalTotal = totalPrice - discountTotal;
+}
+
 <head>
     <script>
         function increaseQuantity(inputId) {
@@ -185,52 +209,62 @@
 
         <!-- Sipariş Özeti -->
         <div class="bg-gray-100 px-6 pt-8 pb-4 shadow-md rounded-lg w-full h-full md:w-1/3 sticky top-[150px] self-start">
-
             <h2 class="text-xl font-semibold mb-4">Sipariş Özeti</h2>
+
             <div class="flex justify-between mb-2">
                 <span>Ara Toplam:</span>
-                <span>₺@(totalPrice-kdv)</span>
+                <span>₺@subtotal.ToString("0.00")</span>
             </div>
+
             <div class="flex justify-between mb-2">
-                <span>KDV(%10):</span>
-                <span>₺@kdv</span>
+                <span>KDV (%10):</span>
+                <span>₺@kdv.ToString("0.00")</span>
             </div>
+
             <div class="flex justify-between mb-2">
                 <span>Kargo:</span>
                 <span>Ücretsiz</span>
             </div>
-            <hr class="my-2 h-px bg-gray-300 border-0">
+
+            @if (discountTotal > 0)
+            {
+                <div class="flex justify-between text-green-700 font-medium mb-2">
+                    <span>İndirim:</span>
+                    <span>-₺@discountTotal.ToString("0.00")</span>
+                </div>
+            }
+
+            <hr class="my-2 h-px bg-gray-300 border-0" />
+
             <div class="flex justify-between font-bold text-lg">
                 <span>Toplam:</span>
-                <span>₺@totalPrice</span>
+                <span>₺@finalTotal.ToString("0.00")</span>
             </div>
 
-            <!-- İndirim Kodu Butonu -->
+            <!-- Kupon Alanı ve Listelemesi -->
             <div class="mt-4 flex justify-center">
-                <button id="discount-button"
-                        class="w-auto font-semibold hover:underline text-gray-800 py-2 rounded">
+                <button id="discount-button" class="font-semibold hover:underline text-gray-800 py-2 rounded">
                     Kupon Kodu +
                 </button>
 
-                <!-- Kupon Kodu Alanı (Başlangıçta Gizli) -->
-                <div id="coupon-section" class="hidden my-4">
-                    <div>
-                        <form asp-controller="Cart" asp-action="ApplyCoupon" method="post" class="inline flex gap-2">
-                            <input type="text" id="coupon-code" name="couponCode"
-                                   class="block w-full border-b bg-transparent h-8 px-2 border-gray-400 shadow-sm transition ease-in-out duration-400 focus:border-gray-500 sm:text-sm"
-                                   placeholder="Kupon kodunuzu girin">
-                            <button id="apply-coupon" type="submit"
-                                    class="px-4 bg-green-700 font-semibold text-gray-50 rounded h-8 transition ease-in-out duration-300 hover:bg-green-800">
-                                Uygula
-                            </button>
-                        </form>
-                        
-                    </div>
+                <div id="coupon-section" class="hidden my-4 w-full">
+                    <form asp-controller="Cart" asp-action="ApplyCoupon" method="post" class="flex gap-2">
+                        <input type="text" id="coupon-code" name="couponCode"
+                               class="w-full border-b bg-transparent h-8 px-2 border-gray-400 shadow-sm focus:border-gray-500 sm:text-sm"
+                               placeholder="Kupon kodunuzu girin" />
+                        <button type="submit"
+                                class="px-4 bg-green-700 font-semibold text-white rounded h-8 hover:bg-green-800">
+                            Uygula
+                        </button>
+                    </form>
                     <p id="coupon-message" class="text-sm text-green-600 mt-2 hidden">Kupon başarıyla uygulandı!</p>
                     <p id="error-message" class="text-sm text-red-600 mt-2 hidden">Geçersiz kupon kodu.</p>
                 </div>
             </div>
-            <div class="text-red-500" asp-validation-summary="ModelOnly"></div>
+
+            @* Kupon kodu uygulandıktan sonra varsa hata mesajı *@
+            <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm mb-2"></div>
+
 
             @if (Model.Cart.CartCoupons != null && Model.Cart.CartCoupons.Any())
             {
@@ -239,10 +273,11 @@
                     <div class="flex flex-wrap gap-2">
                         @foreach (var cartCoupon in Model.Cart.CartCoupons)
                         {
+                            var coupon = cartCoupon.Coupon;
                             <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center">
-                                <span class="mr-2">@cartCoupon.Coupon.Code</span>
+                                <span class="mr-2">@coupon.Code</span>
                                 <form asp-controller="Cart" asp-action="RemoveCouponFromCart" method="post" class="inline">
-                                    <input type="hidden" name="couponCode" value="@cartCoupon.Coupon.Code" />
+                                    <input type="hidden" name="couponCode" value="@coupon.Code" />
                                     <button type="submit" class="text-red-500 hover:text-red-700 ml-1">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
@@ -252,7 +287,6 @@
                     </div>
                 </div>
             }
-
 
             <button class="w-full bg-black text-white py-2 mt-4 rounded hover:bg-gray-800">
                 Satın Al
@@ -264,6 +298,7 @@
                 <i class="fa-brands fa-paypal"></i>
             </div>
         </div>
+
 
     </div>
 </main>

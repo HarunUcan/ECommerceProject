@@ -16,5 +16,6 @@ namespace ECommerceProject.DataAccessLayer.Abstract
         bool DeleteCartItem(string? tempUserId, int userId, int productId, ProductSize size);
         Task<bool> ApplyCoupon(string? tempUserId, int userId, string couponCode);
         Task<bool> RemoveCouponFromCart(string? tempUserId, int userId, string couponCode);
+        Task ValidateCartCoupons(string? tempUserId, int userId);
     }
 }

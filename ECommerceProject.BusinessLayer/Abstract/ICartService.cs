@@ -16,5 +16,6 @@ namespace ECommerceProject.BusinessLayer.Abstract
         bool TDeleteCartItem(string? tempUserId, int userId, int productId, ProductSize size);
         Task<bool> TApplyCoupon(string? tempUserId, int userId, string couponCode);
         Task<bool> TRemoveCouponFromCart(string? tempUserId, int userId, string couponCode);
+        Task TValidateCartCoupons(string? tempUserId, int userId);
     }
 }

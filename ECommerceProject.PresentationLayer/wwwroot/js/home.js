@@ -76,6 +76,16 @@ var productSwiper = new Swiper(".productSwiper", {
             spaceBetween: 25,
             slidesPerGroup: 5, // Daha büyük ekranlarda 5 ürün kaydır
         },
+        1536: {
+            slidesPerView: 6,
+            spaceBetween: 30,
+            slidesPerGroup: 6, // En büyük ekranlarda 6 ürün kaydır
+        },
+        2000: {
+            slidesPerView: 7,
+            spaceBetween: 35,
+            slidesPerGroup: 7, // En büyük ekranlarda 6 ürün kaydır
+        },
     },
     on: {
         init: function () {
