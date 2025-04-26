@@ -140,7 +140,7 @@
 
                                 <div id="price-color-group" class="flex items-center justify-between">
                                     <!-- Fiyat -->
-                                            <p class="text-black font-bold mt-2">₺${product.price}</p>
+                                    <p class="text-black font-bold mt-2">₺${product.price.toFixed(2)}</p>
 
                                     <!-- Renk Seçenekleri -->
                                     <div class="relative flex items-center gap-1 bg-white px-2 py-1 rounded-xl shadow-md w-fit ${product.groupProductsCount <= 0 ? 'hidden' : ''}">

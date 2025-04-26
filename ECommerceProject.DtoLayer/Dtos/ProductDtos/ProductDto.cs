@@ -16,6 +16,7 @@ namespace ECommerceProject.DtoLayer.Dtos.ProductDtos
         public string[] OtherImageUrls { get; set; }
         public string Slug { get; set; }
         public decimal Price { get; set; }
+        public decimal DiscountedPrice { get; set; }
         public int Stock { get; set; }
         public string CategoryName { get; set; }
         public bool IsFeatured { get; set; }

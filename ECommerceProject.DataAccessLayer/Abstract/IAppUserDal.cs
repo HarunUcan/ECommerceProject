@@ -1,0 +1,14 @@
+﻿using ECommerceProject.EntityLayer.Concrete;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ECommerceProject.DataAccessLayer.Abstract
+{
+    public interface IAppUserDal : IGenericDal<AppUser>
+    {
+        Task<List<AppUser>> GetUsersBySearchAsync(string searchTerm);
+    }
+}

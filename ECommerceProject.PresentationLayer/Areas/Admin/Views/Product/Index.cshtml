@@ -34,38 +34,64 @@
             $.get(`/Admin/Product/GetPagedProducts?page=${page}&pageSize=${pageSize}`, function (data) {
                 if (data.length > 0) {
                     data.forEach(product => {
-                        $("#product-list").append(`
+                        let priceHtml = '';
 
-                            <tr>
-                                        <td class="border-b py-4">${product.id}</td>
-                                <td class="border-b py-4">
-                                    <a href="/urun/${product.slug}">
-                                                <img src="${product.mainImageUrl}" alt="Ürün Resmi"
-                                                     class="w-12 h-12 rounded-md object-cover">
-                                    </a>
-                                </td>
-                                        <td class="border-b py-4 underline"><a href="/urun/${product.slug}">${product.name}</a></td>
-                                        <td class="border-b py-4">${product.price} ₺</td>
-                                        <td class="border-b py-4">${product.categoryName}</td>
-                                <td class="border-b py-4">
-                                            <button onclick="toggleFeatured(${product.id}, this)"
-                                        class="${product.isFeatured ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500'} transition"
-                                        title="Öne Çıkanlara Ekle/Kaldır">
+                        if (product.price !== product.discountedPrice) {
+                            const discountRate = Math.round(100 - (product.discountedPrice / product.price) * 100);
+                            priceHtml = `
+                                            <div class="flex items-center gap-1">
+                                                <div>
+                                                    <p class="text-xs text-red-600 line-through">${product.price.toFixed(2)} ₺</p>
+                                                    <p>${product.discountedPrice.toFixed(2)} ₺</p>
+                                                </div>
+                                                <span class="text-xs bg-red-500 text-white px-1 py-0.5 rounded">${discountRate}%</span>
+                                            </div>
+                                        `;
+                        } else {
+                            priceHtml = `<p>${product.price.toFixed(2)} ₺</p>`;
+                        }
+
+                        $("#product-list").append(`
+                        <tr>
+                            <td class="border-b py-4">${product.id}</td>
+                            <td class="border-b py-4">
+                                <a href="/urun/${product.slug}">
+                                    <img src="${product.mainImageUrl}" alt="Ürün Resmi" class="w-12 h-12 rounded-md object-cover">
+                                </a>
+                            </td>
+                            <td class="border-b py-4 underline">
+                                <a href="/urun/${product.slug}">${product.name}</a>
+                            </td>
+                            <td class="border-b py-4">
+                                ${priceHtml}
+                            </td>
+                            <td class="border-b py-4">${product.categoryName}</td>
+                            <td class="border-b py-4">
+                                <button onclick="toggleFeatured(${product.id}, this)"
+                                    class="${product.isFeatured ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500'} transition"
+                                    title="Öne Çıkanlara Ekle/Kaldır">
                                     <i class="fa-solid fa-star"></i>
                                 </button>
-                                    
-                                    <a href="/urun-duzenle/${product.id}"
-                                                       class="text-yellow-600 hover:text-yellow-800 transition"><i class="fas fa-edit" title="Düzenle"></i></a>
-
-                                            <button onclick="confirmDelete(${product.id})" class="text-red-600 hover:text-red-800 transition" title="Sil"><i class="fa-solid fa-trash-can"></i></button>
-                                </td>
-                            </tr>
-                            `);
+                                <a href="/urun-duzenle/${product.id}"
+                                    class="text-yellow-600 hover:text-yellow-800 transition">
+                                    <i class="fas fa-edit" title="Düzenle"></i>
+                                </a>
+                                <button onclick="confirmDelete(${product.id})"
+                                    class="text-red-600 hover:text-red-800 transition" title="Sil">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                                <button onclick="openDiscountModal(${product.id})"
+                                    class="text-green-600 hover:text-green-800 transition" title="İndirim Yap">
+                                    <i class="fa-solid fa-percent"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `);
                     });
 
-                    page++; // Sonraki sayfaya geç
+                    page++;
                 } else {
-                    $(window).off("scroll"); // Ürün yoksa scroll olayını kaldır
+                    $(window).off("scroll");
                 }
 
                 $("#loading").hide();
@@ -118,6 +144,75 @@
                     }
                 }
             });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // İndirim modalını açma ve kapama fonksiyonları
+        function openDiscountModal(productId) {
+            document.getElementById('discountProductId').value = productId;
+            document.getElementById('discountModal').classList.remove('hidden');
+        }
+
+        function closeDiscountModal() {
+            document.getElementById('discountModal').classList.add('hidden');
+        }
+
+        // İndirim uygulama fonksiyonu
+        function applyDiscount() {
+            const productId = document.getElementById('discountProductId').value;
+            const discountType = document.getElementById('discountType').value;
+            const discountValue = document.getElementById('discountValue').value;
+
+            if (!discountValue || discountValue <= 0) {
+                Swal.fire("Hata", "Geçerli bir indirim değeri girin.", "error");
+                return;
+            }
+
+            $.post('/Admin/Product/ApplyDiscount', {
+                productId: productId,
+                discountType: discountType,
+                discountValue: discountValue
+            }, function (response) {
+                if (response.success) {
+                    Swal.fire("Başarılı", "İndirim başarıyla uygulandı.", "success").then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire("Hata", response.message, "error");
+                }
+            });
+
+            closeDiscountModal();
+        }
+
+        // İndirimleri kaldırma fonksiyonu
+        function removeDiscount() {
+            const productId = document.getElementById('discountProductId').value;
+
+            $.post('/Admin/Product/RemoveDiscount', { productId: productId }, function (response) {
+                if (response.success) {
+                    Swal.fire("Başarılı", "İndirim başarıyla kaldırıldı.", "success").then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire("Hata", response.message, "error");
+                }
+            });
+
+            closeDiscountModal();
         }
     </script>
 
@@ -187,5 +282,33 @@
 
     </div>
 </div>
+
+<!-- İndirim Modalı -->
+<div id="discountModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-lg w-96">
+        <h2 class="text-2xl mb-4 font-semibold text-gray-700">İndirim Uygula</h2>
+        <input type="hidden" id="discountProductId" />
+
+        <div class="mb-4">
+            <label class="block text-gray-600 mb-2">İndirim Tipi</label>
+            <select id="discountType" class="w-full border-gray-300 rounded-md">
+                <option value="Percentage">Yüzdelik (%)</option>
+                <option value="Amount">Sabit (₺)</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-600 mb-2">İndirim Değeri</label>
+            <input type="number" id="discountValue" class="w-full border-gray-300 rounded-md" placeholder="İndirim miktarı girin">
+        </div>
+
+        <div class="flex justify-center">
+            <button onclick="applyDiscount()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mr-2">Uygula</button>
+            <button onclick="removeDiscount()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded mr-2">İndirimleri Kaldır</button>
+            <button onclick="closeDiscountModal()" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded">İptal</button>
+        </div>
+    </div>
+</div>
+
 
 

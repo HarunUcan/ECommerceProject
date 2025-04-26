@@ -67,6 +67,25 @@
             @foreach (var product in Model.FeaturedProducts)
             {
                     <div class="swiper-slide bg-white shadow-md relative w-60">
+
+                        <!-- İndirim Oranı -->
+                        @if (product.DiscountRate != null && product.DiscountRate > 0)
+                        {
+                            <div class="absolute top-0 right-0 bg-red-600 text-white text-xs px-2 py-1 shadow-lg z-20">
+                                %@(product.DiscountRate?.ToString("F0")) İndirim!
+                            </div>
+                        }
+                        // DiscountAmount ile hesaplanan indirim oranı
+                        else if(product.DiscountAmount != null && product.DiscountAmount > 0)
+                        {
+                            var discountedPrice = product.Price - product.DiscountAmount.Value;
+                            var calculatedDiscountRate = Math.Round(100 - (discountedPrice / product.Price * 100));
+
+                            <div class="absolute top-0 right-0 bg-red-600 text-white text-xs px-2 py-1 shadow-lg z-20">
+                                %@calculatedDiscountRate İndirim!
+                            </div>
+                        }
+
                         <!-- Stokta yok etiketi -->
                         @(product.ProductVariants.Sum(pv => pv.Stock) <= 0
                             ? Html.Raw(@"<div class=""absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded shadow-lg z-20"">Stokta Yok</div>")
@@ -82,10 +101,29 @@
                                 <h2 class="product-name text-lg font-semibold mt-3">@product.Name</h2>
                                 <p class="product-description text-gray-500 text-sm">@product.Description</p>
 
-                                <div id="price-color-group" class="flex items-center justify-between">
+                            <div id="price-color-group" class="flex items-center justify-between min-h-[52px]">
 
                                     <!-- Fiyat -->
-                                    <p class="text-black font-bold mt-2">₺@product.Price</p>
+                                    @if (product.DiscountRate != null && product.DiscountRate > 0)
+                                    {
+                                        <div class="mt-2">
+                                            <p class="text-sm text-red-600 line-through">₺@product.Price</p>
+                                            <p class="text-black font-bold">₺@((product.Price - product.Price * (product.DiscountRate / 100))?.ToString("F2"))</p>
+                                        </div>
+                                    }
+                                    else if(product.DiscountAmount != null && product.DiscountAmount > 0)
+                                    {
+                                        var discountedPrice = product.Price - product.DiscountAmount.Value;
+
+                                        <div class="mt-2">
+                                            <p class="text-sm text-red-600 line-through">₺@product.Price</p>
+                                            <p class="text-black font-bold">₺@(discountedPrice.ToString("F2"))</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-black font-bold mt-2">₺@product.Price</p>
+                                    }
 
                                     <!-- Renk Seçenekleri -->
                                     <div class="relative flex items-center gap-1 bg-white px-2 py-1 rounded-xl shadow-md w-fit @(product.ProductGroup?.Products == null || product.ProductGroup?.Products.Count <= 1 ? "hidden" : "")">
@@ -162,6 +200,24 @@
 
                     <div class="swiper-slide bg-white shadow-md relative w-60">
 
+                        <!-- İndirim Oranı -->
+                        @if (product.DiscountRate != null && product.DiscountRate > 0)
+                        {
+                            <div class="absolute top-0 right-0 bg-red-600 text-white text-xs px-2 py-1 shadow-lg z-20">
+                                %@(product.DiscountRate?.ToString("F0")) İndirim!
+                            </div>
+                        }
+                        // DiscountAmount ile hesaplanan indirim oranı
+                        else if (product.DiscountAmount != null && product.DiscountAmount > 0)
+                        {
+                            var discountedPrice = product.Price - product.DiscountAmount.Value;
+                            var calculatedDiscountRate = Math.Round(100 - (discountedPrice / product.Price * 100));
+
+                            <div class="absolute top-0 right-0 bg-red-600 text-white text-xs px-2 py-1 shadow-lg z-20">
+                                %@calculatedDiscountRate İndirim!
+                            </div>
+                        }
+
                         <!-- Stokta yok etiketi -->
                         @(product.ProductVariants.Sum(pv => pv.Stock) <= 0
                             ? Html.Raw(@"<div class=""absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded shadow-lg z-20"">Stokta Yok</div>")
@@ -177,9 +233,29 @@
                                 <h2 class="product-name text-lg font-semibold mt-3">@product.Name</h2>
                                 <p class="product-description text-gray-500 text-sm">@product.Description</p>
                             
-                                <div id="price-color-group" class="flex items-center justify-between">
+                                <div id="price-color-group" class="flex items-center justify-between min-h-[52px]">
+
                                     <!-- Fiyat -->
-                                    <p class="text-black font-bold mt-2">₺@product.Price</p>
+                                    @if (product.DiscountRate != null && product.DiscountRate > 0)
+                                    {
+                                        <div class="mt-2">
+                                            <p class="text-sm text-red-600 line-through">₺@product.Price</p>
+                                            <p class="text-black font-bold">₺@((product.Price - product.Price * (product.DiscountRate / 100))?.ToString("F2"))</p>
+                                        </div>
+                                    }
+                                    else if (product.DiscountAmount != null && product.DiscountAmount > 0)
+                                    {
+                                        var discountedPrice = product.Price - product.DiscountAmount.Value;
+
+                                        <div class="mt-2">
+                                            <p class="text-sm text-red-600 line-through">₺@product.Price</p>
+                                            <p class="text-black font-bold">₺@(discountedPrice.ToString("F2"))</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-black font-bold mt-2">₺@product.Price</p>
+                                    }
 
                                     <div class="relative flex items-center gap-1 bg-white px-2 py-1 rounded-xl shadow-md w-fit @(product.ProductGroup?.Products == null || product.ProductGroup?.Products.Count <= 1 ? "hidden" : "" )">
                                         <!-- Gradyan Daireler -->

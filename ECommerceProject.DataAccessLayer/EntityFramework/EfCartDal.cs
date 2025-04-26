@@ -97,6 +97,12 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                     throw new Exception("Bu kupon kodu geçersiz!"); //return false; // Kupon aktif değil
                 }
 
+                // Kullanıcı giriş yapmamışsa indirim kullanamaz
+                if (tempUserId != null)
+                {
+                    throw new Exception("İndirimlerden yararlanmak için kayıt olmalı ve giriş yapmalısınız!"); //return false; // Geçici kullanıcılar kupon kullanamaz
+                }
+
                 var query = context.Carts
                                 .Include(c => c.CartItems)
                                     .ThenInclude(ci => ci.Product)
@@ -123,12 +129,20 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                     throw new Exception("Bu kupon zaten kullanılıyor!"); //return false; // Kupon zaten sepette var
                 }
 
-                bool isCouponTypePercentage = coupon.DiscountPercentage != null && coupon.DiscountPercentage > 0;
-                // Sepette zaten yüzdelik kupon var mı kontrol et
-                if (isCouponTypePercentage && cart.CartCoupons.Any(cc => cc.Coupon.DiscountPercentage != null && cc.Coupon.DiscountPercentage > 0))
+                bool cartHasAnyCoupons = cart.CartCoupons?.Any() ?? false;
+                // Eğer sepette başka kupon varsa yeni kupon eklenemez
+                if (cartHasAnyCoupons)
                 {
-                    throw new Exception("Sepette maksimum 1 adet yüzdelik indirim sağlayan kupon olabilir!"); //return false; // Yüzde indirimli kupon zaten var
+                    throw new Exception("Sepette yalnızca 1 kupon kullanabilirsiniz!"); //return false; // Sepette zaten kupon var
                 }
+
+
+                //bool isCouponTypePercentage = coupon.DiscountPercentage != null && coupon.DiscountPercentage > 0;
+                //// Sepette zaten yüzdelik kupon var mı kontrol et
+                //if (isCouponTypePercentage && cart.CartCoupons.Any(cc => cc.Coupon.DiscountPercentage != null && cc.Coupon.DiscountPercentage > 0))
+                //{
+                //    throw new Exception("Sepette maksimum 1 adet yüzdelik indirim sağlayan kupon olabilir!"); //return false; // Yüzde indirimli kupon zaten var
+                //}
 
                 // Kuponun kullanım sayısını kontrol et
                 if (coupon.CurrentUsageCount >= coupon.MaxUsageCount)
@@ -281,6 +295,12 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
 
                 var couponsToRemove = new List<CartCoupon>();
 
+                // Sepette yalnızca 1 kupon olabilir
+                if(cart.CartCoupons.Count > 1)
+                {
+                    couponsToRemove.AddRange(cart.CartCoupons.Skip(1)); // İlk kuponu bırak, diğerlerini kaldır
+                }
+
                 foreach (var cartCoupon in cart.CartCoupons)
                 {
                     var coupon = cartCoupon.Coupon;
@@ -299,19 +319,26 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                         continue;
                     }
 
-                    // Eğer bu kupon yüzdelikse ve sepette başka yüzdelik varsa (gerekiyorsa)
-                    if (coupon.DiscountPercentage.HasValue)
+                    // Kullanım limiti dolmuş
+                    if (coupon.CurrentUsageCount >= coupon.MaxUsageCount)
                     {
-                        bool hasOtherPercentage = cart.CartCoupons
-                            .Where(cc => cc.CouponId != coupon.CouponId)
-                            .Any(cc => cc.Coupon.DiscountPercentage.HasValue);
-
-                        if (hasOtherPercentage)
-                        {
-                            couponsToRemove.Add(cartCoupon);
-                            continue;
-                        }
+                        couponsToRemove.Add(cartCoupon);
+                        continue;
                     }
+
+                    // Eğer bu kupon yüzdelikse ve sepette başka yüzdelik varsa (gerekiyorsa)
+                    //if (coupon.DiscountPercentage.HasValue)
+                    //{
+                    //    bool hasOtherPercentage = cart.CartCoupons
+                    //        .Where(cc => cc.CouponId != coupon.CouponId)
+                    //        .Any(cc => cc.Coupon.DiscountPercentage.HasValue);
+
+                    //    if (hasOtherPercentage)
+                    //    {
+                    //        couponsToRemove.Add(cartCoupon);
+                    //        continue;
+                    //    }
+                    //}
                 }
 
                 if (couponsToRemove.Any())

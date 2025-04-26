@@ -34,7 +34,7 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            
+
             //List<Product> products = await _productService.TGetAllProductsWithCategoriesImagesAsync();
             //List<ProductDto> productDtos = new List<ProductDto>();
 
@@ -63,12 +63,17 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
 
             foreach (var product in products)
             {
+                var discountedPrice = product.DiscountRate != null ? product.Price - (product.Price * (decimal)product.DiscountRate / 100) 
+                    : product.DiscountAmount != null ? product.Price - (decimal)product.DiscountAmount 
+                    : product.Price;
+
                 productDtos.Add(new ProductDto
                 {
                     Id = product.ProductId,
                     Name = product.Name,
                     Description = product.Description,
                     Price = product.Price,
+                    DiscountedPrice = discountedPrice,
                     Stock = product.Stock,
                     CategoryName = product.Category.Name,
                     MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", ""),
@@ -145,14 +150,14 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                     adminProductSizesViewModel = model.Variants;
                     foreach (var variant in adminProductSizesViewModel)
                     {
-                        
-                            productVariants.Add(new ProductVariant
-                            {
-                                //Color = variant.Color,
-                                Size = Enum.TryParse(variant.Size, out ProductSize size) ? size : ProductSize.NOSIZE,
-                                Stock = variant.Stock
-                            });
-                        
+
+                        productVariants.Add(new ProductVariant
+                        {
+                            //Color = variant.Color,
+                            Size = Enum.TryParse(variant.Size, out ProductSize size) ? size : ProductSize.NOSIZE,
+                            Stock = variant.Stock
+                        });
+
                     }
                 }
 
@@ -186,5 +191,49 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
             await _productService.TDeleteWithImagesAsync(new Product { ProductId = id });
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        public IActionResult ApplyDiscount(int productId, string discountType, decimal discountValue)
+        {
+            var product = _productService.TGetById(productId);
+            if (product != null)
+            {
+                if (discountType == "Percentage")
+                {
+                    product.DiscountRate = discountValue;
+                    product.DiscountAmount = null;
+                }
+                else if (discountType == "Amount")
+                {
+                    product.DiscountAmount = discountValue;
+                    product.DiscountRate = null;
+                }
+                else
+                {
+                    return Json(new { error = "Invalid discount type" });
+                }
+
+                _productService.TUpdate(product);
+                return Json(new { success = true });
+            }
+            return Json(new { error = "Product not found" }
+            );
+        }
+
+        [HttpPost]
+        public IActionResult RemoveDiscount(int productId)
+        {
+            var product = _productService.TGetById(productId);
+            if (product != null)
+            {
+                product.DiscountRate = null;
+                product.DiscountAmount = null;
+                _productService.TUpdate(product);
+                return Json(new { success = true });
+            }
+            return Json(new { error = "Product not found" }
+            );
+        }
+
     }
 }
