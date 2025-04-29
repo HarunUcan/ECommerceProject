@@ -1,0 +1,231 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "Ödeme";
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+
+<div class="mx-auto max-w-3xl px-6 py-10">
+    <!-- Progress Steps -->
+    <div class="flex items-center justify-between mb-10">
+        <div class="flex-1 flex flex-col items-center">
+            <div id="stepIndicator1" class="w-10 h-10 flex items-center justify-center rounded-full border-2 border-black text-black font-semibold bg-white">
+                1
+            </div>
+            <span class="mt-2 text-sm font-medium text-black">Adres Bilgileri</span>
+        </div>
+        <div class="flex-1 h-1 bg-gray-300 mx-2"></div>
+        <div class="flex-1 flex flex-col items-center">
+            <div id="stepIndicator2" class="w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-300 text-gray-400 font-semibold bg-white">
+                2
+            </div>
+            <span class="mt-2 text-sm font-medium text-gray-400">Kart Bilgileri</span>
+        </div>
+    </div>
+
+    <!-- Step Contents -->
+    <div id="step-1">
+        <h2 class="text-2xl font-semibold mb-6">Adres Bilgileri</h2>
+        <form id="address-form">
+            <div class="mb-6">
+                <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Adres Seçin</label>
+                <select id="address" class="block w-full border rounded-md bg-white h-12 px-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm">
+                    <option value="">Adres Seçiniz</option>
+                    <option value="1">Ev Adresi</option>
+                    <option value="2">İş Adresi</option>
+                    <option value="3">Başka Bir Adres</option>
+                </select>
+            </div>
+            <button type="button" onclick="goToStep2()" class="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 transition">
+                Devam Et
+            </button>
+        </form>
+    </div>
+
+    <div id="step-2" class="hidden">
+        <h2 class="text-2xl font-semibold mb-6">Kart Bilgileri</h2>
+        <form>
+            <div class="mb-6">
+                <label for="card-name" class="block text-sm font-medium text-gray-700 mb-2">Kart Üzerindeki İsim</label>
+                <input type="text" id="card-name" class="block w-full border rounded-md bg-white h-12 px-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm" placeholder="Ad Soyad">
+            </div>
+            <div class="mb-6">
+                <label for="card-number" class="block text-sm font-medium text-gray-700 mb-2">Kart Numarası</label>
+                <input type="text" id="card-number" class="block w-full border rounded-md bg-white h-12 px-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm" placeholder="1234 5678 9012 3456">
+            </div>
+            <div class="flex gap-6 mb-6">
+                <div class="w-1/2">
+                    <label for="expiry-date" class="block text-sm font-medium text-gray-700 mb-2">Son Kullanma Tarihi</label>
+                    <input type="text" id="expiry-date" class="block w-full border rounded-md bg-white h-12 px-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm" placeholder="MM/YY">
+                </div>
+                <div class="w-1/2">
+                    <label for="cvv" class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                    <input type="text" id="cvv" class="block w-full border rounded-md bg-white h-12 px-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm" placeholder="123">
+                </div>
+            </div>
+
+
+            <!-- Dinamik Banka ve Taksit Bilgisi -->
+            <div id="bank-info-section" class="mb-6 hidden border rounded-md p-4">
+                <div class="flex items-center gap-3 mb-4">
+                    <img id="bank-logo" src="" alt="Banka Logo" class="h-6" />
+                    <span id="card-family" class="text-green-700 font-semibold text-base"></span>
+                    <span id="bank-name" class="text-gray-600 text-sm"></span>
+                </div>
+                <h3 class="text-lg font-semibold mb-4">Taksit Seçenekleri</h3>
+                <div id="installments" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                <input type="hidden" id="selectedInstallment" name="installment" value="1" />
+            </div>
+
+
+            <button type="submit" class="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 transition">
+                Ödemeyi Tamamla
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function goToStep2() {
+            const addressSelect = document.getElementById('address');
+            if (addressSelect.value === "") {
+                alert('Lütfen bir adres seçiniz.');
+                return;
+            }
+            document.getElementById('step-1').classList.add('hidden');
+            document.getElementById('step-2').classList.remove('hidden');
+
+            document.getElementById('stepIndicator1').classList.replace('border-black', 'border-gray-300');
+            document.getElementById('stepIndicator1').classList.replace('text-black', 'text-gray-400');
+            document.getElementById('stepIndicator2').classList.replace('border-gray-300', 'border-black');
+            document.getElementById('stepIndicator2').classList.replace('text-gray-400', 'text-black');
+        }
+
+        document.getElementById('card-number').addEventListener('input', function () {
+            const value = this.value.replace(/\s/g, '');
+            if (value.length >= 6) {
+                const binNumber = value.substring(0, 6);
+                const price = "4999"; // Dinamik hale getirmek istersen, ViewData üzerinden alabilirsin
+
+                fetch(`/User/Payment/IyzicoInstallmentCheck?price=${price}&binNumber=${binNumber}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "success") {
+                            const details = data.installmentDetails[0];
+                            const installmentArea = document.getElementById("installments");
+                            installmentArea.innerHTML = ""; // Öncekileri temizle
+
+                            // Banka bilgilerini göster
+                            document.getElementById("bank-logo").src = `/images/banka_logo/${details.bankName.toLowerCase()}.png`;
+                            document.getElementById("card-family").textContent = details.cardFamilyName;
+                            // document.getElementById("bank-name").textContent = `(${details.bankName})`;
+
+                            // Alanı görünür yap
+                            document.getElementById("bank-info-section").classList.remove("hidden");
+
+                            // Taksitleri oluştur
+                            details.installmentPrices.forEach(item => {
+                                const div = document.createElement("div");
+                                div.className = "installment-option border border-gray-300 rounded-md p-4 text-center cursor-pointer hover:border-black transition";
+                                div.setAttribute("data-value", item.installmentNumber);
+                                div.onclick = () => selectInstallment(div);
+                                div.innerHTML = `
+                                        <div class="text-base font-medium">${item.installmentNumber} Taksit</div>
+                                        <div class="text-sm text-gray-600">${parseFloat(item.price).toFixed(2)} TL x ${item.installmentNumber}</div>
+                                        <div class="text-sm font-semibold text-black mt-1">${parseFloat(item.totalPrice).toFixed(2)} TL</div>
+                                    `;
+                                installmentArea.appendChild(div);
+                            });
+
+                            // İlk taksiti seçili yap
+                            const firstOption = document.querySelector('.installment-option');
+                            if (firstOption) selectInstallment(firstOption);
+
+                        } else {
+                            console.error("Taksit bilgisi alınamadı.");
+                        }
+                    })
+                    .catch(error => console.error("Hata:", error));
+            } else {
+                document.getElementById("bank-info-section").classList.add("hidden");
+            }
+        });
+
+        function selectInstallment(element) {
+            document.querySelectorAll('.installment-option').forEach(option => {
+                option.classList.remove('border-black');
+                option.classList.add('border-gray-300');
+            });
+
+            element.classList.remove('border-gray-300');
+            element.classList.add('border-black');
+
+            document.getElementById('selectedInstallment').value = element.getAttribute('data-value');
+        }
+
+    </script>
+}
+
+
+@*
+    İyzico API'den gelen örnek JSON yanıtı:
+    ---------------------------------------
+
+    
+    {
+        "installmentDetails": [
+        {
+          "binNumber": "554960",
+          "commercial": 0,
+          "price": "4999",
+          "cardType": "CREDIT_CARD",
+          "cardAssociation": "MASTER_CARD",
+          "cardFamilyName": "Bonus",
+          "force3Ds": 0,
+          "bankCode": 62,
+          "bankName": "Garanti Bankası",
+          "forceCvc": 0,
+          "installmentPrices": [
+            {
+              "price": "4999",
+              "totalPrice": "4999",
+              "installmentNumber": 1
+            },
+            {
+              "price": "2579.97",
+              "totalPrice": "5159.93",
+              "installmentNumber": 2
+            },
+            {
+              "price": "1753.74",
+              "totalPrice": "5261.22",
+              "installmentNumber": 3
+            },
+            {
+              "price": "934.99",
+              "totalPrice": "5609.92",
+              "installmentNumber": 6
+            },
+            {
+              "price": "667.57",
+              "totalPrice": "6008.14",
+              "installmentNumber": 9
+            },
+            {
+              "price": "538.21",
+              "totalPrice": "6458.55",
+              "installmentNumber": 12
+            }
+          ]
+        }
+    ],
+    "status": "success",
+    "statusCode": 200,
+    "errorCode": null,
+    "errorMessage": null,
+    "errorGroup": null,
+    "conversationId": "123456789",
+    "systemTime": 1745879003008,
+    "locale": "tr"
+}
+*@
