@@ -21,6 +21,11 @@ namespace ECommerceProject.PresentationLayer.Middlewares
                 if (!context.Request.Cookies.ContainsKey("TempUserId"))
                 {
                     var tempUserId = Guid.NewGuid().ToString();
+                    tempUserId += Guid.NewGuid().ToString();
+                    tempUserId += Guid.NewGuid().ToString();
+                    tempUserId += Guid.NewGuid().ToString();
+                    tempUserId += Guid.NewGuid().ToString();
+
                     var cookieOptions = new CookieOptions
                     {
                         Expires = DateTime.UtcNow.AddDays(7), // 7 gün boyunca geçerli olacak
@@ -39,6 +44,27 @@ namespace ECommerceProject.PresentationLayer.Middlewares
 
                     // Çerezi oluştur
                     context.Response.Cookies.Append("TempUserId", tempUserId, cookieOptions);
+                }
+            }
+
+            // Iyzico ödemesi yapıldıktan sonra kullanıcı giriş yapmış olduğu halde TempUserId çerezi oluşturuluyor bu yüzden burada siliyoruz 
+            // Şu anlık problem oluşturmuyor gibi görünüyor ancak sepet taşıma işlemlerinde çalışma sırasına bağlı olarak sorun çıkarabilir
+            else
+            {
+                if (context.Request.Cookies.ContainsKey("TempUserId"))
+                {
+                    // Kullanıcı giriş yapmışsa ve TempUserId çerezi varsa, çerezi sil
+                    context.Response.Cookies.Delete("TempUserId");
+
+                    // Kullanıcıya ait sepeti güncelle
+                    var tempUserId = context.Request.Cookies["TempUserId"];
+                    Context dbContext = new Context();
+                    var cart = dbContext.Carts.FirstOrDefault(c => c.TempUserId == tempUserId);
+                    if (cart != null)
+                    {
+                        dbContext.Carts.Remove(cart);
+                        dbContext.SaveChanges();
+                    }
                 }
             }
 

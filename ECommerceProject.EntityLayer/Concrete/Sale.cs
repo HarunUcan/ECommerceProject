@@ -21,22 +21,28 @@ namespace ECommerceProject.EntityLayer.Concrete
 
     public enum SaleStatus
     {
+        /// The order is not approved.
+        NotApproved = 0,
+
         /// The order is being prepared.
-        Preparing = 0,
+        Preparing = 1,
 
         /// The order has been shipped.
-        Shipped = 1,
+        Shipped = 2,
 
         /// The order is in transit to the customer.
-        InTransit = 2,
+        InTransit = 3,
 
         /// The order has been delivered to the customer.
-        Delivered = 3,
+        Delivered = 4,
 
         /// The order has been canceled.
-        Canceled = 4,
+        Canceled = 5,
 
         /// The order has been returned by the customer.
-        Returned = 5
+        Returned = 6,
+
+        /// The order was unsuccessful due to payment failure or other issues.
+        Unsuccessful = 7,
     }
 }
