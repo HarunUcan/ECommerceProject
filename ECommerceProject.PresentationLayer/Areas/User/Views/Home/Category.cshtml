@@ -120,53 +120,60 @@
             $.get(finalUrl, function (data) {
                 if (data.length > 0) {
                     data.forEach(product => {
+                        let hasDiscount = product.discountedPrice < product.price;
+                        let discountRate = hasDiscount
+                            ? Math.round(100 - (product.discountedPrice / product.price * 100))
+                            : 0;
+
                         $("#product-list").append(`
+                <div class="swiper-slide bg-white shadow-md relative w-full lg:w-60">
 
-                    <div class="swiper-slide bg-white shadow-md relative w-full lg:w-60">
-                             <!-- Stokta yok etiketi -->
-                                ${product.stock <= 0 ? 
-                                    `<div class="absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded shadow-lg z-20">
-                                        Stokta Yok
-                                    </div>` : ''}
-                        <a href="urun/${product.slug}">
+                    <!-- Stokta yok etiketi -->
+                    ${product.stock <= 0 ?
+                                `<div class="absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded shadow-lg z-20">
+                            Stokta Yok
+                        </div>` : ''}
 
-                            <!-- Ürün Resmi -->
-                                            <img src="${product.mainImageUrl}" alt="Ürün" class="w-full h-60 md:h-72 object-cover ${product.stock <= 0 ? 'opacity-50' : ''}">
+                    <!-- İndirim etiketi -->
+                    ${hasDiscount ?
+                                `<div class="absolute top-0 right-0 bg-red-600 text-white text-xs px-2 py-1 shadow-lg z-20">
+                            %${discountRate} İndirim!
+                        </div>` : ''}
 
-                            <div class="pb-3 px-3">
-                                <!-- Ürün Bilgileri -->
-                                        <h2 class="product-name text-lg font-semibold mt-3">${product.name}</h2>
-                                        <p class="product-description text-gray-500 text-sm">${product.description}</p>
+                    <a href="urun/${product.slug}">
+                        <img src="${product.mainImageUrl}" alt="Ürün" class="w-full h-60 md:h-72 object-cover ${product.stock <= 0 ? 'opacity-50' : ''}">
+                        <div class="pb-3 px-3">
+                            <h2 class="product-name text-lg font-semibold mt-3">${product.name}</h2>
+                            <p class="product-description text-gray-500 text-sm">${product.description}</p>
 
-                                <div id="price-color-group" class="flex items-center justify-between">
-                                    <!-- Fiyat -->
-                                    <p class="text-black font-bold mt-2">₺${product.price.toFixed(2)}</p>
-
-                                    <!-- Renk Seçenekleri -->
-                                    <div class="relative flex items-center gap-1 bg-white px-2 py-1 rounded-xl shadow-md w-fit ${product.groupProductsCount <= 0 ? 'hidden' : ''}">
-                                        <!-- Gradyan Daireler -->
-                                        <div class="relative flex items-center">
-                                          <!-- Soldaki: Üstte ve border-2 -->
-                                          <div class="w-5 h-5 rounded-full border-2 border-white bg-[linear-gradient(90deg,_#2B2BBE,_#4FAAFD,_#C7F75C)] z-10"></div>
-                                          <!-- Sağdaki: Arkada, hafif sol kaydırılmış -->
-                                          <div class="w-5 h-5 rounded-full border-2 border-white bg-[linear-gradient(90deg,_#FBA1D6,_#FDF57F)] -ml-2 z-0"></div>
-                                        </div>
-
-                                        <!-- Sayı -->
-                                        <div class="text-sm font-medium text-black">${product.groupProductsCount}</div>
+                            <div id="price-color-group" class="flex items-center justify-between min-h-[52px]">
+                                <!-- Fiyat -->
+                                ${hasDiscount ? `
+                                    <div class="mt-2">
+                                        <p class="text-sm text-red-600 line-through">₺${product.price.toFixed(2)}</p>
+                                        <p class="text-black font-bold">₺${product.discountedPrice.toFixed(2)}</p>
                                     </div>
+                                ` : `
+                                    <p class="text-black font-bold mt-2">₺${product.price.toFixed(2)}</p>
+                                `}
 
-
+                                <!-- Grup ürün sayısı -->
+                                <div class="relative flex items-center gap-1 bg-white px-2 py-1 rounded-xl shadow-md w-fit ${product.groupProductsCount <= 0 ? 'hidden' : ''}">
+                                    <div class="relative flex items-center">
+                                        <div class="w-5 h-5 rounded-full border-2 border-white bg-[linear-gradient(90deg,_#2B2BBE,_#4FAAFD,_#C7F75C)] z-10"></div>
+                                        <div class="w-5 h-5 rounded-full border-2 border-white bg-[linear-gradient(90deg,_#FBA1D6,_#FDF57F)] -ml-2 z-0"></div>
+                                    </div>
+                                    <div class="text-sm font-medium text-black">${product.groupProductsCount}</div>
                                 </div>
-
-                                <!-- Sepete Ekle Butonu -->
-                                <button class="mt-4 w-full border-2 border-gray-600 text-black py-2 rounded hover:bg-zinc-100 transition duration-200 ease-in-out">
-                                    <i class="fa-solid fa-cart-shopping mr-2"></i> Sepete Ekle
-                                </button>
                             </div>
-                        </a>
-                    </div>
-                                    `);
+
+                            <button class="mt-4 w-full border-2 border-gray-600 text-black py-2 rounded hover:bg-zinc-100 transition duration-200 ease-in-out">
+                                <i class="fa-solid fa-cart-shopping mr-2"></i> Sepete Ekle
+                            </button>
+                        </div>
+                    </a>
+                </div>
+            `);
                     });
 
                     page++; // Sonraki sayfaya geç

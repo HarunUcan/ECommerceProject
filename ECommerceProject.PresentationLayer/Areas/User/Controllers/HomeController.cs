@@ -84,6 +84,20 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 
             foreach (var product in products)
             {
+                decimal discountedPrice = 0m;
+                if (product.DiscountRate != null)
+                {
+                    discountedPrice = product.Price - (product.Price * product.DiscountRate.Value / 100);
+                }
+                else if (product.DiscountAmount != null)
+                {
+                    discountedPrice = product.Price - product.DiscountAmount.Value;
+                }
+                else
+                {
+                    discountedPrice = product.Price;
+                }
+
                 var groupProductsCount = product.ProductGroup?.Products.Count == null ? 0 : product.ProductGroup.Products.Count <= 1 ? 0 : product.ProductGroup.Products.Count - 1;
                 var productTotalStock = product.ProductVariants.Sum(x => x.Stock);
                 productDtos.Add(new ProductDto
@@ -93,6 +107,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     Description = product.Description,
                     Slug = product.Slug,
                     Price = product.Price,
+                    DiscountedPrice = discountedPrice,
                     Stock = productTotalStock,
                     CategoryName = product.Category.Name,
                     MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", ""),
@@ -149,12 +164,27 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 else
                     cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
 
+                decimal discountedPrice = 0m;
+                if (product.DiscountRate != null)
+                {
+                    discountedPrice = product.Price - (product.Price * product.DiscountRate.Value / 100);
+                }
+                else if (product.DiscountAmount != null)
+                {
+                    discountedPrice = product.Price - product.DiscountAmount.Value;
+                }
+                else
+                {
+                    discountedPrice = product.Price;
+                }
+
                 var productDto = new ProductDto
                 {
                     Id = product.ProductId,
                     Name = product.Name,
                     Description = product.Description,
                     Price = product.Price,
+                    DiscountedPrice = discountedPrice,
                     Stock = product.Stock,
                     CategoryName = product.Category.Name,
                     MainImageUrl = product.ProductImages.FirstOrDefault(x => x.IsMain)?.Url.Replace("wwwroot", ""),

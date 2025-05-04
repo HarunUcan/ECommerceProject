@@ -6,15 +6,33 @@
 @{
     decimal totalPrice = 0;
     foreach (var cartItem in Model.Cart.CartItems)
-        totalPrice += cartItem.Product.Price * cartItem.Quantity;
+    {
+        if(cartItem.Product.DiscountRate != null && cartItem.Product.DiscountRate > 0)
+        {
+            decimal discountedPrice = cartItem.Product.Price - (cartItem.Product.Price * (cartItem.Product.DiscountRate.Value / 100));
+            totalPrice += discountedPrice * cartItem.Quantity;
+        }
+        else if(cartItem.Product.DiscountAmount != null && cartItem.Product.DiscountAmount > 0)
+        {
+            decimal discountedPrice = cartItem.Product.Price - cartItem.Product.DiscountAmount.Value;
+            totalPrice += discountedPrice * cartItem.Quantity;
+        }
+        else
+        {
+            totalPrice += cartItem.Product.Price * cartItem.Quantity;
+        }
+    }
+    // totalPrice += cartItem.Product.Price * cartItem.Quantity;
 
     decimal kdv = totalPrice * 0.1m; // KDV oranı %10
-    
+
+    decimal discountedProductPrice = 0m;
+
 }
 
 @{
     decimal subtotal = totalPrice - kdv;
-    decimal discountTotal = 0;
+    decimal cartDiscountTotal = 0;
 
     if (Model.Cart.CartCoupons != null && Model.Cart.CartCoupons.Any())
     {
@@ -24,16 +42,16 @@
 
             if (coupon.DiscountAmount.HasValue)
             {
-                discountTotal += coupon.DiscountAmount.Value;
+                cartDiscountTotal += coupon.DiscountAmount.Value;
             }
             else if (coupon.DiscountPercentage.HasValue)
             {
-                discountTotal += (subtotal * coupon.DiscountPercentage.Value / 100);
+                cartDiscountTotal += (totalPrice * coupon.DiscountPercentage.Value / 100);
             }
         }
     }
 
-    var finalTotal = totalPrice - discountTotal;
+    var finalTotal = totalPrice - cartDiscountTotal;
 }
 
 <head>
@@ -133,8 +151,23 @@
                             <!-- Birim Fİyat -->
                             <td class="py-4 hidden sm:table-cell">
                                 <div>
-                                    @* <div class="line-through text-red-500 text-sm">₺329,99</div> *@ <!-- İndirim Alanı -->
-                                    <div>₺@cartItem.Product.Price</div>
+                                    @if (cartItem.Product.DiscountRate != null && cartItem.Product.DiscountRate > 0)
+                                    {
+                                        discountedProductPrice = cartItem.Product.Price - (cartItem.Product.Price * (cartItem.Product.DiscountRate.Value / 100));
+                                        <div class="line-through text-red-500 text-sm">₺@cartItem.Product.Price</div>
+                                        <div>₺@(discountedProductPrice.ToString("F2"))</div>
+                                    }
+                                    else if (cartItem.Product.DiscountAmount != null && cartItem.Product.DiscountAmount > 0)
+                                    {
+                                        discountedProductPrice = cartItem.Product.Price - cartItem.Product.DiscountAmount.Value;
+                                        <div class="line-through text-red-500 text-sm">₺@cartItem.Product.Price</div>
+                                        <div>₺@(discountedProductPrice.ToString("F2"))</div>
+                                    }
+                                    else
+                                    {
+                                        discountedProductPrice = cartItem.Product.Price;
+                                        <div>₺@cartItem.Product.Price</div>
+                                    }
                                 </div>
                             </td>
                             <td class="py-4">
@@ -151,7 +184,7 @@
                             </td>
 
                             <!-- Toplam Fİyat -->
-                            <td class="py-4 hidden sm:table-cell">₺@(cartItem.Product.Price * cartItem.Quantity)</td>
+                            <td class="py-4 hidden sm:table-cell">₺@((discountedProductPrice * cartItem.Quantity).ToString("F2"))</td>
                             <td class="py-4">
                                 <a asp-controller="Cart" asp-action="DeleteProductFromCart" asp-route-productId="@cartItem.ProductId" asp-route-size="@cartItem.Size">
                                     <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
@@ -176,7 +209,25 @@
                             <div class="text-sm text-gray-500 pt-1">Ürün Kodu: 067153-70722</div>
                             <div class="text-sm text-gray-500 pt-1">Beden: @cartItem.Size</div>
                             @* <div class="text-xs text-red-500 pt-1 line-through">₺329,99</div> *@ <!-- İndirim Alanı -->
-                            <div class="text-sm text-gray-500 ">₺@cartItem.Product.Price</div>
+                            <div class="text-sm text-gray-500 ">
+                                @if (cartItem.Product.DiscountRate != null && cartItem.Product.DiscountRate > 0)
+                                {
+                                    discountedProductPrice = cartItem.Product.Price - (cartItem.Product.Price * (cartItem.Product.DiscountRate.Value / 100));
+                                    <div class="line-through text-red-500 text-xs">₺@cartItem.Product.Price</div>
+                                    <div>₺@(discountedProductPrice.ToString("F2"))</div>
+                                }
+                                else if (cartItem.Product.DiscountAmount != null && cartItem.Product.DiscountAmount > 0)
+                                {
+                                    discountedProductPrice = cartItem.Product.Price - cartItem.Product.DiscountAmount.Value;
+                                    <div class="line-through text-red-500 text-xs">₺@cartItem.Product.Price</div>
+                                    <div>₺@(discountedProductPrice.ToString("F2"))</div>
+                                }
+                                else
+                                {
+                                    discountedProductPrice = cartItem.Product.Price;
+                                    <div>₺@cartItem.Product.Price</div>
+                                }
+                            </div>
                         </div>
                         <div class="">
                             <a asp-controller="Cart" asp-action="DeleteProductFromCart" asp-route-productId="@cartItem.ProductId" asp-route-size="@cartItem.Size">
@@ -196,7 +247,7 @@
                             </button>
                         </div>
 
-                        <div class="text-sm text-gray-1000 mr-8">Toplam: ₺@(cartItem.Product.Price * cartItem.Quantity)</div>
+                        <div class="text-sm text-gray-1000 mr-8">Toplam: ₺@((discountedProductPrice * cartItem.Quantity).ToString("F2"))</div>
                     </div>
 
 
@@ -226,11 +277,11 @@
                 <span>Ücretsiz</span>
             </div>
 
-            @if (discountTotal > 0)
+            @if (cartDiscountTotal > 0)
             {
                 <div class="flex justify-between text-green-700 font-medium mb-2">
                     <span>İndirim:</span>
-                    <span>-₺@discountTotal.ToString("0.00")</span>
+                    <span>-₺@cartDiscountTotal.ToString("0.00")</span>
                 </div>
             }
 
