@@ -15,8 +15,8 @@ namespace ECommerceProject.EntityLayer.Concrete
         public string City { get; set; }
         public string District { get; set; }
         public string AdressLine { get; set; }
-        public int AppUserId { get; set; }
-        public AppUser AppUser { get; set; }
-        public ICollection<Sale> Sales { get; set; }
+        public int? AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
+        public ICollection<Sale>? Sales { get; set; }
     }
 }

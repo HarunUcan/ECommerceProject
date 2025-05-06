@@ -1,97 +1,125 @@
-﻿@model HomeViewModel
+﻿@model PaymentViewModel
 @{
     ViewData["Title"] = "Ödeme";
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
 }
 
 <div class="mx-auto max-w-3xl px-6 py-10">
-    <!-- Progress Steps -->
+    <!-- Adım Göstergesi -->
     <div class="flex items-center justify-between mb-10">
         <div class="flex-1 flex flex-col items-center">
-            <div id="stepIndicator1" class="w-10 h-10 flex items-center justify-center rounded-full border-2 border-black text-black font-semibold bg-white">
-                1
-            </div>
+            <div id="stepIndicator1" class="w-10 h-10 flex items-center justify-center rounded-full border-2 border-black text-black font-semibold bg-white">1</div>
             <span class="mt-2 text-sm font-medium text-black">Adres Bilgileri</span>
         </div>
         <div class="flex-1 h-1 bg-gray-300 mx-2"></div>
         <div class="flex-1 flex flex-col items-center">
-            <div id="stepIndicator2" class="w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-300 text-gray-400 font-semibold bg-white">
-                2
-            </div>
+            <div id="stepIndicator2" class="w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-300 text-gray-400 font-semibold bg-white">2</div>
             <span class="mt-2 text-sm font-medium text-gray-400">Kart Bilgileri</span>
         </div>
     </div>
 
-    <!-- Step Contents -->
-    <div id="step-1">
-        <h2 class="text-2xl font-semibold mb-6">Adres Bilgileri</h2>
-        <form id="address-form">
-            <div class="mb-6">
-                <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Adres Seçin</label>
-                <select id="address" class="block w-full border rounded-md bg-white h-12 px-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm">
-                    <option value="">Adres Seçiniz</option>
-                    <option value="1">Ev Adresi</option>
-                    <option value="2">İş Adresi</option>
-                    <option value="3">Başka Bir Adres</option>
-                </select>
-            </div>
-            <button type="button" onclick="goToStep2()" class="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 transition">
+    <!-- Form -->
+    <form asp-controller="Payment" asp-action="IyzicoPaymentInitialize" method="post">
+        <!-- Adres Adımı -->
+        <div id="step-1">
+            <h2 class="text-2xl font-semibold mb-6">Adres Bilgileri</h2>
+
+            @if (Model.Adresses == null || !Model.Adresses.Any())
+            {
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2">Yeni Adres</label>
+                    <textarea name="NewAddress" rows="3" class="w-full border rounded-md px-3 py-2" required></textarea>
+                </div>
+            }
+            else
+            {
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2">Adres Seçin</label>
+                    <select name="selectedAdressId" id="address" class="w-full border rounded-md h-12 px-3">
+                        @foreach (var address in Model.Adresses)
+                        {
+                            <option value="@address.AdressId"
+                                    data-title="@address.Title"
+                                    data-city="@address.City"
+                                    data-district="@address.District"
+                                    data-detail="@address.AdressLine">
+                                @address.Title - @address.City/@address.District
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div id="address-card" class="border rounded-lg p-4 bg-gray-50 mb-6">
+                    <h3 class="text-lg font-semibold mb-2">@Model.Adresses.FirstOrDefault()?.Title</h3>
+                    <p class="text-sm"><strong>Şehir:</strong> @Model.Adresses.FirstOrDefault()?.City</p>
+                    <p class="text-sm"><strong>İlçe:</strong> @Model.Adresses.FirstOrDefault()?.District</p>
+                    <p class="text-sm"><strong>Adres:</strong> @Model.Adresses.FirstOrDefault()?.AdressLine</p>
+                </div>
+            }
+
+            <button type="button" onclick="goToStep2()" class="w-full bg-black text-white py-3 rounded-md mt-4">
                 Devam Et
             </button>
-        </form>
-    </div>
+        </div>
 
-    <div id="step-2" class="hidden">
-        <h2 class="text-2xl font-semibold mb-6">Kart Bilgileri</h2>
-        <form asp-controller="Payment" asp-action="IyzicoPaymentInitialize" method="post">
+        <!-- 💳 Kart Adımı -->
+        <div id="step-2" class="hidden">
+            <h2 class="text-2xl font-semibold mb-6">Kart Bilgileri</h2>
+
             <div class="mb-6">
-                <label for="card-name" class="block text-sm font-medium text-gray-700 mb-2">Kart Üzerindeki İsim</label>
-                <input type="text" id="card-name" name="holderName" class="block w-full border rounded-md bg-white h-12 px-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm" placeholder="Ad Soyad">
+                <label class="block text-sm font-medium mb-2">Kart Üzerindeki İsim</label>
+                <input type="text" name="holderName" class="w-full border rounded-md h-12 px-3" required />
             </div>
+
             <div class="mb-6">
-                <label for="card-number" class="block text-sm font-medium text-gray-700 mb-2">Kart Numarası</label>
-                <input type="text" id="card-number" name="cardNumber" class="block w-full border rounded-md bg-white h-12 px-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm" placeholder="1234 5678 9012 3456">
+                <label class="block text-sm font-medium mb-2">Kart Numarası</label>
+                <input type="text" name="cardNumber" id="card-number" class="w-full border rounded-md h-12 px-3" required />
             </div>
+
             <div class="flex gap-6 mb-6">
                 <div class="w-1/2">
-                    <label for="expiry-date" class="block text-sm font-medium text-gray-700 mb-2">Son Kullanma Tarihi</label>
-                    <input type="text" id="expiry-date" name="expiryDate" class="block w-full border rounded-md bg-white h-12 px-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm" placeholder="MM/YY">
+                    <label class="block text-sm font-medium mb-2">Son Kullanma Tarihi</label>
+                    <input type="text" name="expiryDate" class="w-full border rounded-md h-12 px-3" placeholder="MM/YY" required />
                 </div>
                 <div class="w-1/2">
-                    <label for="cvc" class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
-                    <input type="text" id="cvc" name="cvc" class="block w-full border rounded-md bg-white h-12 px-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm" placeholder="123">
+                    <label class="block text-sm font-medium mb-2">CVV</label>
+                    <input type="text" name="cvc" class="w-full border rounded-md h-12 px-3" required />
                 </div>
             </div>
 
-
-            <!-- Dinamik Banka ve Taksit Bilgisi -->
             <div id="bank-info-section" class="mb-6 hidden border rounded-md p-4">
                 <div class="flex items-center gap-3 mb-4">
                     <img id="bank-logo" src="" alt="Banka Logo" class="h-6" />
                     <span id="card-family" class="text-green-700 font-semibold text-base"></span>
-                    <span id="bank-name" class="text-gray-600 text-sm"></span>
                 </div>
                 <h3 class="text-lg font-semibold mb-4">Taksit Seçenekleri</h3>
                 <div id="installments" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-                <input type="hidden" id="selectedInstallment" name="installment" value="1" />
+                <input type="hidden" name="Installment" id="selectedInstallment" value="1" />
             </div>
 
-
-            <button type="submit" class="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 transition">
+            <button type="submit" class="w-full bg-black text-white py-3 rounded-md">
                 Ödemeyi Tamamla
             </button>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
     <script>
         function goToStep2() {
             const addressSelect = document.getElementById('address');
-            if (addressSelect.value === "") {
+            const newAddress = document.querySelector('[name="NewAddress"]');
+
+            if (addressSelect && addressSelect.value === "") {
                 alert('Lütfen bir adres seçiniz.');
                 return;
             }
+
+            if (newAddress && newAddress.value.trim() === "") {
+                alert('Lütfen adresinizi girin.');
+                return;
+            }
+
             document.getElementById('step-1').classList.add('hidden');
             document.getElementById('step-2').classList.remove('hidden');
 
@@ -101,11 +129,12 @@
             document.getElementById('stepIndicator2').classList.replace('text-gray-400', 'text-black');
         }
 
+        // Kart numarasına göre banka bilgisi
         document.getElementById('card-number').addEventListener('input', function () {
             const value = this.value.replace(/\s/g, '');
             if (value.length >= 6) {
                 const binNumber = value.substring(0, 6);
-                const price = "4999"; // Dinamik hale getirmek istersen, ViewData üzerinden alabilirsin
+                const price = "4999"; // ViewData'dan alınabilir
 
                 fetch(`/User/Payment/IyzicoInstallmentCheck?price=${price}&binNumber=${binNumber}`)
                     .then(response => response.json())
@@ -113,39 +142,30 @@
                         if (data.status === "success") {
                             const details = data.installmentDetails[0];
                             const installmentArea = document.getElementById("installments");
-                            installmentArea.innerHTML = ""; // Öncekileri temizle
+                            installmentArea.innerHTML = "";
 
-                            // Banka bilgilerini göster
                             document.getElementById("bank-logo").src = `/images/banka_logo/${details.bankName.toLowerCase()}.png`;
                             document.getElementById("card-family").textContent = details.cardFamilyName;
-                            // document.getElementById("bank-name").textContent = `(${details.bankName})`;
 
-                            // Alanı görünür yap
                             document.getElementById("bank-info-section").classList.remove("hidden");
 
-                            // Taksitleri oluştur
                             details.installmentPrices.forEach(item => {
                                 const div = document.createElement("div");
                                 div.className = "installment-option border border-gray-300 rounded-md p-4 text-center cursor-pointer hover:border-black transition";
                                 div.setAttribute("data-value", item.installmentNumber);
                                 div.onclick = () => selectInstallment(div);
                                 div.innerHTML = `
-                                        <div class="text-base font-medium">${item.installmentNumber} Taksit</div>
-                                        <div class="text-sm text-gray-600">${parseFloat(item.price).toFixed(2)} TL x ${item.installmentNumber}</div>
-                                        <div class="text-sm font-semibold text-black mt-1">${parseFloat(item.totalPrice).toFixed(2)} TL</div>
-                                    `;
+                                            <div class="text-base font-medium">${item.installmentNumber} Taksit</div>
+                                            <div class="text-sm text-gray-600">${parseFloat(item.price).toFixed(2)} TL x ${item.installmentNumber}</div>
+                                            <div class="text-sm font-semibold text-black mt-1">${parseFloat(item.totalPrice).toFixed(2)} TL</div>
+                                        `;
                                 installmentArea.appendChild(div);
                             });
 
-                            // İlk taksiti seçili yap
                             const firstOption = document.querySelector('.installment-option');
                             if (firstOption) selectInstallment(firstOption);
-
-                        } else {
-                            console.error("Taksit bilgisi alınamadı.");
                         }
-                    })
-                    .catch(error => console.error("Hata:", error));
+                    });
             } else {
                 document.getElementById("bank-info-section").classList.add("hidden");
             }
@@ -156,76 +176,26 @@
                 option.classList.remove('border-black');
                 option.classList.add('border-gray-300');
             });
-
             element.classList.remove('border-gray-300');
             element.classList.add('border-black');
-
             document.getElementById('selectedInstallment').value = element.getAttribute('data-value');
         }
 
+        document.getElementById('address')?.addEventListener('change', function () {
+            const selected = this.options[this.selectedIndex];
+            const title = selected.dataset.title;
+            const city = selected.dataset.city;
+            const district = selected.dataset.district;
+            const detail = selected.dataset.detail;
+
+            const card = `
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">${title}</h3>
+                            <p class="text-sm"><strong>Şehir:</strong> ${city}</p>
+                            <p class="text-sm"><strong>İlçe:</strong> ${district}</p>
+                            <p class="text-sm"><strong>Adres:</strong> ${detail}</p>
+                        </div>`;
+            document.getElementById('address-card').innerHTML = card;
+        });
     </script>
 }
-
-
-@*
-    İyzico API'den gelen örnek JSON yanıtı:
-    ---------------------------------------
-
-    
-    {
-        "installmentDetails": [
-        {
-          "binNumber": "554960",
-          "commercial": 0,
-          "price": "4999",
-          "cardType": "CREDIT_CARD",
-          "cardAssociation": "MASTER_CARD",
-          "cardFamilyName": "Bonus",
-          "force3Ds": 0,
-          "bankCode": 62,
-          "bankName": "Garanti Bankası",
-          "forceCvc": 0,
-          "installmentPrices": [
-            {
-              "price": "4999",
-              "totalPrice": "4999",
-              "installmentNumber": 1
-            },
-            {
-              "price": "2579.97",
-              "totalPrice": "5159.93",
-              "installmentNumber": 2
-            },
-            {
-              "price": "1753.74",
-              "totalPrice": "5261.22",
-              "installmentNumber": 3
-            },
-            {
-              "price": "934.99",
-              "totalPrice": "5609.92",
-              "installmentNumber": 6
-            },
-            {
-              "price": "667.57",
-              "totalPrice": "6008.14",
-              "installmentNumber": 9
-            },
-            {
-              "price": "538.21",
-              "totalPrice": "6458.55",
-              "installmentNumber": 12
-            }
-          ]
-        }
-    ],
-    "status": "success",
-    "statusCode": 200,
-    "errorCode": null,
-    "errorMessage": null,
-    "errorGroup": null,
-    "conversationId": "123456789",
-    "systemTime": 1745879003008,
-    "locale": "tr"
-}
-*@

@@ -64,6 +64,9 @@ namespace ECommerceProject.PresentationLayer
             builder.Services.AddScoped<IStaticPageService, StaticPageManager>();
             builder.Services.AddScoped<IStaticPageDal, EfStaticPageDal>();
 
+            builder.Services.AddScoped<ISaleService, SaleManager>();
+            builder.Services.AddScoped<ISaleDal, EfSaleDal>();
+
             builder.Services.AddScoped<IAppUserService, AppUserManager>();
             builder.Services.AddScoped<IAppUserDal, EfAppUserDal>();
 
