@@ -33,6 +33,11 @@ namespace ECommerceProject.BusinessLayer.Concrete
             return _saleDal.GetList();
         }
 
+        public async Task<List<Sale>> TGetListWithSaleItems()
+        {
+            return await _saleDal.GetListWithSaleItems();
+        }
+
         public void TInsert(Sale t)
         {
             _saleDal.Insert(t);

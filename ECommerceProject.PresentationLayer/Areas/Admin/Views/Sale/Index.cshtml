@@ -1,0 +1,111 @@
+﻿@model List<SaleDto>
+
+@{
+    ViewData["Title"] = "Siparişler";
+    ViewData["ActivePage"] = "Sales";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-semibold mb-6">Siparişler</h1>
+
+    <div class="bg-gray-50 p-8 rounded-lg shadow-md">
+        <table class="w-full table-auto border-collapse">
+            <thead>
+                <tr class="text-left text-gray-600 border-b-2">
+                    <th class="py-3"></th>
+                    <th class="py-3">Alıcı</th>
+                    <th class="py-3">Toplam Tutar</th>
+                    <th class="py-3">Tarih</th>
+                    <th class="py-3">Durum</th>
+                    <th class="py-3">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var sale in Model)
+                {
+                    <tr class="border-b">
+                        <td class="py-4">
+                            <button class="toggle-details" data-id="@sale.Id">
+                                <i class="fas fa-chevron-down transition-transform duration-200"></i>
+                            </button>
+                        </td>
+                        <td class="py-4">@sale.BuyerName</td>
+                        <td class="py-4 font-semibold">@sale.TotalPrice.ToString("F2") TL</td>
+                        <td class="py-4">@sale.Date.ToString("dd/MM/yyyy")</td>
+                        <td class="py-4">
+                            <span class="px-2 py-1 rounded-xl text-sm font-medium text-white
+                                          @(sale.Status == "Tamamlandı" ? "bg-green-500" : "bg-yellow-500")">
+                                @sale.Status
+                            </span>
+                        </td>
+                        <td class="py-4">
+                            <a href="/Admin/Sales/Details/@sale.Id" class="text-blue-600 hover:text-blue-800 mr-2">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <button onclick="confirmSaleDelete(@sale.Id)" class="text-red-600 hover:text-red-800">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr id="details-@sale.Id" class="hidden bg-gray-100">
+                        <td colspan="6" class="p-4">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="text-gray-500 text-left">
+                                        <th class="text-left py-2">Ürün</th>
+                                        <th class="text-left py-2">Adet</th>
+                                        <th class="text-left py-2">Birim Fiyat</th>
+                                        <th class="text-left py-2">Toplam</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in sale.Items)
+                                    {
+                                        <tr class="border-t">
+                                            <td class="py-2">@item.ProductName</td>
+                                            <td class="py-2">@item.Quantity</td>
+                                            <td class="py-2">@item.UnitPrice.ToString("F2") TL</td>
+                                            <td class="py-2 font-semibold">@item.TotalPrice.ToString("F2") TL</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.toggle-details').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const id = this.dataset.id;
+            const row = document.getElementById(`details-${id}`);
+            const icon = this.querySelector('i');
+
+            row.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        });
+    });
+
+    function confirmSaleDelete(saleId) {
+        Swal.fire({
+            title: "Emin misiniz?",
+            text: "Bu satış kaydını silmek istediğinize emin misiniz?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Evet, sil!",
+            cancelButtonText: "İptal"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/Admin/Sales/Delete?id=${saleId}`;
+            }
+        });
+    }
+</script>
