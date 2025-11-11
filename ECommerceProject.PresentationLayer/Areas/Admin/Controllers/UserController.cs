@@ -20,44 +20,53 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
             _userService = userService;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             var users = _userManager.Users.ToList();
-            var userRoles = new List<(AppUser User, IList<string> Roles)>();
+            List<AppUserDto> appUserDtos = new List<AppUserDto>();
 
+            // önce adminleri listeye ekliyoruz
             foreach (var user in users)
             {
-                var roles = await _userManager.GetRolesAsync(user);
-                userRoles.Add((user, roles));
+                var roles = _userManager.GetRolesAsync(user).Result;
+                if (roles.Contains("Admin"))
+                {
+                    AppUserDto appUserDto = new AppUserDto
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        Surname = user.Surname,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        IsActive = true,
+                        //CreatedDate = user.CreatedDate,
+                        Role = roles.FirstOrDefault()
+                    };
+                    appUserDtos.Add(appUserDto);
+                }
             }
 
-            var adminDtos = userRoles
-                .Where(ur => ur.Roles.Contains("Admin"))
-                .Select(ur => new AppUserDto
+            // sonra admin olmayanları listeye ekliyoruz
+            foreach (var user in users)
+            {
+                var roles = _userManager.GetRolesAsync(user).Result;
+                if (!roles.Contains("Admin"))
                 {
-                    Id = ur.User.Id,
-                    Name = ur.User.Name,
-                    Surname = ur.User.Surname,
-                    Email = ur.User.Email,
-                    PhoneNumber = ur.User.PhoneNumber,
-                    IsActive = true,
-                    Role = ur.Roles.FirstOrDefault()
-                });
+                    AppUserDto appUserDto = new AppUserDto
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        Surname = user.Surname,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        IsActive = true,
+                        //CreatedDate = user.CreatedDate,
+                        Role = roles.FirstOrDefault()
+                    };
+                    appUserDtos.Add(appUserDto);
+                }
+            }
 
-            var memberDtos = userRoles
-                .Where(ur => !ur.Roles.Contains("Admin"))
-                .Select(ur => new AppUserDto
-                {
-                    Id = ur.User.Id,
-                    Name = ur.User.Name,
-                    Surname = ur.User.Surname,
-                    Email = ur.User.Email,
-                    PhoneNumber = ur.User.PhoneNumber,
-                    IsActive = true,
-                    Role = ur.Roles.FirstOrDefault()
-                });
-
-            var appUserDtos = adminDtos.Concat(memberDtos).ToList();
             return View(appUserDtos);
         }
 

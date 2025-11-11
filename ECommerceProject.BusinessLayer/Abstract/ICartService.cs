@@ -1,16 +1,21 @@
-using ECommerceProject.DtoLayer.Dtos.CartDtos;
-using ECommerceProject.EntityLayer.Concrete;
+﻿using ECommerceProject.EntityLayer.Concrete;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ECommerceProject.BusinessLayer.Abstract;
-
-public interface ICartService : IGenericService<Cart>
+namespace ECommerceProject.BusinessLayer.Abstract
 {
-    Task<bool> TDeleteByTempUserIdAsync(string tempUserId);
-    Task<bool> TTransferCartAsync(string tempUserId, int appUserId);
-    Task<bool> TAddToCartAsync(string? tempUserId, int userId, int productId, int quantity, ProductSize size);
-    Task<CartDetailDto?> TGetCartDetailsAsync(string? tempUserId, int userId);
-    Task<bool> TDeleteCartItemAsync(string? tempUserId, int userId, int productId, ProductSize size);
-    Task<bool> TApplyCoupon(string? tempUserId, int userId, string couponCode);
-    Task<bool> TRemoveCouponFromCart(string? tempUserId, int userId, string couponCode);
-    Task TValidateCartCoupons(string? tempUserId, int userId);
+    public interface ICartService : IGenericService<Cart>
+    {
+        bool TDeleteByTempUserId(string tempUserId);
+        bool TTransferCart(string tempUserId, int appUserId);
+        bool TAddToCart(string? tempUserId, int userId, int productId, int quantity, ProductSize size);
+        Cart TGetCart(string? tempUserId, int userId);
+        bool TDeleteCartItem(string? tempUserId, int userId, int productId, ProductSize size);
+        Task<bool> TApplyCoupon(string? tempUserId, int userId, string couponCode);
+        Task<bool> TRemoveCouponFromCart(string? tempUserId, int userId, string couponCode);
+        Task TValidateCartCoupons(string? tempUserId, int userId);
+    }
 }

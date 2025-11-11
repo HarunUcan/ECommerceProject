@@ -1,4 +1,6 @@
-using ECommerceProject.BusinessLayer.Abstract;
+﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.BusinessLayer.Concrete;
+using ECommerceProject.DataAccessLayer.Concrete;
 using ECommerceProject.DtoLayer.Dtos.AdressDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.ViewModels;
@@ -6,96 +8,94 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ECommerceProject.PresentationLayer.Areas.User.Controllers;
-
-[Area("User")]
-[Authorize]
-public class CustomerAdressController : Controller
+namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 {
-    private readonly UserManager<AppUser> _userManager;
-    private readonly IAdressService _adressService;
-
-    public CustomerAdressController(UserManager<AppUser> userManager, IAdressService adressService)
+    [Area("User")]
+    [Authorize]
+    public class CustomerAdressController : Controller
     {
-        _userManager = userManager;
-        _adressService = adressService;
-    }
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IAdressService _adressService;
 
-    [HttpGet]
-    public async Task<IActionResult> Index()
-    {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
+        public CustomerAdressController(UserManager<AppUser> userManager, IAdressService adressService)
         {
-            return RedirectToAction("Index", "Login");
+            _userManager = userManager;
+            _adressService = adressService;
         }
 
-        var adresses = _adressService.TGetAdressesByUserId(user.Id);
-        var userAddressViewModel = new UserAdressViewModel
+        [HttpGet]
+        public IActionResult Index()
         {
-            AdressList = adresses.Select(x => new AdressDto
+            var user = _userManager.FindByNameAsync(User.Identity.Name).Result;
+            if (user == null)
             {
-                AdressId = x.AdressId,
-                Title = x.Title,
-                City = x.City,
-                District = x.District,
-                AdressLine = x.AdressLine
-            }).ToList(),
-            NewAdress = new AdressDto()
-        };
-        return View(userAddressViewModel);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Index(UserAdressViewModel userAdressViewModel)
-    {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return RedirectToAction("Index", "Login");
-        }
-
-        if (ModelState.IsValid)
-        {
-            Adress adress = new Adress
+                return RedirectToAction("Index", "Login");
+            }
+            List<Adress> adresses = _adressService.TGetAdressesByUserId(user.Id);
+            UserAdressViewModel userAddressViewModel = new UserAdressViewModel
             {
-                Title = userAdressViewModel.NewAdress.Title,
-                City = userAdressViewModel.NewAdress.City,
-                District = userAdressViewModel.NewAdress.District,
-                AdressLine = userAdressViewModel.NewAdress.AdressLine,
-                AppUserId = user.Id
+                AdressList = adresses.Select(x => new AdressDto
+                {
+                    AdressId = x.AdressId,
+                    Title = x.Title,
+                    City = x.City,
+                    District = x.District,
+                    AdressLine = x.AdressLine
+                }).ToList(),
+                NewAdress = new AdressDto()
             };
-            _adressService.TInsert(adress);
-            return RedirectToAction("Index", "CustomerAdress");
+            return View(userAddressViewModel);
         }
 
-        userAdressViewModel.AdressList = _adressService.TGetAdressesByUserId(user.Id)
-            .Select(a => new AdressDto
+        [HttpPost]
+        public IActionResult Index(UserAdressViewModel userAdressViewModel)
+        {
+            var user = _userManager.FindByNameAsync(User.Identity.Name).Result;
+            if (user == null)
             {
-                AdressId = a.AdressId,
-                Title = a.Title,
-                City = a.City,
-                District = a.District,
-                AdressLine = a.AdressLine
-            }).ToList();
-        return View("Index", userAdressViewModel);
-    }
+                return RedirectToAction("Index", "Login");
+            }
 
-    [HttpGet]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-        {
-            return RedirectToAction("Index", "Login");
+            if (ModelState.IsValid)
+            {
+
+                Adress adress = new Adress
+                {
+                    Title = userAdressViewModel.NewAdress.Title,
+                    City = userAdressViewModel.NewAdress.City,
+                    District = userAdressViewModel.NewAdress.District,
+                    AdressLine = userAdressViewModel.NewAdress.AdressLine,
+                    AppUserId = user.Id
+                };
+                _adressService.TInsert(adress);
+                return RedirectToAction("Index", "CustomerAdress");
+            }
+            userAdressViewModel.AdressList = _adressService.TGetAdressesByUserId(user.Id)
+                                          .Select(a => new AdressDto
+                                          {
+                                              Title = a.Title,
+                                              City = a.City,
+                                              District = a.District,
+                                              AdressLine = a.AdressLine
+                                          }).ToList();
+            return View("Index", userAdressViewModel);
         }
 
-        var userAdressList = _adressService.TGetAdressesByUserId(user.Id);
-        if (userAdressList.All(x => x.AdressId != id))
+        [HttpGet]
+        public IActionResult Delete(int id)
         {
+            var user = _userManager.FindByNameAsync(User.Identity.Name).Result;
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            var userAdressList = _adressService.TGetAdressesByUserId(user.Id);
+            if (userAdressList.All(x => x.AdressId != id))
+            {
+                return RedirectToAction("Index", "CustomerAdress");
+            }
+            _adressService.TDelete(new Adress { AdressId = id });
             return RedirectToAction("Index", "CustomerAdress");
         }
-        _adressService.TDelete(new Adress { AdressId = id });
-        return RedirectToAction("Index", "CustomerAdress");
     }
 }

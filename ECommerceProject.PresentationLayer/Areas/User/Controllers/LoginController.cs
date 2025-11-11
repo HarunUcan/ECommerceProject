@@ -43,11 +43,11 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                         if(Request.Cookies["TempUserId"] != null)
                         {
                             string tempUserId = Request.Cookies["TempUserId"];
-                            bool isTransferSuccess = await _cartService.TTransferCartAsync(tempUserId, user.Id);
+                            bool isTransferSuccess = _cartService.TTransferCart(tempUserId, user.Id);
 
                             // Geçici Sepeti sil
                             if (isTransferSuccess)
-                                await _cartService.TDeleteByTempUserIdAsync(tempUserId);
+                                _cartService.TDeleteByTempUserId(tempUserId);
 
                             // Cookie yi sil
                             if (isTransferSuccess)

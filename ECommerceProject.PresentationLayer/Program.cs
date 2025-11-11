@@ -6,12 +6,9 @@ using ECommerceProject.DataAccessLayer.EntityFramework;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.Middlewares;
 using ECommerceProject.PresentationLayer.Models;
-using ECommerceProject.PresentationLayer.Options;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using System.Globalization;
 
 namespace ECommerceProject.PresentationLayer
@@ -22,15 +19,14 @@ namespace ECommerceProject.PresentationLayer
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // K√ºlt√ºr√º √ùngilizce (ABD) olarak ayarla
+            // K¸lt¸r¸ ›ngilizce (ABD) olarak ayarla
             var cultureInfo = new CultureInfo("en-US");
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddDbContext<Context>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddDbContext<Context>();
             builder.Services.AddIdentity<AppUser, AppRole>(options =>
             {
                 options.Password.RequiredLength = 6;
@@ -39,10 +35,6 @@ namespace ECommerceProject.PresentationLayer
                 options.Password.RequireNonAlphanumeric = false;
                 options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
             }).AddEntityFrameworkStores<Context>().AddErrorDescriber<CustomIdentityValidator>().AddDefaultTokenProviders();
-
-            builder.Services.Configure<AdminAccountOptions>(builder.Configuration.GetSection("AdminAccount"));
-            builder.Services.Configure<Iyzipay.Options>(builder.Configuration.GetSection("Iyzico"));
-            builder.Services.Configure<TempUserCookieOptions>(builder.Configuration.GetSection("TempUserCookie"));
 
             builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
             {
@@ -89,7 +81,7 @@ namespace ECommerceProject.PresentationLayer
 
                 options.Events = new CookieAuthenticationEvents
                 {
-                    // Giri√æ yapmam√Ω√æ kullan√Ωc√Ω admin sayfas√Ωna eri√æmeye √ßal√Ω√æ√Ωrsa
+                    // Giri˛ yapmam˝˛ kullan˝c˝ admin sayfas˝na eri˛meye Áal˝˛˝rsa
                     OnRedirectToLogin = context =>
                     {
                         if (context.Request.Path.StartsWithSegments("/Admin"))
@@ -98,22 +90,22 @@ namespace ECommerceProject.PresentationLayer
                             return Task.CompletedTask;
                         }
 
-                        // Di√∞er sayfalar i√ßin normal login y√∂nlendirmesi
+                        // Dier sayfalar iÁin normal login yˆnlendirmesi
                         context.Response.Redirect(context.RedirectUri);
                         return Task.CompletedTask;
                     },
 
-                    // Giri√æ yapm√Ω√æ ama yetkisi olmayan kullan√Ωc√Ω admin sayfas√Ωna eri√æmeye √ßal√Ω√æ√Ωrsa
+                    // Giri˛ yapm˝˛ ama yetkisi olmayan kullan˝c˝ admin sayfas˝na eri˛meye Áal˝˛˝rsa
                     OnRedirectToAccessDenied = context =>
                     {
                         if (context.Request.Path.StartsWithSegments("/Admin"))
                         {
-                            // admin sayfalar√Ωn√Ωn if√æa olmamas√Ω i√ßin returnUrl olmadan y√∂nlendirme
+                            // admin sayfalar˝n˝n if˛a olmamas˝ iÁin returnUrl olmadan yˆnlendirme
                             context.Response.Redirect("/User/Home/NotFound");
                             return Task.CompletedTask;
                         }
 
-                        // Di√∞er eri√æim reddi y√∂nlendirmeleri
+                        // Dier eri˛im reddi yˆnlendirmeleri
                         context.Response.Redirect(context.RedirectUri);
                         return Task.CompletedTask;
                     }
@@ -123,7 +115,7 @@ namespace ECommerceProject.PresentationLayer
 
             var app = builder.Build();
 
-            // K√ºlt√ºr√º HTTP iste√∞ine g√∂re zorla
+            // K¸lt¸r¸ HTTP isteine gˆre zorla
             var supportedCultures = new[] { cultureInfo };
             app.UseRequestLocalization(new RequestLocalizationOptions
             {
@@ -148,7 +140,7 @@ namespace ECommerceProject.PresentationLayer
             app.UseAuthentication();    
             app.UseAuthorization();
 
-            // Middleware¬íi ekle
+            // Middlewareíi ekle
             app.UseMiddleware<CheckUserMiddleware>();
             app.UseMiddleware<RateLimitMiddleware>();
 
@@ -192,15 +184,14 @@ namespace ECommerceProject.PresentationLayer
 
 
 
-            // Roller ve admin kullan√Ωc√Ωs√Ωn√Ω olu√ætur
+            // Roller ve admin kullan˝c˝s˝n˝ olu˛tur
             using (var scope = app.Services.CreateScope())
             {
                 var serviceProvider = scope.ServiceProvider;
                 var roleManager = serviceProvider.GetRequiredService<RoleManager<AppRole>>();
                 var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
-                var adminAccountOptions = serviceProvider.GetRequiredService<IOptions<AdminAccountOptions>>().Value;
 
-                // 1. Roller varsa olu√ætur
+                // 1. Roller varsa olu˛tur
                 foreach (var role in Enum.GetValues(typeof(UserRoles)))
                 {
                     string roleName = role.ToString();
@@ -210,49 +201,26 @@ namespace ECommerceProject.PresentationLayer
                     }
                 }
 
-                // 2. Admin kullanƒ±cƒ±yƒ± olu≈ütur
-                string? adminEmail = adminAccountOptions.Email;
-                string? adminPassword = adminAccountOptions.Password;
-                string? adminPasswordHash = adminAccountOptions.PasswordHash;
+                // 2. Admin kullan˝c˝y˝ olu˛tur
+                string adminEmail = "admin@example.com";
+                string adminPassword = "Admin123!";
 
-                if (!string.IsNullOrWhiteSpace(adminEmail))
+                var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
+                if (existingAdmin == null)
                 {
-                    var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
-                    if (existingAdmin == null)
+                    var adminUser = new AppUser
                     {
-                        var adminUser = new AppUser
-                        {
-                            Name = "Admin",
-                            Surname = "1",
-                            UserName = adminEmail,
-                            Email = adminEmail,
-                            EmailConfirmed = true
-                        };
+                        Name = "Admin",
+                        Surname = "1",
+                        UserName = adminEmail,
+                        Email = adminEmail,
+                        EmailConfirmed = true
+                    };
 
-                        IdentityResult result;
-
-                        if (!string.IsNullOrWhiteSpace(adminPassword))
-                        {
-                            result = await userManager.CreateAsync(adminUser, adminPassword);
-                        }
-                        else if (!string.IsNullOrWhiteSpace(adminPasswordHash))
-                        {
-                            adminUser.PasswordHash = adminPasswordHash;
-                            result = await userManager.CreateAsync(adminUser);
-                        }
-                        else
-                        {
-                            result = IdentityResult.Failed(new IdentityError
-                            {
-                                Code = "AdminPasswordMissing",
-                                Description = "Admin password configuration is missing."
-                            });
-                        }
-
-                        if (result.Succeeded)
-                        {
-                            await userManager.AddToRoleAsync(adminUser, UserRoles.Admin.ToString());
-                        }
+                    var result = await userManager.CreateAsync(adminUser, adminPassword);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(adminUser, UserRoles.Admin.ToString());
                     }
                 }
             }

@@ -4,43 +4,49 @@
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
 }
 @{
-    var cartItems = Model.Cart?.Items ?? Enumerable.Empty<ECommerceProject.DtoLayer.Dtos.CartDtos.CartItemDetailDto>();
     decimal totalPrice = 0;
-    foreach (var cartItem in cartItems)
+    foreach (var cartItem in Model.Cart.CartItems)
     {
-        decimal discountedPrice = cartItem.Price;
-        if (cartItem.DiscountRate.HasValue && cartItem.DiscountRate.Value > 0)
+        if(cartItem.Product.DiscountRate != null && cartItem.Product.DiscountRate > 0)
         {
-            discountedPrice -= cartItem.Price * cartItem.DiscountRate.Value / 100m;
+            decimal discountedPrice = cartItem.Product.Price - (cartItem.Product.Price * (cartItem.Product.DiscountRate.Value / 100));
+            totalPrice += discountedPrice * cartItem.Quantity;
         }
-        else if (cartItem.DiscountAmount.HasValue && cartItem.DiscountAmount.Value > 0)
+        else if(cartItem.Product.DiscountAmount != null && cartItem.Product.DiscountAmount > 0)
         {
-            discountedPrice -= cartItem.DiscountAmount.Value;
+            decimal discountedPrice = cartItem.Product.Price - cartItem.Product.DiscountAmount.Value;
+            totalPrice += discountedPrice * cartItem.Quantity;
         }
-
-        totalPrice += discountedPrice * cartItem.Quantity;
+        else
+        {
+            totalPrice += cartItem.Product.Price * cartItem.Quantity;
+        }
     }
+    // totalPrice += cartItem.Product.Price * cartItem.Quantity;
 
     decimal kdv = totalPrice * 0.1m; // KDV oranı %10
 
     decimal discountedProductPrice = 0m;
+
 }
 
 @{
     decimal subtotal = totalPrice - kdv;
     decimal cartDiscountTotal = 0;
 
-    if (Model.Cart?.Coupons != null && Model.Cart.Coupons.Any())
+    if (Model.Cart.CartCoupons != null && Model.Cart.CartCoupons.Any())
     {
-        foreach (var coupon in Model.Cart.Coupons)
+        foreach (var cartCoupon in Model.Cart.CartCoupons)
         {
+            var coupon = cartCoupon.Coupon;
+
             if (coupon.DiscountAmount.HasValue)
             {
                 cartDiscountTotal += coupon.DiscountAmount.Value;
             }
             else if (coupon.DiscountPercentage.HasValue)
             {
-                cartDiscountTotal += (totalPrice * coupon.DiscountPercentage.Value / 100m);
+                cartDiscountTotal += (totalPrice * coupon.DiscountPercentage.Value / 100);
             }
         }
     }
@@ -128,15 +134,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(var cartItem in cartItems)
+                    @foreach(var cartItem in Model.Cart.CartItems)
                     {
                         <!-- Ürün Satırı -->
                         <tr class="border-b">
                             <td class="py-4 flex items-center space-x-4">
-                                <img src="@((cartItem.PrimaryImageUrl ?? string.Empty).Replace("wwwroot", string.Empty))" alt="Ürün 1"
+                                <img src="@cartItem.Product.ProductImages.FirstOrDefault().Url.Replace("wwwroot","")" alt="Ürün 1"
                                      class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
                                 <div>
-                                    <div class="font-semibold">@cartItem.ProductName</div>
+                                    <div class="font-semibold">@cartItem.Product.Name</div>
                                     <div class="text-sm text-gray-500">067153-70722</div>
                                     <div class="text-sm text-gray-500">Beden: @cartItem.Size</div>
                                 </div>
@@ -145,22 +151,22 @@
                             <!-- Birim Fİyat -->
                             <td class="py-4 hidden sm:table-cell">
                                 <div>
-                                    @if (cartItem.DiscountRate != null && cartItem.DiscountRate > 0)
+                                    @if (cartItem.Product.DiscountRate != null && cartItem.Product.DiscountRate > 0)
                                     {
-                                        discountedProductPrice = cartItem.Price - (cartItem.Price * (cartItem.DiscountRate.Value / 100));
-                                        <div class="line-through text-red-500 text-sm">₺@cartItem.Price</div>
+                                        discountedProductPrice = cartItem.Product.Price - (cartItem.Product.Price * (cartItem.Product.DiscountRate.Value / 100));
+                                        <div class="line-through text-red-500 text-sm">₺@cartItem.Product.Price</div>
                                         <div>₺@(discountedProductPrice.ToString("F2"))</div>
                                     }
-                                    else if (cartItem.DiscountAmount != null && cartItem.DiscountAmount > 0)
+                                    else if (cartItem.Product.DiscountAmount != null && cartItem.Product.DiscountAmount > 0)
                                     {
-                                        discountedProductPrice = cartItem.Price - cartItem.DiscountAmount.Value;
-                                        <div class="line-through text-red-500 text-sm">₺@cartItem.Price</div>
+                                        discountedProductPrice = cartItem.Product.Price - cartItem.Product.DiscountAmount.Value;
+                                        <div class="line-through text-red-500 text-sm">₺@cartItem.Product.Price</div>
                                         <div>₺@(discountedProductPrice.ToString("F2"))</div>
                                     }
                                     else
                                     {
-                                        discountedProductPrice = cartItem.Price;
-                                        <div>₺@cartItem.Price</div>
+                                        discountedProductPrice = cartItem.Product.Price;
+                                        <div>₺@cartItem.Product.Price</div>
                                     }
                                 </div>
                             </td>
@@ -190,36 +196,36 @@
                 </tbody>
             </table>
 
-            @foreach (var cartItem in cartItems)
+            @foreach (var cartItem in Model.Cart.CartItems)
             {
                 <!-- Mobil Görünüm Ürün Kartı -->
                 <div class="border border-gray-400 pt-2 pb-8 mb-3 rounded-lg sm:hidden">
 
                     <div class="flex justify-between p-3">
-                        <img src="@((cartItem.PrimaryImageUrl ?? string.Empty).Replace("wwwroot", string.Empty))" alt=""
+                        <img src="@cartItem.Product.ProductImages.FirstOrDefault().Url.Replace("wwwroot","")" alt=""
                              class="w-24 h-24 rounded object-cover min-w-[64px] min-h-[64px] object-top">
                         <div class="ml-2">
-                            <div class="font-semibold">@cartItem.ProductName</div>
+                            <div class="font-semibold">@cartItem.Product.Name</div>
                             <div class="text-sm text-gray-500 pt-1">Ürün Kodu: 067153-70722</div>
                             <div class="text-sm text-gray-500 pt-1">Beden: @cartItem.Size</div>
                             @* <div class="text-xs text-red-500 pt-1 line-through">₺329,99</div> *@ <!-- İndirim Alanı -->
                             <div class="text-sm text-gray-500 ">
-                                @if (cartItem.DiscountRate != null && cartItem.DiscountRate > 0)
+                                @if (cartItem.Product.DiscountRate != null && cartItem.Product.DiscountRate > 0)
                                 {
-                                    discountedProductPrice = cartItem.Price - (cartItem.Price * (cartItem.DiscountRate.Value / 100));
-                                    <div class="line-through text-red-500 text-xs">₺@cartItem.Price</div>
+                                    discountedProductPrice = cartItem.Product.Price - (cartItem.Product.Price * (cartItem.Product.DiscountRate.Value / 100));
+                                    <div class="line-through text-red-500 text-xs">₺@cartItem.Product.Price</div>
                                     <div>₺@(discountedProductPrice.ToString("F2"))</div>
                                 }
-                                else if (cartItem.DiscountAmount != null && cartItem.DiscountAmount > 0)
+                                else if (cartItem.Product.DiscountAmount != null && cartItem.Product.DiscountAmount > 0)
                                 {
-                                    discountedProductPrice = cartItem.Price - cartItem.DiscountAmount.Value;
-                                    <div class="line-through text-red-500 text-xs">₺@cartItem.Price</div>
+                                    discountedProductPrice = cartItem.Product.Price - cartItem.Product.DiscountAmount.Value;
+                                    <div class="line-through text-red-500 text-xs">₺@cartItem.Product.Price</div>
                                     <div>₺@(discountedProductPrice.ToString("F2"))</div>
                                 }
                                 else
                                 {
-                                    discountedProductPrice = cartItem.Price;
-                                    <div>₺@cartItem.Price</div>
+                                    discountedProductPrice = cartItem.Product.Price;
+                                    <div>₺@cartItem.Product.Price</div>
                                 }
                             </div>
                         </div>
@@ -311,13 +317,14 @@
             <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm mb-2"></div>
 
 
-            @if (Model.Cart?.Coupons != null && Model.Cart?.Coupons.Any())
+            @if (Model.Cart.CartCoupons != null && Model.Cart.CartCoupons.Any())
             {
                 <div class="mt-4">
                     <h3 class="text-md font-semibold mb-2">Aktif Kuponlar</h3>
                     <div class="flex flex-wrap gap-2">
-                        @foreach (var coupon in Model.Cart?.Coupons ?? Enumerable.Empty<ECommerceProject.DtoLayer.Dtos.CartDtos.CartCouponDetailDto>())
+                        @foreach (var cartCoupon in Model.Cart.CartCoupons)
                         {
+                            var coupon = cartCoupon.Coupon;
                             <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center">
                                 <span class="mr-2">@coupon.Code</span>
                                 <form asp-controller="Cart" asp-action="RemoveCouponFromCart" method="post" class="inline">

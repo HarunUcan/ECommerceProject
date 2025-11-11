@@ -1,49 +1,20 @@
-using System;
-using ECommerceProject.EntityLayer.Concrete;
+﻿using ECommerceProject.EntityLayer.Concrete;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ECommerceProject.DataAccessLayer.Concrete
 {
-    public class Context : IdentityDbContext<AppUser, AppRole, int>
+    public class Context : IdentityDbContext<AppUser,AppRole,int>
     {
-        private readonly string? _connectionString;
-
-        public Context()
-        {
-        }
-
-        public Context(DbContextOptions<Context> options, IConfiguration configuration) : base(options)
-        {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                var connectionString = _connectionString ?? BuildConfiguration().GetConnectionString("DefaultConnection");
-
-                if (string.IsNullOrWhiteSpace(connectionString))
-                {
-                    throw new InvalidOperationException("Database connection string is not configured.");
-                }
-
-                optionsBuilder.UseSqlServer(connectionString);
-            }
-        }
-
-        private static IConfiguration BuildConfiguration()
-        {
-            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
-
-            return new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables()
-                .Build();
+            // optionsBuilder.UseSqlServer("Server=localhost;initial catalog = ECommerceProjectDb;User Id=sa; Password=sa1234SA; MultipleActiveResultSets=true; Trust Server Certificate=true;");
+            optionsBuilder.UseSqlServer("Server=213.136.75.68,1433; Initial Catalog=ECommerceProjectDb; User Id=sa; Password=sa1234SA; MultipleActiveResultSets=true; Trust Server Certificate=true;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

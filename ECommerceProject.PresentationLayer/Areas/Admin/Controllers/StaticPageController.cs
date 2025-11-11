@@ -26,7 +26,28 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> PrivacyPolicy()
         {
-            var staticPageDto = await _staticPageService.TGetDtoByEnumTypeAsync(StaticPageType.PrivacyPolicy);
+            var staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.PrivacyPolicy);
+            StaticPageDto staticPageDto;
+
+            if (staticPage == null)
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Title = "",
+                    Content = "",
+                    UpdatedDate = DateTime.Now
+                };
+            }
+            else
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Id = staticPage.Id,
+                    Title = staticPage.Title,
+                    Content = staticPage.Content,
+                    UpdatedDate = staticPage.UpdatedDate
+                };
+            }
             return View(staticPageDto);
         }
 
@@ -66,7 +87,28 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> CookiePolicy()
         {
-            var staticPageDto = await _staticPageService.TGetDtoByEnumTypeAsync(StaticPageType.CookiePolicy);
+            var staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.CookiePolicy);
+            StaticPageDto staticPageDto;
+
+            if (staticPage == null)
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Title = "",
+                    Content = "",
+                    UpdatedDate = DateTime.Now
+                };
+            }
+            else
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Id = staticPage.Id,
+                    Title = staticPage.Title,
+                    Content = staticPage.Content,
+                    UpdatedDate = staticPage.UpdatedDate
+                };
+            }
             return View(staticPageDto);
         }
 
@@ -106,7 +148,28 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> DistanceSalesAgreement()
         {
-            var staticPageDto = await _staticPageService.TGetDtoByEnumTypeAsync(StaticPageType.DistanceSalesAgreement);
+            var staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.DistanceSalesAgreement);
+            StaticPageDto staticPageDto;
+
+            if (staticPage == null)
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Title = "",
+                    Content = "",
+                    UpdatedDate = DateTime.Now
+                };
+            }
+            else
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Id = staticPage.Id,
+                    Title = staticPage.Title,
+                    Content = staticPage.Content,
+                    UpdatedDate = staticPage.UpdatedDate
+                };
+            }
             return View(staticPageDto);
         }
 
@@ -146,7 +209,28 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> ReturnAndRefundPolicy()
         {
-            var staticPageDto = await _staticPageService.TGetDtoByEnumTypeAsync(StaticPageType.ReturnAndRefundPolicy);
+            var staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.ReturnAndRefundPolicy);
+            StaticPageDto staticPageDto;
+
+            if (staticPage == null)
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Title = "",
+                    Content = "",
+                    UpdatedDate = DateTime.Now
+                };
+            }
+            else
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Id = staticPage.Id,
+                    Title = staticPage.Title,
+                    Content = staticPage.Content,
+                    UpdatedDate = staticPage.UpdatedDate
+                };
+            }
             return View(staticPageDto);
         }
 
@@ -186,7 +270,28 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> MembershipAgreement()
         {
-            var staticPageDto = await _staticPageService.TGetDtoByEnumTypeAsync(StaticPageType.MembershipAgreement);
+            var staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.MembershipAgreement);
+            StaticPageDto staticPageDto;
+
+            if (staticPage == null)
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Title = "",
+                    Content = "",
+                    UpdatedDate = DateTime.Now
+                };
+            }
+            else
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Id = staticPage.Id,
+                    Title = staticPage.Title,
+                    Content = staticPage.Content,
+                    UpdatedDate = staticPage.UpdatedDate
+                };
+            }
             return View(staticPageDto);
         }
 
@@ -226,7 +331,28 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> KVKK()
         {
-            var staticPageDto = await _staticPageService.TGetDtoByEnumTypeAsync(StaticPageType.KVKK);
+            var staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.KVKK);
+            StaticPageDto staticPageDto;
+
+            if (staticPage == null)
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Title = "",
+                    Content = "",
+                    UpdatedDate = DateTime.Now
+                };
+            }
+            else
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Id = staticPage.Id,
+                    Title = staticPage.Title,
+                    Content = staticPage.Content,
+                    UpdatedDate = staticPage.UpdatedDate
+                };
+            }
             return View(staticPageDto);
         }
 
@@ -266,7 +392,28 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> AboutUs()
         {
-            var staticPageDto = await _staticPageService.TGetDtoByEnumTypeAsync(StaticPageType.AboutUs);
+            var staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.AboutUs);
+            StaticPageDto staticPageDto;
+
+            if (staticPage == null)
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Title = "",
+                    Content = "",
+                    UpdatedDate = DateTime.Now
+                };
+            }
+            else
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Id = staticPage.Id,
+                    Title = staticPage.Title,
+                    Content = staticPage.Content,
+                    UpdatedDate = staticPage.UpdatedDate
+                };
+            }
             return View(staticPageDto);
         }
 
@@ -306,7 +453,28 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Store()
         {
-            var staticPageDto = await _staticPageService.TGetDtoByEnumTypeAsync(StaticPageType.Store);
+            var staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.Store);
+            StaticPageDto staticPageDto;
+
+            if (staticPage == null)
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Title = "",
+                    Content = "",
+                    UpdatedDate = DateTime.Now
+                };
+            }
+            else
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Id = staticPage.Id,
+                    Title = staticPage.Title,
+                    Content = staticPage.Content,
+                    UpdatedDate = staticPage.UpdatedDate
+                };
+            }
             return View(staticPageDto);
         }
 
@@ -346,7 +514,28 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> FAQ()
         {
-            var staticPageDto = await _staticPageService.TGetDtoByEnumTypeAsync(StaticPageType.FAQ);
+            var staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.FAQ);
+            StaticPageDto staticPageDto;
+
+            if (staticPage == null)
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Title = "",
+                    Content = "",
+                    UpdatedDate = DateTime.Now
+                };
+            }
+            else
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Id = staticPage.Id,
+                    Title = staticPage.Title,
+                    Content = staticPage.Content,
+                    UpdatedDate = staticPage.UpdatedDate
+                };
+            }
             return View(staticPageDto);
         }
 
@@ -386,7 +575,28 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> PaymentOptions()
         {
-            var staticPageDto = await _staticPageService.TGetDtoByEnumTypeAsync(StaticPageType.PaymentOptions);
+            var staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.PaymentOptions);
+            StaticPageDto staticPageDto;
+
+            if (staticPage == null)
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Title = "",
+                    Content = "",
+                    UpdatedDate = DateTime.Now
+                };
+            }
+            else
+            {
+                staticPageDto = new StaticPageDto
+                {
+                    Id = staticPage.Id,
+                    Title = staticPage.Title,
+                    Content = staticPage.Content,
+                    UpdatedDate = staticPage.UpdatedDate
+                };
+            }
             return View(staticPageDto);
         }
 
