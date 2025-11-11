@@ -35,8 +35,8 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var featuredProducts = await _productService.TGetFeaturedProductsAsync(); // Default olarak max 15 ürün getirir
-            var featuredCategoryProducts = await _productService.TGetFeaturedCategoryProductsAsync(); // Default olarak kategori baþýna max 15 ürün getirir
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
             var categories = _categoryService.TGetList();
             var user = await _userManager.GetUserAsync(User);
             Cart cart = null;
@@ -57,7 +57,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         [HttpGet]
         public IActionResult HexColorTester(string hex)
         {
-            hex = Regex.Replace(hex, "[^0-9A-Fa-f]", ""); // Geçersiz karakterleri temizle
+            hex = Regex.Replace(hex, "[^0-9A-Fa-f]", ""); // GeÃ§ersiz karakterleri temizle
             var hexCode = $"#{hex}";
             return Content(ColorHelper.GetNearestColor(hexCode));
         }
@@ -119,13 +119,13 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         }
 
         [HttpGet]
-        // Bu metot layout un çalýþmasý için kullanýlýyor, listenecek ürünler GetPagedProductsByCategory metodundan ajax ile çekiliyor
-        public async Task<IActionResult> CategoryAsync(string slug, string[]? sizes = null, string[]? colors = null, int? minPrice = 0, int? maxPrice = int.MaxValue)
+                    cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
+                    cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
         {
             try
             {
-                var products = await _productService.TGetListByCategorySlugAsync(slug); // Kategoriyi arar, bulamazsa hata fýrlatýr
-                var currentCategory = _categoryService.TGetBySlug(slug);
+                    cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
+                    cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
                 var categories = _categoryService.TGetList();
 
                 var user = await _userManager.GetUserAsync(User);
@@ -230,9 +230,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             var user = await _userManager.GetUserAsync(User);
             Cart cart = null;
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
             HomeViewModel homeViewModel = new HomeViewModel
             {
                 Categories = categories,
@@ -250,9 +250,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             Cart cart = null;
 
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
 
             StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.AboutUs);
 
@@ -292,9 +292,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             Cart cart = null;
 
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
 
             StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.Store);
 
@@ -334,9 +334,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             Cart cart = null;
 
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
 
             StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.MembershipAgreement);
 
@@ -376,9 +376,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             Cart cart = null;
 
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
 
             StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.PrivacyPolicy);
 
@@ -418,9 +418,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             Cart cart = null;
 
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
 
             StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.DistanceSalesAgreement);
 
@@ -460,9 +460,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             Cart cart = null;
 
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
 
             StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.KVKK);
 
@@ -502,9 +502,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             Cart cart = null;
 
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
 
             StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.ReturnAndRefundPolicy);
 
@@ -544,9 +544,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             Cart cart = null;
 
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
 
             StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.CookiePolicy);
 
@@ -586,9 +586,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             Cart cart = null;
 
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
 
             StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.FAQ);
 
@@ -628,9 +628,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             Cart cart = null;
 
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
 
             StaticPage staticPage = await _staticPageService.TGetByEnumTypeAsync(StaticPageType.PaymentOptions);
 
@@ -670,9 +670,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             var user = await _userManager.GetUserAsync(User);
             Cart cart = null;
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
             HomeViewModel homeViewModel = new HomeViewModel
             {
                 Categories = categories,

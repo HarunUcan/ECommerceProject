@@ -1,4 +1,4 @@
-﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.BusinessLayer.Abstract;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -25,9 +25,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             var user = _userManager.GetUserAsync(User).Result;
             Cart cart = null;
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
             var homeViewModel = new HomeViewModel
             {
                 Categories = _categoryService.TGetList(),
@@ -51,7 +51,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 
             else
             {
-                var tempUserId = Request.Cookies["tempUserId"];
+                var tempUserId = Request.Cookies["TempUserId"];
                 if (tempUserId != null)
                 {
                     if (Enum.TryParse<ProductSize>(size, out var productSizeEnum))
@@ -74,7 +74,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             }
             else
             {
-                var tempUserId = Request.Cookies["tempUserId"];
+                var tempUserId = Request.Cookies["TempUserId"];
                 if (tempUserId != null)
                 {
                     _cartService.TDeleteCartItem(tempUserId, 0, productId, Enum.Parse<ProductSize>(size));
@@ -102,7 +102,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             }
             else
             {
-                var tempUserId = Request.Cookies["tempUserId"];
+                var tempUserId = Request.Cookies["TempUserId"];
                 if (tempUserId != null)
                 {
                     try
@@ -120,7 +120,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             return View("Index", new HomeViewModel
             {
                 Categories = _categoryService.TGetList(),
-                Cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user?.Id ?? 0)
+                Cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user?.Id ?? 0)
             });
         }
 
@@ -135,7 +135,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             }
             else
             {
-                var tempUserId = Request.Cookies["tempUserId"];
+                var tempUserId = Request.Cookies["TempUserId"];
                 if (tempUserId != null)
                 {
                     await _cartService.TRemoveCouponFromCart(tempUserId, 0, couponCode);

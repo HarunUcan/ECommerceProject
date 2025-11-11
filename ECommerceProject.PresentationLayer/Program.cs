@@ -42,6 +42,7 @@ namespace ECommerceProject.PresentationLayer
 
             builder.Services.Configure<AdminAccountOptions>(builder.Configuration.GetSection("AdminAccount"));
             builder.Services.Configure<Iyzipay.Options>(builder.Configuration.GetSection("Iyzico"));
+            builder.Services.Configure<TempUserCookieOptions>(builder.Configuration.GetSection("TempUserCookie"));
 
             builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
             {
