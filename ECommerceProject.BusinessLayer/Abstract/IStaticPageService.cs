@@ -1,14 +1,10 @@
-﻿using ECommerceProject.EntityLayer.Concrete;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ECommerceProject.DtoLayer.Dtos.StaticPageDtos;
+using ECommerceProject.EntityLayer.Concrete;
 
-namespace ECommerceProject.BusinessLayer.Abstract
+namespace ECommerceProject.BusinessLayer.Abstract;
+
+public interface IStaticPageService : IGenericService<StaticPage>
 {
-    public interface IStaticPageService : IGenericService<StaticPage>
-    {
-        Task<StaticPage> TGetByEnumTypeAsync(StaticPageType staticPageType);
-    }
+    Task<StaticPage> TGetByEnumTypeAsync(StaticPageType staticPageType);
+    Task<StaticPageDto> TGetDtoByEnumTypeAsync(StaticPageType staticPageType);
 }
