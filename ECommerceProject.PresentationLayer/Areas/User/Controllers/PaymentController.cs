@@ -42,12 +42,12 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 
             if (user != null)
             {
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], user.Id);
                 userAdresses = _adressService.TGetAdressesByUserId(user.Id);
             }
             else
             {
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
                 userAdresses = null;
             }
 
@@ -92,7 +92,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                         return RedirectToAction("PaymentStatus", new { isSuccess = false });
                 }
                 else
-                    cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                    cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
 
                 //var priceOfCart = cart.CartItems.Sum(ci => ci.Product.Price);
                 decimal priceOfCart = 0;
@@ -182,7 +182,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 
                 Buyer buyer = new Buyer
                 {
-                    Id = user != null ? user.Id.ToString() : Request.Cookies["tempUserId"],
+                    Id = user != null ? user.Id.ToString() : Request.Cookies["TempUserId"],
                     Name = name,
                     Surname = surname,
                     GsmNumber = user?.PhoneNumber ?? "",
@@ -238,7 +238,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     AdressId = userAdress.AdressId,
                     SaleStatus = SaleStatus.NotApproved,
                     AppUserId = user?.Id,
-                    TempCartId = user == null ? Request.Cookies["tempUserId"] : null,
+                    TempCartId = user == null ? Request.Cookies["TempUserId"] : null,
                     TotalPrice = priceOfCart,
                     InstallmentCount = 1, // Taksit sayısı
                     PaymentMethod = PaymentMethod.CreditCard // Ödeme yöntemi
@@ -255,7 +255,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     PaidPrice = priceOfCart.ToString(),
                     Currency = Currency.TRY.ToString(),
                     Installment = 1,
-                    BasketId = user != null ? cart.CartId.ToString() : Request.Cookies["tempUserId"],
+                    BasketId = user != null ? cart.CartId.ToString() : Request.Cookies["TempUserId"],
                     PaymentChannel = PaymentChannel.WEB.ToString(),
                     PaymentGroup = PaymentGroup.PRODUCT.ToString(),
                     CallbackUrl = "https://localhost:44321/User/Payment/IyzicoPaymentCallback",
@@ -283,9 +283,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 {
                     // Redirect to the 3D Secure page
                     // Clean the cart after successful payment
-                    if (Request.Cookies["tempUserId"] != null)
+                    if (Request.Cookies["TempUserId"] != null)
                     {
-                        var tempUserId = Request.Cookies["tempUserId"];
+                        var tempUserId = Request.Cookies["TempUserId"];
                         CleanTheCart(tempUserId, 0, cart);
                     }
                     else
@@ -367,7 +367,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             if (user != null)
                 cart = _cartService.TGetCart(null, user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                cart = _cartService.TGetCart(Request.Cookies["TempUserId"], 0);
 
             //var priceOfCart = cart.CartItems.Sum(ci => ci.Product.Price);
             decimal priceOfCart = 0;

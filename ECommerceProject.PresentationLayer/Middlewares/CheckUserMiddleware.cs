@@ -1,75 +1,97 @@
-﻿using ECommerceProject.DataAccessLayer.Concrete;
+using ECommerceProject.BusinessLayer.Abstract;
 using ECommerceProject.EntityLayer.Concrete;
+using ECommerceProject.PresentationLayer.Options;
+using Microsoft.Extensions.Options;
 
 namespace ECommerceProject.PresentationLayer.Middlewares
 {
     public class CheckUserMiddleware
     {
-        private readonly RequestDelegate _next;
+        private const string TempUserCookieName = "TempUserId";
 
-        public CheckUserMiddleware(RequestDelegate next)
+        private readonly RequestDelegate _next;
+        private readonly ICartService _cartService;
+        private readonly TempUserCookieOptions _cookieOptions;
+        private readonly ILogger<CheckUserMiddleware> _logger;
+
+        public CheckUserMiddleware(
+            RequestDelegate next,
+            ICartService cartService,
+            IOptions<TempUserCookieOptions> cookieOptions,
+            ILogger<CheckUserMiddleware> logger)
         {
             _next = next;
+            _cartService = cartService;
+            _cookieOptions = cookieOptions.Value;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
         {
-            // Kullanıcı giriş yapmış mı kontrol et
-            if (context.User.Identity?.IsAuthenticated == false) // Kullanıcı giriş yapmamışsa
+            if (context.User.Identity?.IsAuthenticated != true)
             {
-                // TempUserId çerezi var mı kontrol et
-                if (!context.Request.Cookies.ContainsKey("TempUserId"))
-                {
-                    var tempUserId = Guid.NewGuid().ToString();
-                    tempUserId += Guid.NewGuid().ToString();
-                    tempUserId += Guid.NewGuid().ToString();
-                    tempUserId += Guid.NewGuid().ToString();
-                    tempUserId += Guid.NewGuid().ToString();
-
-                    var cookieOptions = new CookieOptions
-                    {
-                        Expires = DateTime.UtcNow.AddDays(7), // 7 gün boyunca geçerli olacak
-                        HttpOnly = true, // Güvenlik için JavaScript erişimini engelle
-                        Secure = true, // HTTPS zorunlu (HTTP kullanıyorsan false yap)
-                        SameSite = SameSiteMode.Strict // Çerez paylaşımını sınırla
-                    };
-
-                    Context dbContext = new Context();
-                    dbContext.Carts.Add(new Cart 
-                    { 
-                        TempUserId = tempUserId,
-                        UpdatedDate = DateTime.Now
-                    });
-                    dbContext.SaveChanges();
-
-                    // Çerezi oluştur
-                    context.Response.Cookies.Append("TempUserId", tempUserId, cookieOptions);
-                }
+                EnsureTempUserCookie(context);
             }
-
-            // Iyzico ödemesi yapıldıktan sonra kullanıcı giriş yapmış olduğu halde TempUserId çerezi oluşturuluyor bu yüzden burada siliyoruz 
-            // Şu anlık problem oluşturmuyor gibi görünüyor ancak sepet taşıma işlemlerinde çalışma sırasına bağlı olarak sorun çıkarabilir
             else
             {
-                if (context.Request.Cookies.ContainsKey("TempUserId"))
-                {
-                    // Kullanıcı giriş yapmışsa ve TempUserId çerezi varsa, çerezi sil
-                    context.Response.Cookies.Delete("TempUserId");
-
-                    // Kullanıcıya ait sepeti güncelle
-                    var tempUserId = context.Request.Cookies["TempUserId"];
-                    Context dbContext = new Context();
-                    var cart = dbContext.Carts.FirstOrDefault(c => c.TempUserId == tempUserId);
-                    if (cart != null)
-                    {
-                        dbContext.Carts.Remove(cart);
-                        dbContext.SaveChanges();
-                    }
-                }
+                await RemoveTempUserCookieAsync(context);
             }
 
             await _next(context);
         }
-    }
 
+        private void EnsureTempUserCookie(HttpContext context)
+        {
+            if (context.Request.Cookies.ContainsKey(TempUserCookieName))
+            {
+                return;
+            }
+
+            var tempUserId = string.Concat(Enumerable.Range(0, 5).Select(_ => Guid.NewGuid().ToString()));
+
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddDays(7),
+                HttpOnly = true,
+                Secure = _cookieOptions.RequireSecure,
+                SameSite = SameSiteMode.Strict
+            };
+
+            try
+            {
+                _cartService.TInsert(new Cart
+                {
+                    TempUserId = tempUserId,
+                    UpdatedDate = DateTime.UtcNow
+                });
+
+                context.Response.Cookies.Append(TempUserCookieName, tempUserId, cookieOptions);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Failed to create temporary cart for anonymous user.");
+            }
+        }
+
+        private Task RemoveTempUserCookieAsync(HttpContext context)
+        {
+            if (!context.Request.Cookies.TryGetValue(TempUserCookieName, out var tempUserId) || string.IsNullOrWhiteSpace(tempUserId))
+            {
+                return Task.CompletedTask;
+            }
+
+            context.Response.Cookies.Delete(TempUserCookieName);
+
+            try
+            {
+                _cartService.TDeleteByTempUserId(tempUserId);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Failed to delete temporary cart for authenticated user.");
+            }
+
+            return Task.CompletedTask;
+        }
+    }
 }
