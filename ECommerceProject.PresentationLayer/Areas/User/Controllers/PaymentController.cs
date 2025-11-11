@@ -1,12 +1,14 @@
-﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.BusinessLayer.Abstract;
 using ECommerceProject.DtoLayer.Dtos.PaymentDtos;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.ViewModels;
 using Iyzipay;
 using Iyzipay.Model;
 using Iyzipay.Request;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 {
@@ -19,8 +21,9 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         private readonly IAdressService _adressService;
         private readonly IProductService _productService;
         private readonly ISaleService _saleService;
+        private readonly Options _iyzicoOptions;
 
-        public PaymentController(ICartService cartService, ICategoryService categoryService, UserManager<AppUser> userManager, IAdressService adressService, IProductService productService, ISaleService saleService)
+        public PaymentController(ICartService cartService, ICategoryService categoryService, UserManager<AppUser> userManager, IAdressService adressService, IProductService productService, ISaleService saleService, IOptions<Options> iyzicoOptions)
         {
             _userManager = userManager;
             _cartService = cartService;
@@ -28,14 +31,8 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             _adressService = adressService;
             _productService = productService;
             _saleService = saleService;
+            _iyzicoOptions = iyzicoOptions.Value;
         }
-
-        private readonly Options _options = new Options()
-        {
-            ApiKey = "sandbox-F6uw4W12sdhw4AxjzYVYITZbc43z1cwi",
-            SecretKey = "sandbox-2E5YPn8Qt8sI2DhL1WzBup4CF5EoKJDS",
-            BaseUrl = "https://sandbox-api.iyzipay.com"
-        };
 
         public IActionResult Index()
         {
@@ -275,7 +272,12 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 request.BillingAddress = billingAddress;
 
                 // Initialize the payment client
-                ThreedsInitialize threedsInitialize = await ThreedsInitialize.Create(request, _options);
+                if (string.IsNullOrWhiteSpace(_iyzicoOptions.ApiKey) || string.IsNullOrWhiteSpace(_iyzicoOptions.SecretKey) || string.IsNullOrWhiteSpace(_iyzicoOptions.BaseUrl))
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Payment provider configuration is missing.");
+                }
+
+                ThreedsInitialize threedsInitialize = await ThreedsInitialize.Create(request, _iyzicoOptions);
 
                 if (threedsInitialize.Status == "success")
                 {
@@ -411,7 +413,12 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             request.BinNumber = binNumber.ToString();
             request.Price = priceOfCart.ToString();
 
-            InstallmentInfo installmentInfo = await InstallmentInfo.Retrieve(request, _options);
+            if (string.IsNullOrWhiteSpace(_iyzicoOptions.ApiKey) || string.IsNullOrWhiteSpace(_iyzicoOptions.SecretKey) || string.IsNullOrWhiteSpace(_iyzicoOptions.BaseUrl))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Payment provider configuration is missing.");
+            }
+
+            InstallmentInfo installmentInfo = await InstallmentInfo.Retrieve(request, _iyzicoOptions);
 
             if (installmentInfo.Status == "success")
             {
