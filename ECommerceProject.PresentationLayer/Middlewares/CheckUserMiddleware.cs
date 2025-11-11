@@ -73,25 +73,24 @@ namespace ECommerceProject.PresentationLayer.Middlewares
             }
         }
 
-        private Task RemoveTempUserCookieAsync(HttpContext context)
+        private async Task RemoveTempUserCookieAsync(HttpContext context)
         {
             if (!context.Request.Cookies.TryGetValue(TempUserCookieName, out var tempUserId) || string.IsNullOrWhiteSpace(tempUserId))
             {
-                return Task.CompletedTask;
+                return;
             }
 
             context.Response.Cookies.Delete(TempUserCookieName);
 
             try
             {
-                _cartService.TDeleteByTempUserId(tempUserId);
+                await _cartService.TDeleteByTempUserIdAsync(tempUserId);
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Failed to delete temporary cart for authenticated user.");
             }
 
-            return Task.CompletedTask;
         }
     }
 }

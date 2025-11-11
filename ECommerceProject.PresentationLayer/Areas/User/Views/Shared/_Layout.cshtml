@@ -1,13 +1,6 @@
 ﻿@model dynamic
 @{
-    int cartItemsCount = 0;
-    if(Model.Cart != null && Model.Cart.CartItems != null && Model.Cart.CartItems.Count > 0)
-    {
-        foreach (var item in Model.Cart.CartItems)
-        {
-            cartItemsCount += item.Quantity;
-        }
-    }
+    int cartItemsCount = Model.Cart?.Items?.Sum(item => item.Quantity) ?? 0;
 }
 <!DOCTYPE html>
 <html lang="en">

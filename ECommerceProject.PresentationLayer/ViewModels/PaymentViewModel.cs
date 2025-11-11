@@ -1,11 +1,11 @@
-﻿using ECommerceProject.EntityLayer.Concrete;
+using ECommerceProject.DtoLayer.Dtos.CartDtos;
+using ECommerceProject.EntityLayer.Concrete;
 
-namespace ECommerceProject.PresentationLayer.ViewModels
+namespace ECommerceProject.PresentationLayer.ViewModels;
+
+public class PaymentViewModel
 {
-    public class PaymentViewModel
-    {
-        public List<Category>? Categories { get; set; }
-        public Cart? Cart { get; set; }
-        public List<Adress>? Adresses { get; set; }
-    }
+    public List<Category>? Categories { get; set; }
+    public CartDetailDto? Cart { get; set; }
+    public List<Adress>? Adresses { get; set; }
 }
