@@ -16,21 +16,16 @@ using System.Globalization;
 namespace ECommerceProject.PresentationLayer.Areas.User.Controllers;
 
 [Area("User")]
-public class PaymentController : Controller
+public class PaymentController : BaseUserController
 {
-    private readonly UserManager<AppUser> _userManager;
-    private readonly ICartService _cartService;
-    private readonly ICategoryService _categoryService;
     private readonly IAdressService _adressService;
     private readonly IProductService _productService;
     private readonly ISaleService _saleService;
     private readonly Options _iyzicoOptions;
 
     public PaymentController(ICartService cartService, ICategoryService categoryService, UserManager<AppUser> userManager, IAdressService adressService, IProductService productService, ISaleService saleService, IOptions<Options> iyzicoOptions)
+        : base(categoryService, cartService, userManager)
     {
-        _userManager = userManager;
-        _cartService = cartService;
-        _categoryService = categoryService;
         _adressService = adressService;
         _productService = productService;
         _saleService = saleService;
@@ -39,14 +34,13 @@ public class PaymentController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var user = await _userManager.GetUserAsync(User);
-        var cart = await _cartService.TGetCartDetailsAsync(Request.Cookies["TempUserId"], user?.Id ?? 0);
-        List<Adress>? userAdresses = user != null ? _adressService.TGetAdressesByUserId(user.Id) : null;
+        var context = await BuildUserViewContextAsync();
+        List<Adress>? userAdresses = context.User != null ? _adressService.TGetAdressesByUserId(context.User.Id) : null;
 
         var paymentViewModel = new PaymentViewModel
         {
-            Categories = _categoryService.TGetList(),
-            Cart = cart,
+            Categories = context.Categories,
+            Cart = context.Cart,
             Adresses = userAdresses,
         };
         return View(paymentViewModel);
@@ -67,11 +61,11 @@ public class PaymentController : Controller
     {
         try
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = await UserManager.GetUserAsync(User);
 
             CartDetailDto? cart = user != null
-                ? await _cartService.TGetCartDetailsAsync(null, user.Id)
-                : await _cartService.TGetCartDetailsAsync(Request.Cookies["TempUserId"], 0);
+                ? await CartService.TGetCartDetailsAsync(null, user.Id)
+                : await CartService.TGetCartDetailsAsync(Request.Cookies["TempUserId"], 0);
 
             if (cart == null || !cart.Items.Any())
             {
@@ -219,11 +213,11 @@ public class PaymentController : Controller
     [HttpGet]
     public async Task<IActionResult> IyzicoInstallmentCheck(string price, string binNumber)
     {
-        var user = await _userManager.GetUserAsync(User);
+        var user = await UserManager.GetUserAsync(User);
 
         CartDetailDto? cart = user != null
-            ? await _cartService.TGetCartDetailsAsync(null, user.Id)
-            : await _cartService.TGetCartDetailsAsync(Request.Cookies["TempUserId"], 0);
+            ? await CartService.TGetCartDetailsAsync(null, user.Id)
+            : await CartService.TGetCartDetailsAsync(Request.Cookies["TempUserId"], 0);
 
         CartPricingResult pricing = CartPricingCalculator.CalculateTotals(cart);
 
@@ -261,7 +255,7 @@ public class PaymentController : Controller
                 _productService.TUpdate(product);
             }
 
-            await _cartService.TDeleteCartItemAsync(tempUserId, userId, item.ProductId, item.Size);
+            await CartService.TDeleteCartItemAsync(tempUserId, userId, item.ProductId, item.Size);
         }
     }
 

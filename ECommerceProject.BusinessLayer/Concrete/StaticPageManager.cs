@@ -1,51 +1,68 @@
-﻿using ECommerceProject.BusinessLayer.Abstract;
+using ECommerceProject.BusinessLayer.Abstract;
 using ECommerceProject.DataAccessLayer.Abstract;
+using ECommerceProject.DtoLayer.Dtos.StaticPageDtos;
 using ECommerceProject.EntityLayer.Concrete;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ECommerceProject.BusinessLayer.Concrete
+namespace ECommerceProject.BusinessLayer.Concrete;
+
+public class StaticPageManager : IStaticPageService
 {
-    public class StaticPageManager : IStaticPageService
+    private readonly IStaticPageDal _staticPageDal;
+
+    public StaticPageManager(IStaticPageDal staticPageDal)
     {
-        private readonly IStaticPageDal _staticPageDal;
+        _staticPageDal = staticPageDal;
+    }
 
-        public StaticPageManager(IStaticPageDal staticPageDal)
+    public async Task<StaticPage> TGetByEnumTypeAsync(StaticPageType staticPageType)
+    {
+        return await _staticPageDal.GetByEnumTypeAsync(staticPageType);
+    }
+
+    public async Task<StaticPageDto> TGetDtoByEnumTypeAsync(StaticPageType staticPageType)
+    {
+        var staticPage = await _staticPageDal.GetByEnumTypeAsync(staticPageType);
+        if (staticPage == null)
         {
-            _staticPageDal = staticPageDal;
+            return new StaticPageDto
+            {
+                Title = string.Empty,
+                Content = string.Empty,
+                UpdatedDate = DateTime.Now
+            };
         }
 
-        public async Task<StaticPage> TGetByEnumTypeAsync(StaticPageType staticPageType)
+        return new StaticPageDto
         {
-            return await _staticPageDal.GetByEnumTypeAsync(staticPageType);
-        }
+            Id = staticPage.Id,
+            Title = staticPage.Title,
+            Content = staticPage.Content,
+            UpdatedDate = staticPage.UpdatedDate
+        };
+    }
 
-        public void TDelete(StaticPage t)
-        {
-            _staticPageDal.Delete(t);
-        }
+    public void TDelete(StaticPage t)
+    {
+        _staticPageDal.Delete(t);
+    }
 
-        public StaticPage TGetById(int id)
-        {
-            return _staticPageDal.GetById(id);
-        }
+    public StaticPage TGetById(int id)
+    {
+        return _staticPageDal.GetById(id);
+    }
 
-        public List<StaticPage> TGetList()
-        {
-            return _staticPageDal.GetList();
-        }
+    public List<StaticPage> TGetList()
+    {
+        return _staticPageDal.GetList();
+    }
 
-        public void TInsert(StaticPage t)
-        {
-            _staticPageDal.Insert(t);
-        }
+    public void TInsert(StaticPage t)
+    {
+        _staticPageDal.Insert(t);
+    }
 
-        public void TUpdate(StaticPage t)
-        {
-            _staticPageDal.Update(t);
-        }
+    public void TUpdate(StaticPage t)
+    {
+        _staticPageDal.Update(t);
     }
 }

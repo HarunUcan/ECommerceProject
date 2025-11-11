@@ -7,49 +7,41 @@ using Microsoft.AspNetCore.Mvc;
 namespace ECommerceProject.PresentationLayer.Areas.User.Controllers;
 
 [Area("User")]
-public class CartController : Controller
+public class CartController : BaseUserController
 {
-    private readonly UserManager<AppUser> _userManager;
-    private readonly ICartService _cartService;
-    private readonly ICategoryService _categoryService;
-
     public CartController(ICategoryService categoryService, UserManager<AppUser> userManager, ICartService cartService)
+        : base(categoryService, cartService, userManager)
     {
-        _categoryService = categoryService;
-        _userManager = userManager;
-        _cartService = cartService;
     }
 
     public async Task<IActionResult> Index()
     {
-        var user = await _userManager.GetUserAsync(User);
-        var cart = await _cartService.TGetCartDetailsAsync(Request.Cookies["TempUserId"], user?.Id ?? 0);
+        var context = await BuildUserViewContextAsync();
 
-        var homeViewModel = new HomeViewModel
+        return View(new HomeViewModel
         {
-            Categories = _categoryService.TGetList(),
-            Cart = cart
-        };
-        return View(homeViewModel);
+            Categories = context.Categories,
+            Cart = context.Cart
+        });
     }
 
     [HttpPost]
     public async Task<IActionResult> AddToCartAsync(int productId, int quantity, string size)
     {
-        var user = await _userManager.GetUserAsync(User);
+        var user = await UserManager.GetUserAsync(User);
 
         if (Enum.TryParse<ProductSize>(size, out var productSizeEnum))
         {
             if (user != null)
             {
-                await _cartService.TAddToCartAsync(null, user.Id, productId, quantity, productSizeEnum);
+                await CartService.TAddToCartAsync(null, user.Id, productId, quantity, productSizeEnum);
             }
             else
             {
                 var tempUserId = Request.Cookies["TempUserId"];
                 if (tempUserId != null)
                 {
-                    await _cartService.TAddToCartAsync(tempUserId, 0, productId, quantity, productSizeEnum);
+                    await CartService.TAddToCartAsync(tempUserId, 0, productId, quantity, productSizeEnum);
                 }
             }
         }
@@ -60,19 +52,19 @@ public class CartController : Controller
     [HttpGet]
     public async Task<IActionResult> DeleteProductFromCart(int productId, string size)
     {
-        var user = await _userManager.GetUserAsync(User);
+        var user = await UserManager.GetUserAsync(User);
         if (Enum.TryParse<ProductSize>(size, out var productSizeEnum))
         {
             if (user != null)
             {
-                await _cartService.TDeleteCartItemAsync(null, user.Id, productId, productSizeEnum);
+                await CartService.TDeleteCartItemAsync(null, user.Id, productId, productSizeEnum);
             }
             else
             {
                 var tempUserId = Request.Cookies["TempUserId"];
                 if (tempUserId != null)
                 {
-                    await _cartService.TDeleteCartItemAsync(tempUserId, 0, productId, productSizeEnum);
+                    await CartService.TDeleteCartItemAsync(tempUserId, 0, productId, productSizeEnum);
                 }
             }
         }
@@ -82,20 +74,20 @@ public class CartController : Controller
     [HttpPost]
     public async Task<IActionResult> ApplyCoupon(string couponCode)
     {
-        var user = await _userManager.GetUserAsync(User);
+        var user = await UserManager.GetUserAsync(User);
 
         try
         {
             if (user != null)
             {
-                await _cartService.TApplyCoupon(null, user.Id, couponCode);
+                await CartService.TApplyCoupon(null, user.Id, couponCode);
             }
             else
             {
                 var tempUserId = Request.Cookies["TempUserId"];
                 if (tempUserId != null)
                 {
-                    await _cartService.TApplyCoupon(tempUserId, 0, couponCode);
+                    await CartService.TApplyCoupon(tempUserId, 0, couponCode);
                 }
                 else
                 {
@@ -108,29 +100,29 @@ public class CartController : Controller
             ModelState.AddModelError(string.Empty, ex.Message);
         }
 
-        var updatedCart = await _cartService.TGetCartDetailsAsync(Request.Cookies["TempUserId"], user?.Id ?? 0);
+        var context = await BuildUserViewContextAsync();
         return View("Index", new HomeViewModel
         {
-            Categories = _categoryService.TGetList(),
-            Cart = updatedCart
+            Categories = context.Categories,
+            Cart = context.Cart
         });
     }
 
     [HttpPost]
     public async Task<IActionResult> RemoveCouponFromCart(string couponCode)
     {
-        var user = await _userManager.GetUserAsync(User);
+        var user = await UserManager.GetUserAsync(User);
 
         if (user != null)
         {
-            await _cartService.TRemoveCouponFromCart(null, user.Id, couponCode);
+            await CartService.TRemoveCouponFromCart(null, user.Id, couponCode);
         }
         else
         {
             var tempUserId = Request.Cookies["TempUserId"];
             if (tempUserId != null)
             {
-                await _cartService.TRemoveCouponFromCart(tempUserId, 0, couponCode);
+                await CartService.TRemoveCouponFromCart(tempUserId, 0, couponCode);
             }
         }
         return RedirectToAction("Index", "Cart");
