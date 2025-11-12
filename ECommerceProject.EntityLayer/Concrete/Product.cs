@@ -17,6 +17,7 @@ namespace ECommerceProject.EntityLayer.Concrete
         public bool IsFeatured { get; set; }
         public int? ProductGroupId { get; set; }
         public ProductGroup? ProductGroup { get; set; }
+        public bool HasSizeOptions { get; set; }
         public ICollection<ProductVariant> ProductVariants { get; set; }
         public ICollection<ProductImage> ProductImages { get; set; }
         public string UniqueCode { get; set; }

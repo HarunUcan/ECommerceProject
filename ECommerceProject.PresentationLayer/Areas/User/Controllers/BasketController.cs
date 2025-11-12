@@ -37,16 +37,19 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToBasketAsync(int productId, int quantity, string size)
+        public async Task<IActionResult> AddToBasketAsync(int productId, int quantity, string? size)
         {
             var user = await _userManager.GetUserAsync(User);
+            var productSizeEnum = ProductSize.NOSIZE;
+
+            if (!string.IsNullOrWhiteSpace(size) && Enum.TryParse<ProductSize>(size, out var parsedSize))
+            {
+                productSizeEnum = parsedSize;
+            }
 
             if (user != null)
             {
-                if (Enum.TryParse<ProductSize>(size, out var productSizeEnum))
-                {
-                    _basketService.TAddToBasket(null, user.Id, productId, quantity, productSizeEnum);
-                }
+                _basketService.TAddToBasket(null, user.Id, productId, quantity, productSizeEnum);
             }
 
             else
@@ -54,10 +57,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 var tempUserId = Request.Cookies["tempUserId"];
                 if (tempUserId != null)
                 {
-                    if (Enum.TryParse<ProductSize>(size, out var productSizeEnum))
-                    {
-                        _basketService.TAddToBasket(tempUserId, 0, productId, quantity, productSizeEnum);
-                    }
+                    _basketService.TAddToBasket(tempUserId, 0, productId, quantity, productSizeEnum);
                 }
 
             }

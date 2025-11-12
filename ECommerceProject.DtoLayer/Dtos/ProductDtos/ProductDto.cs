@@ -23,5 +23,12 @@ namespace ECommerceProject.DtoLayer.Dtos.ProductDtos
         public List<GroupProductDto>? GroupProducts { get; set; }
         public List<ProductVariantDto>? ProductVariants { get; set; }
         public int GroupProductsCount { get; set; } 
+
+        private bool? _hasSizeOptions;
+        public bool HasSizeOptions
+        {
+            get => _hasSizeOptions ?? (ProductVariants?.Any() ?? false);
+            set => _hasSizeOptions = value;
+        }
     }
 }

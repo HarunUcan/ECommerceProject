@@ -10,6 +10,8 @@ namespace ECommerceProject.PresentationLayer.ViewModels
         public string? Currency { get; set; }
         public int CategoryId { get; set; }
         public string? Color { get; set; }
+        public bool HasSizeOptions { get; set; } = true;
+        public int? Stock { get; set; }
 
         // Ana resim
         public IFormFile? MainImage { get; set; }

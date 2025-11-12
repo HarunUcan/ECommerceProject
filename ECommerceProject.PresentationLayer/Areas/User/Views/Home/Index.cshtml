@@ -66,6 +66,9 @@
         <div class="swiper-wrapper">
             @foreach (var product in Model.FeaturedProducts)
             {
+                var productStock = product.HasSizeOptions
+                    ? (product.ProductVariants?.Sum(pv => pv.Stock) ?? 0)
+                    : product.Stock;
                     <div class="swiper-slide bg-white shadow-md relative w-60">
 
                         <!-- İndirim Oranı -->
@@ -87,14 +90,14 @@
                         }
 
                         <!-- Stokta yok etiketi -->
-                        @(product.ProductVariants.Sum(pv => pv.Stock) <= 0
+                        @(productStock <= 0
                             ? Html.Raw(@"<div class=""absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded shadow-lg z-20"">Stokta Yok</div>")
                             : null)
 
                         <a asp-area="User" asp-controller="Home" asp-action="ProductDetail" asp-route-slug="@product.Slug">
 
                             <!-- Ürün Resmi -->
-                            <img src="@product.ProductImages.FirstOrDefault(img => img.IsMain == true).Url.Replace("wwwroot","")" alt="Ürün" class="w-full h-60 md:h-72 object-cover @(product.ProductVariants.Sum(pv => pv.Stock) <= 0 ? "opacity-50" : "")">
+                            <img src="@product.ProductImages.FirstOrDefault(img => img.IsMain == true).Url.Replace("wwwroot","")" alt="Ürün" class="w-full h-60 md:h-72 object-cover @(productStock <= 0 ? "opacity-50" : "")">
 
                             <div class="pb-3 px-3">
                                 <!-- Ürün Bilgileri -->
@@ -196,6 +199,9 @@
             <div class="swiper-wrapper">
                 @foreach (var product in categoryProducts)
                 {
+                    var productStock = product.HasSizeOptions
+                        ? (product.ProductVariants?.Sum(pv => pv.Stock) ?? 0)
+                        : product.Stock;
                     if(product.CategoryId != category.CategoryId) continue;
 
                     <div class="swiper-slide bg-white shadow-md relative w-60">
@@ -219,14 +225,14 @@
                         }
 
                         <!-- Stokta yok etiketi -->
-                        @(product.ProductVariants.Sum(pv => pv.Stock) <= 0
+                        @(productStock <= 0
                             ? Html.Raw(@"<div class=""absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded shadow-lg z-20"">Stokta Yok</div>")
                             : null)
 
                         <a asp-area="User" asp-controller="Home" asp-action="ProductDetail" asp-route-slug="@product.Slug">
 
                             <!-- Ürün Resmi -->
-                            <img src="@product.ProductImages.FirstOrDefault(img => img.IsMain == true)?.Url.Replace("wwwroot","")" alt="Ürün" class="w-full h-60 md:h-72 object-cover @(product.ProductVariants.Sum(pv => pv.Stock) <= 0 ? "opacity-50" : "")">
+                            <img src="@product.ProductImages.FirstOrDefault(img => img.IsMain == true)?.Url.Replace("wwwroot","")" alt="Ürün" class="w-full h-60 md:h-72 object-cover @(productStock <= 0 ? "opacity-50" : "")">
                             
                             <div class="pb-3 px-3">
                                 <!-- Ürün Bilgileri -->
@@ -239,8 +245,8 @@
                                     @if (product.DiscountRate != null && product.DiscountRate > 0)
                                     {
                                         <div class="mt-2">
-                                            <p class="text-sm text-red-600 line-through">₺@product.Price</p>
-                                            <p class="text-black font-bold">₺@((product.Price - product.Price * (product.DiscountRate / 100))?.ToString("F2"))</p>
+                                            <p class="text-sm text-red-600 line-through">?@product.Price</p>
+                                            <p class="text-black font-bold">?@((product.Price - product.Price * (product.DiscountRate / 100))?.ToString("F2"))</p>
                                         </div>
                                     }
                                     else if (product.DiscountAmount != null && product.DiscountAmount > 0)
@@ -248,13 +254,13 @@
                                         var discountedPrice = product.Price - product.DiscountAmount.Value;
 
                                         <div class="mt-2">
-                                            <p class="text-sm text-red-600 line-through">₺@product.Price</p>
-                                            <p class="text-black font-bold">₺@(discountedPrice.ToString("F2"))</p>
+                                            <p class="text-sm text-red-600 line-through">?@product.Price</p>
+                                            <p class="text-black font-bold">?@(discountedPrice.ToString("F2"))</p>
                                         </div>
                                     }
                                     else
                                     {
-                                        <p class="text-black font-bold mt-2">₺@product.Price</p>
+                                        <p class="text-black font-bold mt-2">?@product.Price</p>
                                     }
 
                                     <div class="relative flex items-center gap-1 bg-white px-2 py-1 rounded-xl shadow-md w-fit @(product.ProductGroup?.Products == null || product.ProductGroup?.Products.Count <= 1 ? "hidden" : "" )">
@@ -324,7 +330,7 @@
                     <p class="product-description text-gray-500 text-sm">@product.Description</p>
 
                     <!-- Fiyat -->
-                    <p class="text-black font-bold mt-2">@product.Price ₺</p>
+                    <p class="text-black font-bold mt-2">@product.Price ?</p>
 
                     <!-- Renk Seçenekleri -->
                     <div class="relative flex justify-start items-center mt-2">
@@ -353,6 +359,9 @@
 
 
 <script src="~/js/home.js" defer></script>
+
+
+
 
 
 

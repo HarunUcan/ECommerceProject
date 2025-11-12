@@ -4,6 +4,7 @@ using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
 {
@@ -44,6 +45,29 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProductGroup(AdminProductGroupViewModel model)
         {
+            if (model.Products != null)
+            {
+                for (int i = 0; i < model.Products.Count; i++)
+                {
+                    var viewModelProduct = model.Products[i];
+                    var hasVariants = viewModelProduct.Variants != null && viewModelProduct.Variants.Any();
+                    viewModelProduct.HasSizeOptions = hasVariants;
+
+                    if (hasVariants)
+                    {
+                        continue;
+                    }
+
+                    viewModelProduct.Variants = null;
+                    var variantKeys = ModelState.Keys.Where(k => k.StartsWith($"Products[{i}].Variants"));
+                    foreach (var key in variantKeys)
+                    {
+                        ModelState[key].Errors.Clear();
+                        ModelState[key].ValidationState = ModelValidationState.Valid;
+                    }
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 // Burada ProductGroupService sınıfına ProductGroup return eden bir Insert metodu yazılacak
@@ -93,16 +117,16 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                     }
 
                     List<ProductVariant> productVariants = new List<ProductVariant>();
-                    foreach (var variant in product.Variants)
+                    if (product.HasSizeOptions && product.Variants != null)
                     {
-
-                        productVariants.Add(new ProductVariant
+                        foreach (var variant in product.Variants)
                         {
-                            //Color = variant.Color,
-                            Size = Enum.TryParse(variant.Size, out ProductSize size) ? size : ProductSize.NOSIZE,
-                            Stock = variant.Stock
-                        });
-
+                            productVariants.Add(new ProductVariant
+                            {
+                                Size = Enum.TryParse(variant.Size, out ProductSize size) ? size : ProductSize.NOSIZE,
+                                Stock = variant.Stock
+                            });
+                        }
                     }
 
                     List<ProductImage> productImages = await _productImageService.SaveProductImageAsync(productImageDtos);
@@ -112,6 +136,10 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
 
                     decimal productPrice = product.UseGroupPrice != null && product.UseGroupPrice == true ? model.GroupPrice ?? 0 : product.Price ?? 0;
                     string productDescription = product.UseGroupDescription != null && product.UseGroupDescription == true ? model.GroupDescription : product.Description;
+                    var computedStock = product.HasSizeOptions
+                        ? productVariants.Sum(x => x.Stock)
+                        : (product.Stock ?? 0);
+
                     products.Add(new Product
                     {
                         Name = $"{model.GroupName} - {product.ProductName}",
@@ -119,10 +147,11 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                         Color = product.Color,
                         Price = productPrice,
                         UniqueCode = $"{DateTime.Now.Year.ToString().Substring(2)}{DateTime.Now.Month}{DateTime.Now.Day}{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}",
-                        Stock = productVariants.Sum(x => x.Stock),
+                        Stock = computedStock,
+                        HasSizeOptions = product.HasSizeOptions,
                         ProductGroupId = productGroup.ProductGroupId,
                         CategoryId = model.GroupCategoryId,
-                        ProductVariants = productVariants,
+                        ProductVariants = product.HasSizeOptions ? productVariants : new List<ProductVariant>(),
                         ProductImages = productImages,
                         BasketItems = basketItems
                     });

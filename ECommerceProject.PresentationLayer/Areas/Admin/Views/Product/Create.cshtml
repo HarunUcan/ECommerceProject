@@ -135,6 +135,57 @@
             button.parentElement.remove();
         }
 
+        function toggleSizeSectionVisibility() {
+            const checkbox = document.getElementById("hasSizeOptions");
+            const sizeSection = document.getElementById("sizeSection");
+            const stockSection = document.getElementById("stockSection");
+            const toggleVariantInputs = (disabled) => {
+                if (!sizeSection) return;
+                const inputs = sizeSection.querySelectorAll('select[name^="Variants"], input[name^="Variants"]');
+                inputs.forEach(input => {
+                    input.disabled = disabled;
+                    if (disabled && input.type === "number") {
+                        input.value = "";
+                    }
+                });
+            };
+            const toggleStockInput = (disabled) => {
+                if (!stockSection) return;
+                const stockInput = stockSection.querySelector('input[name="Stock"]');
+                if (stockInput) {
+                    stockInput.disabled = disabled;
+                    if (disabled) {
+                        stockInput.value = "";
+                    }
+                }
+            };
+
+            if (!checkbox || !sizeSection || !stockSection) {
+                return;
+            }
+
+            if (checkbox.checked) {
+                sizeSection.classList.remove("hidden");
+                stockSection.classList.add("hidden");
+                toggleVariantInputs(false);
+                toggleStockInput(true);
+            }
+            else {
+                sizeSection.classList.add("hidden");
+                stockSection.classList.remove("hidden");
+                toggleVariantInputs(true);
+                toggleStockInput(false);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const checkbox = document.getElementById("hasSizeOptions");
+            if (checkbox) {
+                checkbox.addEventListener("change", toggleSizeSectionVisibility);
+            }
+            toggleSizeSectionVisibility();
+        });
+
     </script>
 
 </head>
@@ -196,8 +247,17 @@
 
                 </div>
 
-                <!-- Beden ve Stok Miktarları -->
                 <div class="mb-6">
+                    <label asp-for="HasSizeOptions" class="block text-sm font-medium text-gray-600 mb-2">Beden Seçimi</label>
+                    <div class="flex items-center gap-2">
+                        <input asp-for="HasSizeOptions"
+                               id="hasSizeOptions"
+                               class="h-5 w-5 text-indigo-600 border-gray-300 rounded" />
+                        <span class="text-gray-700">Bu ürün için beden seçenekleri var</span>
+                    </div>
+                </div>
+
+                <div id="sizeSection" class="mb-6 @(Model?.HasSizeOptions == false ? "hidden" : "")">
                     <label class="block text-sm font-medium text-gray-600">Beden ve Stok Miktarları</label>
                     <div id="sizeStockContainer" class="">
                         <div class="flex gap-2 items-center mt-4">
@@ -233,7 +293,16 @@
                             class="mt-4 px-3 py-1 bg-blue-500 text-white rounded-lg">
                         + Beden Ekle
                     </button>
-                    
+                </div>
+
+                <div id="stockSection" class="mb-6 @(Model?.HasSizeOptions == false ? "" : "hidden")">
+                    <label class="block text-sm font-medium text-gray-600">Stok Miktarı</label>
+                    <input type="number"
+                           name="Stock"
+                           min="0"
+                           value="@(Model?.Stock?.ToString() ?? string.Empty)"
+                           placeholder="Stok Miktarı"
+                           class="mt-2 w-1/3 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 bg-gray-50" />
                 </div>
                 </div>
             <!-- Main Product Image -->

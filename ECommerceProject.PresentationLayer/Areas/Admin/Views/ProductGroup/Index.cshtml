@@ -1,4 +1,4 @@
-ï»¿@model List<ECommerceProject.EntityLayer.Concrete.ProductGroup>
+@model List<ECommerceProject.EntityLayer.Concrete.ProductGroup>
 
 @{
     ViewData["Title"] = "ProductGroups";
@@ -12,10 +12,10 @@
 </head>
 
 <div class="max-w-7xl mx-auto">
-    <h1 class="text-3xl font-semibold text-gray-700 mb-8">ÃœrÃ¼n GruplarÄ±</h1>
+    <h1 class="text-3xl font-semibold text-gray-700 mb-8">Ürün Gruplarý</h1>
 
     <div class="bg-gray-50 p-8 rounded-lg shadow-md">
-        <h2 class="text-xl font-semibold text-gray-700 mb-6">Mevcut ÃœrÃ¼n GruplarÄ±</h2>
+        <h2 class="text-xl font-semibold text-gray-700 mb-6">Mevcut Ürün Gruplarý</h2>
         <ul class="space-y-4">
             @foreach (var productGroup in Model)
             {
@@ -26,11 +26,11 @@
                         <div class="space-x-3 flex items-center">
                             @if (productGroup.Products?.Any() == true)
                             {
-                                <button onclick="toggleProducts(@toggleId)" class="text-blue-600 hover:text-blue-800 transition" title="ÃœrÃ¼nleri GÃ¶r">
+                                <button onclick="toggleProducts(@toggleId)" class="text-blue-600 hover:text-blue-800 transition" title="Ürünleri Gör">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             }
-                            <a asp-area="Admin" asp-controller="ProductGroup" asp-action="Edit" asp-route-id="@productGroup.ProductGroupId" class="text-yellow-600 hover:text-yellow-800 transition" title="DÃ¼zenle">
+                            <a asp-area="Admin" asp-controller="ProductGroup" asp-action="Edit" asp-route-id="@productGroup.ProductGroupId" class="text-yellow-600 hover:text-yellow-800 transition" title="Düzenle">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <button onclick="confirmDeleteGroup(@productGroup.ProductGroupId)" class="text-red-600 hover:text-red-800 transition" title="Sil">
@@ -45,20 +45,20 @@
                             <table class="w-full table-auto border-collapse border border-gray-300 shadow-md rounded-lg overflow-hidden">
                                 @* <thead>
                         <tr class="bg-gray-200 text-gray-700">
-                        <th class="border-b-2 py-4 text-left text-gray-600">ÃœrÃ¼n Resmi</th>
-                        <th class="border-b-2 py-4 text-left text-gray-600">ÃœrÃ¼n AdÄ±</th>
+                        <th class="border-b-2 py-4 text-left text-gray-600">Ürün Resmi</th>
+                        <th class="border-b-2 py-4 text-left text-gray-600">Ürün Adý</th>
                         <th class="border-b-2 py-4 text-left text-gray-600">Fiyat(TL)</th>
                         <th class="border-b-2 py-4 text-left text-gray-600">Stok</th>
                         </tr>
                         </thead> *@
                                 <thead>
                                     <tr>
-                                        <th class="border-b-2 py-4 text-left text-gray-600">ÃœrÃ¼n ID</th>
-                                        <th class="border-b-2 py-4 text-left text-gray-600">ÃœrÃ¼n Resmi</th>
-                                        <th class="border-b-2 py-4 text-left text-gray-600">ÃœrÃ¼n AdÄ±</th>
+                                        <th class="border-b-2 py-4 text-left text-gray-600">Ürün ID</th>
+                                        <th class="border-b-2 py-4 text-left text-gray-600">Ürün Resmi</th>
+                                        <th class="border-b-2 py-4 text-left text-gray-600">Ürün Adý</th>
                                         <th class="border-b-2 py-4 text-left text-gray-600">Fiyat(TL)</th>
                                         <th class="border-b-2 py-4 text-left text-gray-600">Toplam Stok</th>
-                                        <th class="border-b-2 py-4 text-left text-gray-600">Ä°ÅŸlemler</th>
+                                        <th class="border-b-2 py-4 text-left text-gray-600">Ýþlemler</th>
                                     </tr>
                                 </thead>
                                 <tbody class="">
@@ -79,9 +79,9 @@
                                                 </a>
                                             </td>
                                             <td class="border-b py-4 px-4">@product.Price</td>
-                                            <td class="border-b py-4 px-4">@product.ProductVariants?.Sum(v => v.Stock)</td>
+                                            <td class="border-b py-4 px-4">@(product.HasSizeOptions ? product.ProductVariants?.Sum(v => v.Stock) : product.Stock)</td>
                                             <td class="border-b py-4 px-4">
-                                                <a asp-area="Admin" asp-controller="Product" asp-action="Edit" asp-route-id="@product.ProductId" class="text-yellow-600 hover:text-yellow-800 transition" title="DÃ¼zenle">
+                                                <a asp-area="Admin" asp-controller="Product" asp-action="Edit" asp-route-id="@product.ProductId" class="text-yellow-600 hover:text-yellow-800 transition" title="Düzenle">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <button onclick="confirmDelete(@product.ProductId)" class="text-red-600 hover:text-red-800 transition" title="Sil">
@@ -111,13 +111,13 @@
     function confirmDelete(productId) {
         Swal.fire({
             title: "Emin misiniz?",
-            text: "Bu Ã¼rÃ¼nÃ¼ silmek istediÄŸinize emin misiniz? Bu iÅŸlem geri alÄ±namaz!",
+            text: "Bu ürünü silmek istediðinize emin misiniz? Bu iþlem geri alýnamaz!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#d33",
             cancelButtonColor: "#3085d6",
             confirmButtonText: "Evet, sil!",
-            cancelButtonText: "Ä°ptal"
+            cancelButtonText: "Ýptal"
         }).then((result) => {
             if (result.isConfirmed) {
                 window.location.href = `/Admin/Product/Delete?id=${productId}`;
@@ -127,13 +127,13 @@
     function confirmDeleteGroup(productId) {
         Swal.fire({
             title: "Emin misiniz?",
-            text: "Bu grubu ve bu grubun altÄ±nda bulunan Ã¼rÃ¼nleri silmek istediÄŸinize emin misiniz? Bu iÅŸlem geri alÄ±namaz!",
+            text: "Bu grubu ve bu grubun altýnda bulunan ürünleri silmek istediðinize emin misiniz? Bu iþlem geri alýnamaz!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#d33",
             cancelButtonColor: "#3085d6",
             confirmButtonText: "Evet, sil!",
-            cancelButtonText: "Ä°ptal"
+            cancelButtonText: "Ýptal"
         }).then((result) => {
             if (result.isConfirmed) {
                 window.location.href = `/Admin/ProductGroup/Delete?id=${productId}`;
@@ -141,3 +141,4 @@
         });
     }
 </script>
+

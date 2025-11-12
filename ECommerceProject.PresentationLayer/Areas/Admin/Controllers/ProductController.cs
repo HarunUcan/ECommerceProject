@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
 {
@@ -104,10 +105,21 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(AdminProductViewModel model)
         {
+            if (!model.HasSizeOptions)
+            {
+                model.Variants = null;
+                var variantKeys = ModelState.Keys.Where(k => k.StartsWith("Variants"));
+                foreach (var key in variantKeys)
+                {
+                    ModelState[key].Errors.Clear();
+                    ModelState[key].ValidationState = ModelValidationState.Valid;
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 List<ProductImageDto> imageDtos = new List<ProductImageDto>();
-
+    
                 if (model.MainImage != null)
                 {
                     using (var memoryStream = new MemoryStream())
@@ -121,7 +133,7 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                         });
                     }
                 }
-
+    
                 if (model.AdditionalImages != null)
                 {
                     foreach (var image in model.AdditionalImages)
@@ -138,34 +150,27 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                         }
                     }
                 }
-
-                List<AdminProductSizesViewModel> adminProductSizesViewModel;
+    
                 List<ProductVariant> productVariants = new List<ProductVariant>();
-                if (model.Variants == null)
+                if (model.HasSizeOptions && model.Variants != null)
                 {
-                    adminProductSizesViewModel = new List<AdminProductSizesViewModel>();
-                }
-                else
-                {
-                    adminProductSizesViewModel = model.Variants;
-                    foreach (var variant in adminProductSizesViewModel)
+                    foreach (var variant in model.Variants)
                     {
-
                         productVariants.Add(new ProductVariant
                         {
-                            //Color = variant.Color,
                             Size = Enum.TryParse(variant.Size, out ProductSize size) ? size : ProductSize.NOSIZE,
                             Stock = variant.Stock
                         });
-
                     }
                 }
-
+    
+                var computedStock = model.HasSizeOptions
+                    ? productVariants.Sum(x => x.Stock)
+                    : (model.Stock ?? 0);
+    
                 List<ProductImage> productImages = await _productImageService.SaveProductImageAsync(imageDtos);
-
                 var nearestColor = ColorHelper.GetNearestColor(model.Color);
-
-                List<BasketItem> basketItems = new List<BasketItem>();
+    
                 var product = new Product
                 {
                     Name = model.ProductName,
@@ -173,18 +178,24 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                     Color = model.Color,
                     NearestColor = nearestColor,
                     Price = model.Price ?? 0,
-                    UniqueCode = $"{DateTime.Now.Year.ToString().Substring(2)}{DateTime.Now.Month}{DateTime.Now.Day}{DateTime.Now.Hour}{DateTime.Now.Minute}{DateTime.Now.Second}",
-                    //Stock = adminProductSizesViewModel.Sum(x => x.Sizes.Sum(y => y.Stock)),
+                    UniqueCode = $"{DateTime.Now:yyMMddHHmmss}",
+                    Stock = computedStock,
                     CategoryId = model.CategoryId,
-                    ProductVariants = productVariants,
+                    HasSizeOptions = model.HasSizeOptions,
+                    ProductVariants = model.HasSizeOptions ? productVariants : new List<ProductVariant>(),
                     ProductImages = productImages,
-                    BasketItems = basketItems
+                    BasketItems = new List<BasketItem>()
                 };
+    
                 _productService.TInsert(product);
                 return RedirectToAction("Index");
             }
+    
+            // ModelState geçersiz -> Kategorileri yeniden yükle
+            model.Categories = _categoryService.TGetList();
             return View(model);
         }
+
 
         public async Task<IActionResult> DeleteAsync(int id)
         {

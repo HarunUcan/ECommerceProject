@@ -33,6 +33,7 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                     Slug = p.Slug,
                     Stock = p.Stock,
                     Price = p.Price,
+                    HasSizeOptions = p.HasSizeOptions,
                     ProductImages = p.ProductImages
                         .Where(pi => pi.IsMain) // Sadece ana resmi al
                         .ToList(),
@@ -62,6 +63,7 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                     Name = p.Name,
                     Stock = p.Stock,
                     Price = p.Price,
+                    HasSizeOptions = p.HasSizeOptions,
                     ProductImages = p.ProductImages.ToList(),
                     ProductVariants = p.ProductVariants.ToList()
                 }).ToList()

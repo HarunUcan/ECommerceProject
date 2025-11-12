@@ -99,7 +99,7 @@
         <div>
             <h1 class="text-4xl font-semibold mb-2">@Model.ProductDto.Name</h1>
             <p class="text-gray-600 mb-4">@Model.ProductDto.Description</p>
-            @* <div class="text-3xl font-bold text-gray-900 mb-4">₺@Model.ProductDto.Price</div> *@
+            @* <div class="text-3xl font-bold text-gray-900 mb-4">?@Model.ProductDto.Price</div> *@
             <div class="font-bold text-gray-900 mb-4">
                 @if (Model.ProductDto.DiscountedPrice != Model.ProductDto.Price)
                 {
@@ -112,37 +112,35 @@
                 }
             </div>
 
-            <form asp-controller="Basket" asp-action="AddToBasket" method="post">
+            <form asp-controller="Basket" asp-action="AddToBasket" method="post" id="productDetailForm">
                 <input type="hidden" name="productId" value="@Model.ProductDto.Id"/>
-                <!-- Beden Seçimi -->
-                <label class="block mb-2 text-gray-700 font-medium">Beden Seçimi</label>
-                <div class="flex flex-wrap gap-2 mb-4">
-                    @foreach (var size in new[] { "STD", "XXS", "XS", "S", "M", "L", "XL", "XXL" })
-                    {
-                        bool isContains = Model.ProductDto.ProductVariants.Any(p => p.Size == size);
-                        bool isDisabled = true;
-
-                        if (isContains)
+                @if (Model.ProductDto.HasSizeOptions)
+                {
+                    <label class="block mb-2 text-gray-700 font-medium">Beden Seçimi</label>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        @foreach (var size in new[] { "STD", "XXS", "XS", "S", "M", "L", "XL", "XXL" })
                         {
-                            var stock = Model.ProductDto.ProductVariants.FirstOrDefault(p => p.Size == size).Stock;
-                            isDisabled = !(stock > 0);
-                        }
-                        else continue;
-
-                        <label class="flex items-center relative cursor-pointer" title="@(isDisabled ? "Stokta Yok" : "")">
-                            <input type="radio" name="size" value="@size" class="hidden" onclick="selectSize(this)" @(isDisabled ? "disabled" : "") required>
-                            <span class="px-5 py-2 border-2 border-gray-800 rounded-lg transition-colors @(isDisabled ? "bg-gray-300 text-gray-500 cursor-not-allowed relative" : "hover:bg-gray-100")">
-                                @size
-                                @if (isDisabled)
-                                {
-                                    <span class="absolute top-0 right-0 -mt-2 -mr-2 w-5 h-5 bg-white border border-black text-red-600 flex items-center justify-center rounded-full font-bold text-xs">
-                                        ✕
+                            var variant = Model.ProductDto.ProductVariants?.FirstOrDefault(p => p.Size == size);
+                            if (variant != null && variant.Stock > 0)
+                            {
+                                <label class="relative">
+                                    <input type="radio" name="size" value="@size" class="peer hidden">
+                                    <span class="px-4 py-2 border rounded-lg cursor-pointer text-sm transition peer-checked:bg-black peer-checked:text-white">
+                                        @size (@variant.Stock adet)
                                     </span>
-                                }
-                            </span>
-                        </label>
-                    }
-                </div>
+                                    <span class="absolute inset-0 rounded-lg border-2 border-transparent peer-checked:border-black transition"></span>
+                                </label>
+                            }
+                        }
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" name="size" value="NOSIZE" />
+                    <div class="mb-4 px-4 py-3 rounded-lg bg-gray-50 text-sm text-gray-700 border border-dashed border-gray-300">
+                        Bu ürün tek beden/standart ölçüdedir, seçim yapmanıza gerek yoktur.
+                    </div>
+                }
 
                 <!-- Adet Seçimi -->
                 <label class="block mb-2 text-gray-700 font-medium">Adet Seçimi</label>
@@ -287,3 +285,5 @@
         });
     });
 </script>
+
+
