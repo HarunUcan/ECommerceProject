@@ -11,70 +11,70 @@ using System.Threading.Tasks;
 
 namespace ECommerceProject.DataAccessLayer.EntityFramework
 {
-    public class EfCartDal : GenericRepository<Cart>, ICartDal
+    public class EfBasketDal : GenericRepository<Basket>, IBasketDal
     {
-        public bool AddToCart(string? tempUserId, int userId, int productId, int quantity, ProductSize size)
+        public bool AddToBasket(string? tempUserId, int userId, int productId, int quantity, ProductSize size)
         {
             using (Context context = new())
             {
                 if(tempUserId != null)
                 {
-                    var cart = context.Carts.FirstOrDefault(x => x.TempUserId == tempUserId);
-                    if (cart == null)
+                    var basket = context.Baskets.FirstOrDefault(x => x.TempUserId == tempUserId);
+                    if (basket == null)
                     {
-                        cart = new Cart
+                        basket = new Basket
                         {
                             TempUserId = tempUserId
                         };
-                        context.Carts.Add(cart);
+                        context.Baskets.Add(basket);
                         context.SaveChanges();
                     }
-                    var cartItem = context.CartItems.FirstOrDefault(x => x.CartId == cart.CartId && x.ProductId == productId && x.Size == size);
-                    if (cartItem == null)
+                    var basketItem = context.BasketItems.FirstOrDefault(x => x.BasketId == basket.BasketId && x.ProductId == productId && x.Size == size);
+                    if (basketItem == null)
                     {
-                        cartItem = new CartItem
+                        basketItem = new BasketItem
                         {
-                            CartId = cart.CartId,
+                            BasketId = basket.BasketId,
                             ProductId = productId,
                             Quantity = quantity,
                             Size = size
                         };
-                        context.CartItems.Add(cartItem);
+                        context.BasketItems.Add(basketItem);
                     }
                     else
                     {
-                        cartItem.Quantity += quantity;
+                        basketItem.Quantity += quantity;
                     }
                     context.SaveChanges();
                     return true;
                 }
                 else
                 {
-                    var cart = context.Carts.FirstOrDefault(x => x.AppUserId == userId);
-                    if (cart == null)
+                    var basket = context.Baskets.FirstOrDefault(x => x.AppUserId == userId);
+                    if (basket == null)
                     {
-                        cart = new Cart
+                        basket = new Basket
                         {
                             AppUserId = userId
                         };
-                        context.Carts.Add(cart);
+                        context.Baskets.Add(basket);
                         context.SaveChanges();
                     }
-                    var cartItem = context.CartItems.FirstOrDefault(x => x.CartId == cart.CartId && x.ProductId == productId && x.Size == size);
-                    if (cartItem == null)
+                    var basketItem = context.BasketItems.FirstOrDefault(x => x.BasketId == basket.BasketId && x.ProductId == productId && x.Size == size);
+                    if (basketItem == null)
                     {
-                        cartItem = new CartItem
+                        basketItem = new BasketItem
                         {
-                            CartId = cart.CartId,
+                            BasketId = basket.BasketId,
                             ProductId = productId,
                             Quantity = quantity,
                             Size = size
                         };
-                        context.CartItems.Add(cartItem);
+                        context.BasketItems.Add(basketItem);
                     }
                     else
                     {
-                        cartItem.Quantity += quantity;
+                        basketItem.Quantity += quantity;
                     }
                     context.SaveChanges();
                     return true;
@@ -103,17 +103,17 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                     throw new Exception("İndirimlerden yararlanmak için kayıt olmalı ve giriş yapmalısınız!"); //return false; // Geçici kullanıcılar kupon kullanamaz
                 }
 
-                var query = context.Carts
-                                .Include(c => c.CartItems)
+                var query = context.Baskets
+                                .Include(c => c.BasketItems)
                                     .ThenInclude(ci => ci.Product)
-                                .Include(c => c.CartCoupons)
+                                .Include(c => c.BasketCoupons)
                                     .ThenInclude(cc => cc.Coupon);
 
-                Cart? cart = tempUserId != null
+                Basket? basket = tempUserId != null
                     ? await query.FirstOrDefaultAsync(c => c.TempUserId == tempUserId)
                     : await query.FirstOrDefaultAsync(c => c.AppUserId == userId);
 
-                if (cart == null) return false;
+                if (basket == null) return false;
 
 
                 // Son Kullanım tarihini kontrol et
@@ -123,15 +123,15 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                 }
 
                 // Sepette aynı kupon zaten var mı kontrol et
-                bool alreadyApplied = cart.CartCoupons?.Any(cc => cc.CouponId == coupon.CouponId) ?? false;
+                bool alreadyApplied = basket.BasketCoupons?.Any(cc => cc.CouponId == coupon.CouponId) ?? false;
                 if (alreadyApplied)
                 {
                     throw new Exception("Bu kupon zaten kullanılıyor!"); //return false; // Kupon zaten sepette var
                 }
 
-                bool cartHasAnyCoupons = cart.CartCoupons?.Any() ?? false;
+                bool basketHasAnyCoupons = basket.BasketCoupons?.Any() ?? false;
                 // Eğer sepette başka kupon varsa yeni kupon eklenemez
-                if (cartHasAnyCoupons)
+                if (basketHasAnyCoupons)
                 {
                     throw new Exception("Sepette yalnızca 1 kupon kullanabilirsiniz!"); //return false; // Sepette zaten kupon var
                 }
@@ -139,7 +139,7 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
 
                 //bool isCouponTypePercentage = coupon.DiscountPercentage != null && coupon.DiscountPercentage > 0;
                 //// Sepette zaten yüzdelik kupon var mı kontrol et
-                //if (isCouponTypePercentage && cart.CartCoupons.Any(cc => cc.Coupon.DiscountPercentage != null && cc.Coupon.DiscountPercentage > 0))
+                //if (isCouponTypePercentage && basket.BasketCoupons.Any(cc => cc.Coupon.DiscountPercentage != null && cc.Coupon.DiscountPercentage > 0))
                 //{
                 //    throw new Exception("Sepette maksimum 1 adet yüzdelik indirim sağlayan kupon olabilir!"); //return false; // Yüzde indirimli kupon zaten var
                 //}
@@ -150,19 +150,19 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
                     throw new Exception("Bu kuponun kullanım limiti dolmuştur!"); //return false; // Kuponun kullanım limiti dolmuş
                 }
                 // Kuponun minimum sipariş tutarını kontrol et
-                var cartTotalPrice = cart.CartItems?.Sum(ci => ci.Quantity * ci.Product.Price);
-                if (cartTotalPrice < coupon.MinOrderAmount)
+                var basketTotalPrice = basket.BasketItems?.Sum(ci => ci.Quantity * ci.Product.Price);
+                if (basketTotalPrice < coupon.MinOrderAmount)
                 {
                     throw new Exception("Bu kuponu kullanmak için olan minimum sipariş tutarı sağlanmamıştır!"); //return false; // Minimum sipariş tutarı sağlanmamış
                 }
                 
                 // Kuponu sepete ekle
-                var cartCoupon = new CartCoupon
+                var basketCoupon = new BasketCoupon
                 {
-                    CartId = cart.CartId,
+                    BasketId = basket.BasketId,
                     CouponId = coupon.CouponId
                 };
-                context.CartCoupons.Add(cartCoupon);
+                context.BasketCoupons.Add(basketCoupon);
                 await context.SaveChangesAsync();
                 return true;
             }
@@ -172,10 +172,10 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
         {
             using (Context context = new())
             {
-                var cart = context.Carts.FirstOrDefault(x => x.TempUserId == tempUserId);
-                if (cart != null)
+                var basket = context.Baskets.FirstOrDefault(x => x.TempUserId == tempUserId);
+                if (basket != null)
                 {
-                    context.Carts.Remove(cart);
+                    context.Baskets.Remove(basket);
                     context.SaveChanges();
                     return true;
                 }
@@ -183,33 +183,33 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             }
         }
 
-        public bool DeleteCartItem(string? tempUserId, int userId, int productId, ProductSize size)
+        public bool DeleteBasketItem(string? tempUserId, int userId, int productId, ProductSize size)
         {
             using (Context context = new())
             {
-                Cart cart;
+                Basket basket;
                 if (tempUserId != null)
                 {
-                    cart = context.Carts.FirstOrDefault(x => x.TempUserId == tempUserId);
+                    basket = context.Baskets.FirstOrDefault(x => x.TempUserId == tempUserId);
                 }
                 else
                 {
-                    cart = context.Carts.FirstOrDefault(x => x.AppUserId == userId);
+                    basket = context.Baskets.FirstOrDefault(x => x.AppUserId == userId);
                 }
 
-                if (cart != null)
+                if (basket != null)
                 {
-                    var cartItem = context.CartItems.FirstOrDefault(x => x.CartId == cart.CartId && x.ProductId == productId && x.Size == size);
-                    if (cartItem != null)
+                    var basketItem = context.BasketItems.FirstOrDefault(x => x.BasketId == basket.BasketId && x.ProductId == productId && x.Size == size);
+                    if (basketItem != null)
                     {
-                        context.CartItems.Remove(cartItem);
+                        context.BasketItems.Remove(basketItem);
                         context.SaveChanges();
 
                         // Sepetteki kuponları kontrol et ve geçersiz olanları kaldır
                         if (tempUserId != null)
-                            ValidateCartCoupons(tempUserId, 0).Wait();
+                            ValidateBasketCoupons(tempUserId, 0).Wait();
                         else
-                            ValidateCartCoupons(null, userId).Wait();
+                            ValidateBasketCoupons(null, userId).Wait();
 
                         return true;
                     }
@@ -218,29 +218,29 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             }
         }
 
-        public Cart GetCart(string? tempUserId, int userId)
+        public Basket GetBasket(string? tempUserId, int userId)
         {
 
             using (Context context = new())
             {
-                IQueryable<Cart> query = context.Carts
-                    .Include(c => c.CartItems)
+                IQueryable<Basket> query = context.Baskets
+                    .Include(c => c.BasketItems)
                         .ThenInclude(ci => ci.Product)
                             .ThenInclude(p => p.ProductImages)
-                    .Include(c => c.CartItems)
+                    .Include(c => c.BasketItems)
                         .ThenInclude(ci => ci.Product)
                             .ThenInclude(p => p.ProductVariants)
-                    .Include(c => c.CartCoupons) // Kupon ilişkisini getir
+                    .Include(c => c.BasketCoupons) // Kupon ilişkisini getir
                         .ThenInclude(cc => cc.Coupon); // Kuponun kendisini de getir
 
                 if (tempUserId != null)
                 {
-                    ValidateCartCoupons(tempUserId, 0).Wait();
+                    ValidateBasketCoupons(tempUserId, 0).Wait();
                     return query.FirstOrDefault(x => x.TempUserId == tempUserId);
                 }
                 else
                 {
-                    ValidateCartCoupons(null, userId).Wait();
+                    ValidateBasketCoupons(null, userId).Wait();
                     return query.FirstOrDefault(x => x.AppUserId == userId);
                 }
             }
@@ -249,22 +249,22 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
             //{
             //    if (tempUserId != null)
             //    {
-            //        return context.Carts
-            //            .Include(c => c.CartItems)
-            //                .ThenInclude(ci => ci.Product) // CartItem içindeki Product'ı getir
+            //        return context.Baskets
+            //            .Include(c => c.BasketItems)
+            //                .ThenInclude(ci => ci.Product) // BasketItem içindeki Product'ı getir
             //                    .ThenInclude(p => p.ProductImages) // Product içindeki resimleri getir
-            //            .Include(c => c.CartItems)
+            //            .Include(c => c.BasketItems)
             //                .ThenInclude(ci => ci.Product)
             //                    .ThenInclude(p => p.ProductVariants) // Varyantları da getir
             //            .FirstOrDefault(x => x.TempUserId == tempUserId);
             //    }
             //    else
             //    {
-            //        return context.Carts
-            //            .Include(c => c.CartItems)
+            //        return context.Baskets
+            //            .Include(c => c.BasketItems)
             //                .ThenInclude(ci => ci.Product)
             //                    .ThenInclude(p => p.ProductImages)
-            //            .Include(c => c.CartItems)
+            //            .Include(c => c.BasketItems)
             //                .ThenInclude(ci => ci.Product)
             //                    .ThenInclude(p => p.ProductVariants)
             //            .FirstOrDefault(x => x.AppUserId == userId);
@@ -274,68 +274,68 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
         }
 
         // Sepetteki kuponları kontrol et ve geçersiz olanları kaldır
-        public async Task ValidateCartCoupons(string? tempUserId, int userId)
+        public async Task ValidateBasketCoupons(string? tempUserId, int userId)
         {
             using (Context context = new())
             {
-                var cartQuery = context.Carts
-                    .Include(c => c.CartItems)
+                var basketQuery = context.Baskets
+                    .Include(c => c.BasketItems)
                         .ThenInclude(ci => ci.Product)
-                    .Include(c => c.CartCoupons)
+                    .Include(c => c.BasketCoupons)
                         .ThenInclude(cc => cc.Coupon);
 
-                Cart? cart = tempUserId != null
-                    ? await cartQuery.FirstOrDefaultAsync(c => c.TempUserId == tempUserId)
-                    : await cartQuery.FirstOrDefaultAsync(c => c.AppUserId == userId);
+                Basket? basket = tempUserId != null
+                    ? await basketQuery.FirstOrDefaultAsync(c => c.TempUserId == tempUserId)
+                    : await basketQuery.FirstOrDefaultAsync(c => c.AppUserId == userId);
 
-                if (cart == null || cart.CartCoupons == null || !cart.CartCoupons.Any())
+                if (basket == null || basket.BasketCoupons == null || !basket.BasketCoupons.Any())
                     return;
 
-                var cartTotalPrice = cart.CartItems.Sum(ci => ci.Quantity * ci.Product.Price);
+                var basketTotalPrice = basket.BasketItems.Sum(ci => ci.Quantity * ci.Product.Price);
 
-                var couponsToRemove = new List<CartCoupon>();
+                var couponsToRemove = new List<BasketCoupon>();
 
                 // Sepette yalnızca 1 kupon olabilir
-                if(cart.CartCoupons.Count > 1)
+                if(basket.BasketCoupons.Count > 1)
                 {
-                    couponsToRemove.AddRange(cart.CartCoupons.Skip(1)); // İlk kuponu bırak, diğerlerini kaldır
+                    couponsToRemove.AddRange(basket.BasketCoupons.Skip(1)); // İlk kuponu bırak, diğerlerini kaldır
                 }
 
-                foreach (var cartCoupon in cart.CartCoupons)
+                foreach (var basketCoupon in basket.BasketCoupons)
                 {
-                    var coupon = cartCoupon.Coupon;
+                    var coupon = basketCoupon.Coupon;
 
                     // Minimum sipariş tutarı şartını sağlamıyor
-                    if (coupon.MinOrderAmount.HasValue && cartTotalPrice < coupon.MinOrderAmount.Value)
+                    if (coupon.MinOrderAmount.HasValue && basketTotalPrice < coupon.MinOrderAmount.Value)
                     {
-                        couponsToRemove.Add(cartCoupon);
+                        couponsToRemove.Add(basketCoupon);
                         continue;
                     }
 
                     // Expired ya da artık aktif değil
                     if (!coupon.IsActive || coupon.ExpirationDate < DateTime.Now)
                     {
-                        couponsToRemove.Add(cartCoupon);
+                        couponsToRemove.Add(basketCoupon);
                         continue;
                     }
 
                     // Kullanım limiti dolmuş
                     if (coupon.CurrentUsageCount >= coupon.MaxUsageCount)
                     {
-                        couponsToRemove.Add(cartCoupon);
+                        couponsToRemove.Add(basketCoupon);
                         continue;
                     }
 
                     // Eğer bu kupon yüzdelikse ve sepette başka yüzdelik varsa (gerekiyorsa)
                     //if (coupon.DiscountPercentage.HasValue)
                     //{
-                    //    bool hasOtherPercentage = cart.CartCoupons
+                    //    bool hasOtherPercentage = basket.BasketCoupons
                     //        .Where(cc => cc.CouponId != coupon.CouponId)
                     //        .Any(cc => cc.Coupon.DiscountPercentage.HasValue);
 
                     //    if (hasOtherPercentage)
                     //    {
-                    //        couponsToRemove.Add(cartCoupon);
+                    //        couponsToRemove.Add(basketCoupon);
                     //        continue;
                     //    }
                     //}
@@ -343,61 +343,61 @@ namespace ECommerceProject.DataAccessLayer.EntityFramework
 
                 if (couponsToRemove.Any())
                 {
-                    context.CartCoupons.RemoveRange(couponsToRemove);
+                    context.BasketCoupons.RemoveRange(couponsToRemove);
                     await context.SaveChangesAsync();
                 }
             }
         }
 
 
-        public async Task<bool> RemoveCouponFromCart(string? tempUserId, int userId, string couponCode)
+        public async Task<bool> RemoveCouponFromBasket(string? tempUserId, int userId, string couponCode)
         {
             using (Context context = new())
             {
                 var coupon = await context.Coupons.FirstOrDefaultAsync(x => x.Code == couponCode);
                 if (coupon == null) return false; // Kupon bulunamadı
 
-                Cart cart;
+                Basket basket;
                 if (tempUserId != null)
-                    cart = await context.Carts
-                .Include(c => c.CartCoupons)
+                    basket = await context.Baskets
+                .Include(c => c.BasketCoupons)
                 .FirstOrDefaultAsync(c => c.TempUserId == tempUserId);
 
                 else
-                    cart = await context.Carts
-                .Include(c => c.CartCoupons)
+                    basket = await context.Baskets
+                .Include(c => c.BasketCoupons)
                 .FirstOrDefaultAsync(c => c.AppUserId == userId);
 
-                if (cart == null) return false;
+                if (basket == null) return false;
 
                 // Sepette aynı kupon zaten var mı kontrol et
-                var cartCoupon = cart.CartCoupons?.FirstOrDefault(cc => cc.CouponId == coupon.CouponId);
-                if (cartCoupon == null) return false;
+                var basketCoupon = basket.BasketCoupons?.FirstOrDefault(cc => cc.CouponId == coupon.CouponId);
+                if (basketCoupon == null) return false;
 
                 // Kuponu sepetten çıkar
-                context.CartCoupons.Remove(cartCoupon);
+                context.BasketCoupons.Remove(basketCoupon);
                 await context.SaveChangesAsync();
                 return true;
             }
         }
 
-        public bool TransferCart(string tempUserId, int appUserId)
+        public bool TransferBasket(string tempUserId, int appUserId)
         {
             using (Context context = new())
             {
-                var tempCart = context.Carts.Include(c => c.CartItems).FirstOrDefault(x => x.TempUserId == tempUserId);
-                var userCart = context.Carts.FirstOrDefault(x => x.AppUserId == appUserId);
+                var tempBasket = context.Baskets.Include(c => c.BasketItems).FirstOrDefault(x => x.TempUserId == tempUserId);
+                var userBasket = context.Baskets.FirstOrDefault(x => x.AppUserId == appUserId);
 
-                if(tempCart == null || userCart == null) return false;
+                if(tempBasket == null || userBasket == null) return false;
                 
-                if (tempCart != null)
+                if (tempBasket != null)
                 {
-                    List<CartItem> tempCartItems = tempCart.CartItems.ToList();
-                    if(tempCartItems != null)
+                    List<BasketItem> tempBasketItems = tempBasket.BasketItems.ToList();
+                    if(tempBasketItems != null)
                     {
-                        foreach (var item in tempCartItems)
+                        foreach (var item in tempBasketItems)
                         {
-                            item.CartId = userCart.CartId;
+                            item.BasketId = userBasket.BasketId;
                         }
                         context.SaveChanges();
                     }

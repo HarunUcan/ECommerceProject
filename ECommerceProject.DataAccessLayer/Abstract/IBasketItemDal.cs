@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerceProject.BusinessLayer.Abstract
+namespace ECommerceProject.DataAccessLayer.Abstract
 {
-    public interface ICartItemService : IGenericService<CartItem>
+    public interface IBasketItemDal : IGenericDal<BasketItem>
     {
     }
 }

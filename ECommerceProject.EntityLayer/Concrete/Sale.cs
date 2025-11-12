@@ -21,7 +21,7 @@ namespace ECommerceProject.EntityLayer.Concrete
         public string? TrackingNumber { get; set; }
         public int? AppUserId { get; set; }
         public AppUser? AppUser { get; set; }
-        public string? TempCartId { get; set; } // Eğer kullanıcı giriş yapmamışsa, AppUserId yerine geçici sepet ID'si (cookie) kullanılacak.
+        public string? TempBasketId { get; set; } // Eğer kullanıcı giriş yapmamışsa, AppUserId yerine geçici sepet ID'si (cookie) kullanılacak.
         public decimal TotalPrice { get; set; }
         public int InstallmentCount { get; set; } // Taksit sayısı
         public PaymentMethod? PaymentMethod { get; set; } // Ödeme yöntemi (Kredi kartı, havale, kapıda ödeme vb.)

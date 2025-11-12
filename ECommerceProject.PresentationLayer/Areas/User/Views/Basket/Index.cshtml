@@ -5,24 +5,24 @@
 }
 @{
     decimal totalPrice = 0;
-    foreach (var cartItem in Model.Cart.CartItems)
+    foreach (var basketItem in Model.Basket.BasketItems)
     {
-        if(cartItem.Product.DiscountRate != null && cartItem.Product.DiscountRate > 0)
+        if(basketItem.Product.DiscountRate != null && basketItem.Product.DiscountRate > 0)
         {
-            decimal discountedPrice = cartItem.Product.Price - (cartItem.Product.Price * (cartItem.Product.DiscountRate.Value / 100));
-            totalPrice += discountedPrice * cartItem.Quantity;
+            decimal discountedPrice = basketItem.Product.Price - (basketItem.Product.Price * (basketItem.Product.DiscountRate.Value / 100));
+            totalPrice += discountedPrice * basketItem.Quantity;
         }
-        else if(cartItem.Product.DiscountAmount != null && cartItem.Product.DiscountAmount > 0)
+        else if(basketItem.Product.DiscountAmount != null && basketItem.Product.DiscountAmount > 0)
         {
-            decimal discountedPrice = cartItem.Product.Price - cartItem.Product.DiscountAmount.Value;
-            totalPrice += discountedPrice * cartItem.Quantity;
+            decimal discountedPrice = basketItem.Product.Price - basketItem.Product.DiscountAmount.Value;
+            totalPrice += discountedPrice * basketItem.Quantity;
         }
         else
         {
-            totalPrice += cartItem.Product.Price * cartItem.Quantity;
+            totalPrice += basketItem.Product.Price * basketItem.Quantity;
         }
     }
-    // totalPrice += cartItem.Product.Price * cartItem.Quantity;
+    // totalPrice += basketItem.Product.Price * basketItem.Quantity;
 
     decimal kdv = totalPrice * 0.1m; // KDV oranı %10
 
@@ -32,26 +32,26 @@
 
 @{
     decimal subtotal = totalPrice - kdv;
-    decimal cartDiscountTotal = 0;
+    decimal basketDiscountTotal = 0;
 
-    if (Model.Cart.CartCoupons != null && Model.Cart.CartCoupons.Any())
+    if (Model.Basket.BasketCoupons != null && Model.Basket.BasketCoupons.Any())
     {
-        foreach (var cartCoupon in Model.Cart.CartCoupons)
+        foreach (var basketCoupon in Model.Basket.BasketCoupons)
         {
-            var coupon = cartCoupon.Coupon;
+            var coupon = basketCoupon.Coupon;
 
             if (coupon.DiscountAmount.HasValue)
             {
-                cartDiscountTotal += coupon.DiscountAmount.Value;
+                basketDiscountTotal += coupon.DiscountAmount.Value;
             }
             else if (coupon.DiscountPercentage.HasValue)
             {
-                cartDiscountTotal += (totalPrice * coupon.DiscountPercentage.Value / 100);
+                basketDiscountTotal += (totalPrice * coupon.DiscountPercentage.Value / 100);
             }
         }
     }
 
-    var finalTotal = totalPrice - cartDiscountTotal;
+    var finalTotal = totalPrice - basketDiscountTotal;
 }
 
 <head>
@@ -134,39 +134,39 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(var cartItem in Model.Cart.CartItems)
+                    @foreach(var basketItem in Model.Basket.BasketItems)
                     {
                         <!-- Ürün Satırı -->
                         <tr class="border-b">
                             <td class="py-4 flex items-center space-x-4">
-                                <img src="@cartItem.Product.ProductImages.FirstOrDefault().Url.Replace("wwwroot","")" alt="Ürün 1"
+                                <img src="@basketItem.Product.ProductImages.FirstOrDefault().Url.Replace("wwwroot","")" alt="Ürün 1"
                                      class="w-16 h-16 rounded object-cover min-w-[64px] min-h-[64px] object-top">
                                 <div>
-                                    <div class="font-semibold">@cartItem.Product.Name</div>
+                                    <div class="font-semibold">@basketItem.Product.Name</div>
                                     <div class="text-sm text-gray-500">067153-70722</div>
-                                    <div class="text-sm text-gray-500">Beden: @cartItem.Size</div>
+                                    <div class="text-sm text-gray-500">Beden: @basketItem.Size</div>
                                 </div>
                             </td>
 
                             <!-- Birim Fİyat -->
                             <td class="py-4 hidden sm:table-cell">
                                 <div>
-                                    @if (cartItem.Product.DiscountRate != null && cartItem.Product.DiscountRate > 0)
+                                    @if (basketItem.Product.DiscountRate != null && basketItem.Product.DiscountRate > 0)
                                     {
-                                        discountedProductPrice = cartItem.Product.Price - (cartItem.Product.Price * (cartItem.Product.DiscountRate.Value / 100));
-                                        <div class="line-through text-red-500 text-sm">₺@cartItem.Product.Price</div>
+                                        discountedProductPrice = basketItem.Product.Price - (basketItem.Product.Price * (basketItem.Product.DiscountRate.Value / 100));
+                                        <div class="line-through text-red-500 text-sm">₺@basketItem.Product.Price</div>
                                         <div>₺@(discountedProductPrice.ToString("F2"))</div>
                                     }
-                                    else if (cartItem.Product.DiscountAmount != null && cartItem.Product.DiscountAmount > 0)
+                                    else if (basketItem.Product.DiscountAmount != null && basketItem.Product.DiscountAmount > 0)
                                     {
-                                        discountedProductPrice = cartItem.Product.Price - cartItem.Product.DiscountAmount.Value;
-                                        <div class="line-through text-red-500 text-sm">₺@cartItem.Product.Price</div>
+                                        discountedProductPrice = basketItem.Product.Price - basketItem.Product.DiscountAmount.Value;
+                                        <div class="line-through text-red-500 text-sm">₺@basketItem.Product.Price</div>
                                         <div>₺@(discountedProductPrice.ToString("F2"))</div>
                                     }
                                     else
                                     {
-                                        discountedProductPrice = cartItem.Product.Price;
-                                        <div>₺@cartItem.Product.Price</div>
+                                        discountedProductPrice = basketItem.Product.Price;
+                                        <div>₺@basketItem.Product.Price</div>
                                     }
                                 </div>
                             </td>
@@ -176,7 +176,7 @@
                                     <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
                                         -
                                     </button>
-                                    <input type="number" class="outline-none bg-gray-50" value="@cartItem.Quantity" min="1">
+                                    <input type="number" class="outline-none bg-gray-50" value="@basketItem.Quantity" min="1">
                                     <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
                                         +
                                     </button>
@@ -184,9 +184,9 @@
                             </td>
 
                             <!-- Toplam Fİyat -->
-                            <td class="py-4 hidden sm:table-cell">₺@((discountedProductPrice * cartItem.Quantity).ToString("F2"))</td>
+                            <td class="py-4 hidden sm:table-cell">₺@((discountedProductPrice * basketItem.Quantity).ToString("F2"))</td>
                             <td class="py-4">
-                                <a asp-controller="Cart" asp-action="DeleteProductFromCart" asp-route-productId="@cartItem.ProductId" asp-route-size="@cartItem.Size">
+                                <a asp-controller="Basket" asp-action="DeleteProductFromBasket" asp-route-productId="@basketItem.ProductId" asp-route-size="@basketItem.Size">
                                     <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
                                 </a>
                             </td>
@@ -196,41 +196,41 @@
                 </tbody>
             </table>
 
-            @foreach (var cartItem in Model.Cart.CartItems)
+            @foreach (var basketItem in Model.Basket.BasketItems)
             {
                 <!-- Mobil Görünüm Ürün Kartı -->
                 <div class="border border-gray-400 pt-2 pb-8 mb-3 rounded-lg sm:hidden">
 
                     <div class="flex justify-between p-3">
-                        <img src="@cartItem.Product.ProductImages.FirstOrDefault().Url.Replace("wwwroot","")" alt=""
+                        <img src="@basketItem.Product.ProductImages.FirstOrDefault().Url.Replace("wwwroot","")" alt=""
                              class="w-24 h-24 rounded object-cover min-w-[64px] min-h-[64px] object-top">
                         <div class="ml-2">
-                            <div class="font-semibold">@cartItem.Product.Name</div>
+                            <div class="font-semibold">@basketItem.Product.Name</div>
                             <div class="text-sm text-gray-500 pt-1">Ürün Kodu: 067153-70722</div>
-                            <div class="text-sm text-gray-500 pt-1">Beden: @cartItem.Size</div>
+                            <div class="text-sm text-gray-500 pt-1">Beden: @basketItem.Size</div>
                             @* <div class="text-xs text-red-500 pt-1 line-through">₺329,99</div> *@ <!-- İndirim Alanı -->
                             <div class="text-sm text-gray-500 ">
-                                @if (cartItem.Product.DiscountRate != null && cartItem.Product.DiscountRate > 0)
+                                @if (basketItem.Product.DiscountRate != null && basketItem.Product.DiscountRate > 0)
                                 {
-                                    discountedProductPrice = cartItem.Product.Price - (cartItem.Product.Price * (cartItem.Product.DiscountRate.Value / 100));
-                                    <div class="line-through text-red-500 text-xs">₺@cartItem.Product.Price</div>
+                                    discountedProductPrice = basketItem.Product.Price - (basketItem.Product.Price * (basketItem.Product.DiscountRate.Value / 100));
+                                    <div class="line-through text-red-500 text-xs">₺@basketItem.Product.Price</div>
                                     <div>₺@(discountedProductPrice.ToString("F2"))</div>
                                 }
-                                else if (cartItem.Product.DiscountAmount != null && cartItem.Product.DiscountAmount > 0)
+                                else if (basketItem.Product.DiscountAmount != null && basketItem.Product.DiscountAmount > 0)
                                 {
-                                    discountedProductPrice = cartItem.Product.Price - cartItem.Product.DiscountAmount.Value;
-                                    <div class="line-through text-red-500 text-xs">₺@cartItem.Product.Price</div>
+                                    discountedProductPrice = basketItem.Product.Price - basketItem.Product.DiscountAmount.Value;
+                                    <div class="line-through text-red-500 text-xs">₺@basketItem.Product.Price</div>
                                     <div>₺@(discountedProductPrice.ToString("F2"))</div>
                                 }
                                 else
                                 {
-                                    discountedProductPrice = cartItem.Product.Price;
-                                    <div>₺@cartItem.Product.Price</div>
+                                    discountedProductPrice = basketItem.Product.Price;
+                                    <div>₺@basketItem.Product.Price</div>
                                 }
                             </div>
                         </div>
                         <div class="">
-                            <a asp-controller="Cart" asp-action="DeleteProductFromCart" asp-route-productId="@cartItem.ProductId" asp-route-size="@cartItem.Size">
+                            <a asp-controller="Basket" asp-action="DeleteProductFromBasket" asp-route-productId="@basketItem.ProductId" asp-route-size="@basketItem.Size">
                                 <i class="fa-solid fa-trash-can text-red-500 mr-2"></i>
                             </a>
                         </div>
@@ -241,13 +241,13 @@
                             <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
                                 -
                             </button>
-                            <input type="number" class="outline-none bg-gray-50" value="@cartItem.Quantity" min="1">
+                            <input type="number" class="outline-none bg-gray-50" value="@basketItem.Quantity" min="1">
                             <button class="flex justify-center items-center bg-gray-50 w-[28px] text-lg rounded-full transition ease-in-out hover:bg-gray-300 duration-300">
                                 +
                             </button>
                         </div>
 
-                        <div class="text-sm text-gray-1000 mr-8">Toplam: ₺@((discountedProductPrice * cartItem.Quantity).ToString("F2"))</div>
+                        <div class="text-sm text-gray-1000 mr-8">Toplam: ₺@((discountedProductPrice * basketItem.Quantity).ToString("F2"))</div>
                     </div>
 
 
@@ -277,11 +277,11 @@
                 <span>Ücretsiz</span>
             </div>
 
-            @if (cartDiscountTotal > 0)
+            @if (basketDiscountTotal > 0)
             {
                 <div class="flex justify-between text-green-700 font-medium mb-2">
                     <span>İndirim:</span>
-                    <span>-₺@cartDiscountTotal.ToString("0.00")</span>
+                    <span>-₺@basketDiscountTotal.ToString("0.00")</span>
                 </div>
             }
 
@@ -299,7 +299,7 @@
                 </button>
 
                 <div id="coupon-section" class="hidden my-4 w-full">
-                    <form asp-controller="Cart" asp-action="ApplyCoupon" method="post" class="flex gap-2">
+                    <form asp-controller="Basket" asp-action="ApplyCoupon" method="post" class="flex gap-2">
                         <input type="text" id="coupon-code" name="couponCode"
                                class="w-full border-b bg-transparent h-8 px-2 border-gray-400 shadow-sm focus:border-gray-500 sm:text-sm"
                                placeholder="Kupon kodunuzu girin" />
@@ -317,17 +317,17 @@
             <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm mb-2"></div>
 
 
-            @if (Model.Cart.CartCoupons != null && Model.Cart.CartCoupons.Any())
+            @if (Model.Basket.BasketCoupons != null && Model.Basket.BasketCoupons.Any())
             {
                 <div class="mt-4">
                     <h3 class="text-md font-semibold mb-2">Aktif Kuponlar</h3>
                     <div class="flex flex-wrap gap-2">
-                        @foreach (var cartCoupon in Model.Cart.CartCoupons)
+                        @foreach (var basketCoupon in Model.Basket.BasketCoupons)
                         {
-                            var coupon = cartCoupon.Coupon;
+                            var coupon = basketCoupon.Coupon;
                             <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center">
                                 <span class="mr-2">@coupon.Code</span>
-                                <form asp-controller="Cart" asp-action="RemoveCouponFromCart" method="post" class="inline">
+                                <form asp-controller="Basket" asp-action="RemoveCouponFromBasket" method="post" class="inline">
                                     <input type="hidden" name="couponCode" value="@coupon.Code" />
                                     <button type="submit" class="text-red-500 hover:text-red-700 ml-1">
                                         <i class="fa-solid fa-xmark"></i>
@@ -367,7 +367,7 @@
     //     const couponCode = document.getElementById('coupon-code').value.trim();
     //     if (couponCode !== "") {
     //         // GET isteği atıp sayfayı yönlendir
-    //         window.location.href = `/User/Cart/ApplyCoupon?couponCode=${encodeURIComponent(couponCode)}`;
+    //         window.location.href = `/User/Basket/ApplyCoupon?couponCode=${encodeURIComponent(couponCode)}`;
     //     }
     // });
 </script>

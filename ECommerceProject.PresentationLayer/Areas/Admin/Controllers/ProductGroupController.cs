@@ -108,7 +108,7 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                     List<ProductImage> productImages = await _productImageService.SaveProductImageAsync(productImageDtos);
 
 
-                    List<CartItem> cartItems = new List<CartItem>();
+                    List<BasketItem> basketItems = new List<BasketItem>();
 
                     decimal productPrice = product.UseGroupPrice != null && product.UseGroupPrice == true ? model.GroupPrice ?? 0 : product.Price ?? 0;
                     string productDescription = product.UseGroupDescription != null && product.UseGroupDescription == true ? model.GroupDescription : product.Description;
@@ -124,7 +124,7 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                         CategoryId = model.GroupCategoryId,
                         ProductVariants = productVariants,
                         ProductImages = productImages,
-                        CartItems = cartItems
+                        BasketItems = basketItems
                     });
                 }
                 await _productService.TInsertRange(products);

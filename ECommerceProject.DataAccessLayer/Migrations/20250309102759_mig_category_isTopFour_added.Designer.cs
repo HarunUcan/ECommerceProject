@@ -100,7 +100,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("CartId")
+                    b.Property<int>("BasketId")
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -157,7 +157,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CartId")
+                    b.HasIndex("BasketId")
                         .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
@@ -171,13 +171,13 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Cart", b =>
+            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Basket", b =>
                 {
-                    b.Property<int>("CartId")
+                    b.Property<int>("BasketId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasketId"));
 
                     b.Property<string>("DiscountCode")
                         .HasColumnType("nvarchar(max)");
@@ -185,20 +185,20 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("CartId");
+                    b.HasKey("BasketId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Baskets");
                 });
 
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.CartItem", b =>
+            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.BasketItem", b =>
                 {
-                    b.Property<int>("CartItemId")
+                    b.Property<int>("BasketItemId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasketItemId"));
 
-                    b.Property<int>("CartId")
+                    b.Property<int>("BasketId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
@@ -210,13 +210,13 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.Property<int>("Size")
                         .HasColumnType("int");
 
-                    b.HasKey("CartItemId");
+                    b.HasKey("BasketItemId");
 
-                    b.HasIndex("CartId");
+                    b.HasIndex("BasketId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("BasketItems");
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Category", b =>
@@ -604,30 +604,30 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.AppUser", b =>
                 {
-                    b.HasOne("ECommerceProject.EntityLayer.Concrete.Cart", "Cart")
+                    b.HasOne("ECommerceProject.EntityLayer.Concrete.Basket", "Basket")
                         .WithOne("AppUser")
-                        .HasForeignKey("ECommerceProject.EntityLayer.Concrete.AppUser", "CartId")
+                        .HasForeignKey("ECommerceProject.EntityLayer.Concrete.AppUser", "BasketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Cart");
+                    b.Navigation("Basket");
                 });
 
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.CartItem", b =>
+            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.BasketItem", b =>
                 {
-                    b.HasOne("ECommerceProject.EntityLayer.Concrete.Cart", "Cart")
-                        .WithMany("CartItems")
-                        .HasForeignKey("CartId")
+                    b.HasOne("ECommerceProject.EntityLayer.Concrete.Basket", "Basket")
+                        .WithMany("BasketItems")
+                        .HasForeignKey("BasketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ECommerceProject.EntityLayer.Concrete.Product", "Product")
-                        .WithMany("CartItems")
+                        .WithMany("BasketItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Cart");
+                    b.Navigation("Basket");
 
                     b.Navigation("Product");
                 });
@@ -793,12 +793,12 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.Navigation("Sales");
                 });
 
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Cart", b =>
+            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Basket", b =>
                 {
                     b.Navigation("AppUser")
                         .IsRequired();
 
-                    b.Navigation("CartItems");
+                    b.Navigation("BasketItems");
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Category", b =>
@@ -810,7 +810,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Product", b =>
                 {
-                    b.Navigation("CartItems");
+                    b.Navigation("BasketItems");
 
                     b.Navigation("ProductImages");
 

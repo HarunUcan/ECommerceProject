@@ -42,23 +42,23 @@ namespace ECommerceProject.DataAccessLayer.Concrete
                 .HasForeignKey(c => c.ParentCategoryId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Cart>()
+            modelBuilder.Entity<Basket>()
                 .HasOne(c => c.AppUser)
-                .WithOne(a => a.Cart)
-                .HasForeignKey<Cart>(c => c.AppUserId)
+                .WithOne(a => a.Basket)
+                .HasForeignKey<Basket>(c => c.AppUserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<CartCoupon>()
-                .HasKey(cc => new { cc.CartId, cc.CouponId });
+            modelBuilder.Entity<BasketCoupon>()
+                .HasKey(cc => new { cc.BasketId, cc.CouponId });
 
-            modelBuilder.Entity<CartCoupon>()
-                .HasOne(cc => cc.Cart)
-                .WithMany(c => c.CartCoupons)
-                .HasForeignKey(cc => cc.CartId);
+            modelBuilder.Entity<BasketCoupon>()
+                .HasOne(cc => cc.Basket)
+                .WithMany(c => c.BasketCoupons)
+                .HasForeignKey(cc => cc.BasketId);
 
-            modelBuilder.Entity<CartCoupon>()
+            modelBuilder.Entity<BasketCoupon>()
                 .HasOne(cc => cc.Coupon)
-                .WithMany(c => c.CartCoupons)
+                .WithMany(c => c.BasketCoupons)
                 .HasForeignKey(cc => cc.CouponId);
         }
 
@@ -68,9 +68,9 @@ namespace ECommerceProject.DataAccessLayer.Concrete
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductGroup> ProductGroups { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Cart> Carts { get; set; }
-        public DbSet<CartCoupon> CartCoupons { get; set; }
-        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Basket> Baskets { get; set; }
+        public DbSet<BasketCoupon> BasketCoupons { get; set; }
+        public DbSet<BasketItem> BasketItems { get; set; }
         public DbSet<Coupon> Coupons { get; set; }
         public DbSet<Sale> Sales { get; set; }
         public DbSet<SaleItem> SaleItems { get; set; }

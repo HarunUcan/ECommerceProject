@@ -39,7 +39,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     ModelState.AddModelError("", "Kullanıcı sözleşmesini kabul etmelisiniz.");
                     return View(appUserRegisterDto);
                 }
-                Cart cart = new Cart
+                Basket basket = new Basket
                 {
                     UpdatedDate = DateTime.Now
                 };
@@ -49,7 +49,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     Name = appUserRegisterDto.Name,
                     Surname = appUserRegisterDto.Surname,
                     Email = appUserRegisterDto.Email,
-                    Cart = cart
+                    Basket = basket
                 };
 
                 var result = await _userManager.CreateAsync(appUser, appUserRegisterDto.Password);

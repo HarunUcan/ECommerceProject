@@ -33,7 +33,7 @@ namespace ECommerceProject.EntityLayer.Concrete
             (DiscountAmount != null && DiscountStartDate <= DateTime.Now && DiscountEndDate >= DateTime.Now) ? Price - DiscountAmount : Price;
         public int CategoryId { get; set; }
         public Category Category { get; set; }
-        public ICollection<CartItem> CartItems { get; set; }
+        public ICollection<BasketItem> BasketItems { get; set; }
 
     }
 

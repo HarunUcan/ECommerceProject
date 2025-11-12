@@ -1,11 +1,11 @@
 ﻿@model dynamic
 @{
-    int cartItemsCount = 0;
-    if(Model.Cart != null && Model.Cart.CartItems != null && Model.Cart.CartItems.Count > 0)
+    int basketItemsCount = 0;
+    if(Model.Basket != null && Model.Basket.BasketItems != null && Model.Basket.BasketItems.Count > 0)
     {
-        foreach (var item in Model.Cart.CartItems)
+        foreach (var item in Model.Basket.BasketItems)
         {
-            cartItemsCount += item.Quantity;
+            basketItemsCount += item.Quantity;
         }
     }
 }
@@ -57,10 +57,10 @@
             <!-- Sepet ve Giriş Yap İkonları -->
             <div class="header-icons flex justify-between items-center gap-6">
                 <!-- Sepet Iconu -->
-                <div class="header-cart">
-                    <a asp-area="User" asp-controller="Cart" asp-action="Index" class="hover:text-gray-400">
+                <div class="header-basket">
+                    <a asp-area="User" asp-controller="Basket" asp-action="Index" class="hover:text-gray-400">
                         <i class="fa-solid fa-bag-shopping text-black text-xl"></i>
-                        <span class="absolute flex justify-center items-center w-[15px] h-[15px] bg-red-700 top-7 right-14 rounded-full text-white text-xs">@cartItemsCount</span>
+                        <span class="absolute flex justify-center items-center w-[15px] h-[15px] bg-red-700 top-7 right-14 rounded-full text-white text-xs">@basketItemsCount</span>
                         <!-- Örnek olarak 3 ürün var -->
                     </a>
                 </div>

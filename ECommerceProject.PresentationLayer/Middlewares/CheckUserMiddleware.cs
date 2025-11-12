@@ -35,7 +35,7 @@ namespace ECommerceProject.PresentationLayer.Middlewares
                     };
 
                     Context dbContext = new Context();
-                    dbContext.Carts.Add(new Cart 
+                    dbContext.Baskets.Add(new Basket 
                     { 
                         TempUserId = tempUserId,
                         UpdatedDate = DateTime.Now
@@ -59,10 +59,10 @@ namespace ECommerceProject.PresentationLayer.Middlewares
                     // Kullanıcıya ait sepeti güncelle
                     var tempUserId = context.Request.Cookies["TempUserId"];
                     Context dbContext = new Context();
-                    var cart = dbContext.Carts.FirstOrDefault(c => c.TempUserId == tempUserId);
-                    if (cart != null)
+                    var basket = dbContext.Baskets.FirstOrDefault(c => c.TempUserId == tempUserId);
+                    if (basket != null)
                     {
-                        dbContext.Carts.Remove(cart);
+                        dbContext.Baskets.Remove(basket);
                         dbContext.SaveChanges();
                     }
                 }

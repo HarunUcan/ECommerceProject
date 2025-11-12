@@ -5,34 +5,34 @@
 namespace ECommerceProject.DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class mig_cartcoupon_added : Migration
+    public partial class mig_basketcoupon_added : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
                 name: "DiscountCode",
-                table: "Carts");
+                table: "Baskets");
 
             migrationBuilder.CreateTable(
-                name: "CartCoupons",
+                name: "BasketCoupons",
                 columns: table => new
                 {
-                    CartId = table.Column<int>(type: "int", nullable: false),
+                    BasketId = table.Column<int>(type: "int", nullable: false),
                     CouponId = table.Column<int>(type: "int", nullable: false),
-                    CartCouponId = table.Column<int>(type: "int", nullable: false)
+                    BasketCouponId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CartCoupons", x => new { x.CartId, x.CouponId });
+                    table.PrimaryKey("PK_BasketCoupons", x => new { x.BasketId, x.CouponId });
                     table.ForeignKey(
-                        name: "FK_CartCoupons_Carts_CartId",
-                        column: x => x.CartId,
-                        principalTable: "Carts",
-                        principalColumn: "CartId",
+                        name: "FK_BasketCoupons_Baskets_BasketId",
+                        column: x => x.BasketId,
+                        principalTable: "Baskets",
+                        principalColumn: "BasketId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CartCoupons_Coupons_CouponId",
+                        name: "FK_BasketCoupons_Coupons_CouponId",
                         column: x => x.CouponId,
                         principalTable: "Coupons",
                         principalColumn: "CouponId",
@@ -40,8 +40,8 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartCoupons_CouponId",
-                table: "CartCoupons",
+                name: "IX_BasketCoupons_CouponId",
+                table: "BasketCoupons",
                 column: "CouponId");
         }
 
@@ -49,11 +49,11 @@ namespace ECommerceProject.DataAccessLayer.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CartCoupons");
+                name: "BasketCoupons");
 
             migrationBuilder.AddColumn<string>(
                 name: "DiscountCode",
-                table: "Carts",
+                table: "Baskets",
                 type: "nvarchar(max)",
                 nullable: true);
         }

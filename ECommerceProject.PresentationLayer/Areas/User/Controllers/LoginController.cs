@@ -12,13 +12,13 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
 
-        private readonly ICartService _cartService;
+        private readonly IBasketService _basketService;
 
-        public LoginController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, ICartService cartService)
+        public LoginController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IBasketService basketService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
-            _cartService = cartService;
+            _basketService = basketService;
         }
 
         [HttpGet]
@@ -43,11 +43,11 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                         if(Request.Cookies["TempUserId"] != null)
                         {
                             string tempUserId = Request.Cookies["TempUserId"];
-                            bool isTransferSuccess = _cartService.TTransferCart(tempUserId, user.Id);
+                            bool isTransferSuccess = _basketService.TTransferBasket(tempUserId, user.Id);
 
                             // Geçici Sepeti sil
                             if (isTransferSuccess)
-                                _cartService.TDeleteByTempUserId(tempUserId);
+                                _basketService.TDeleteByTempUserId(tempUserId);
 
                             // Cookie yi sil
                             if (isTransferSuccess)

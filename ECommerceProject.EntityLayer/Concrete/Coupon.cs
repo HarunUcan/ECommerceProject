@@ -17,7 +17,7 @@ namespace ECommerceProject.EntityLayer.Concrete
         public int MaxUsageCount { get; set; }
         public int CurrentUsageCount { get; set; }
         public bool IsActive { get; set; }
-        public ICollection<CartCoupon>? CartCoupons { get; set; }
+        public ICollection<BasketCoupon>? BasketCoupons { get; set; }
 
     }
 }

@@ -5,6 +5,7 @@ using ECommerceProject.PresentationLayer.ViewModels;
 using Iyzipay;
 using Iyzipay.Model;
 using Iyzipay.Request;
+using IyzipayBasketItem = Iyzipay.Model.BasketItem;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -15,7 +16,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
     public class PaymentController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly ICartService _cartService;
+        private readonly IBasketService _basketService;
         private readonly ICategoryService _categoryService;
         private readonly IAdressService _adressService;
         private readonly IProductService _productService;
@@ -23,7 +24,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         private readonly Iyzipay.Options _iyzicoOptions;
 
         public PaymentController(
-            ICartService cartService,
+            IBasketService basketService,
             ICategoryService categoryService,
             UserManager<AppUser> userManager,
             IAdressService adressService,
@@ -32,7 +33,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             IOptions<Iyzipay.Options> iyzicoOptions)
         {
             _userManager = userManager;
-            _cartService = cartService;
+            _basketService = basketService;
             _categoryService = categoryService;
             _adressService = adressService;
             _productService = productService;
@@ -43,24 +44,24 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         public IActionResult Index()
         {
             var user = _userManager.GetUserAsync(User).Result;
-            Cart cart = null;
+            Basket basket = null;
             List<Adress> userAdresses;
 
             if (user != null)
             {
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                basket = _basketService.TGetBasket(Request.Cookies["tempUserId"], user.Id);
                 userAdresses = _adressService.TGetAdressesByUserId(user.Id);
             }
             else
             {
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                basket = _basketService.TGetBasket(Request.Cookies["tempUserId"], 0);
                 userAdresses = null;
             }
 
             var paymentViewModel = new PaymentViewModel
             {
                 Categories = _categoryService.TGetList(),
-                Cart = cart,
+                Basket = basket,
                 Adresses = userAdresses,
             };
             return View(paymentViewModel);
@@ -86,11 +87,11 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 //if(user == null)
                 //    return Content("Payment initialization failed.", "text/html");
 
-                Cart? cart;
+                Basket? basket;
                 Adress? userAdress = null;
                 if (user != null)
                 {
-                    cart = _cartService.TGetCart(null, user.Id);
+                    basket = _basketService.TGetBasket(null, user.Id);
                     var userAdresses = _adressService.TGetAdressesByUserId(user.Id);
                     if(userAdresses.FirstOrDefault(x => x.AdressId == selectedAdressId) != null)
                         userAdress = userAdresses.FirstOrDefault(x => x.AdressId == selectedAdressId);
@@ -98,47 +99,47 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                         return RedirectToAction("PaymentStatus", new { isSuccess = false });
                 }
                 else
-                    cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                    basket = _basketService.TGetBasket(Request.Cookies["tempUserId"], 0);
 
-                //var priceOfCart = cart.CartItems.Sum(ci => ci.Product.Price);
-                decimal priceOfCart = 0;
+                //var priceOfBasket = basket.BasketItems.Sum(ci => ci.Product.Price);
+                decimal priceOfBasket = 0;
 
                 // Ürünlerin fiyatlarını ve indirimlerini hesapla
-                foreach (var item in cart.CartItems)
+                foreach (var item in basket.BasketItems)
                 {
                     var product = _productService.TGetById(item.ProductId);
                     if (product != null)
                     {
                         if (product.DiscountRate != null) // product.DiscountEndDate != null && product.DiscountEndDate > DateTime.Now && 
                         {
-                            priceOfCart += (product.Price - (product.Price * (product.DiscountRate ?? 0) / 100)) * item.Quantity;
+                            priceOfBasket += (product.Price - (product.Price * (product.DiscountRate ?? 0) / 100)) * item.Quantity;
                         }
                         else if (product.DiscountAmount != null) // product.DiscountEndDate != null && product.DiscountEndDate > DateTime.Now && 
                         {
-                            priceOfCart += (product.Price - product.DiscountAmount.Value) * item.Quantity;
+                            priceOfBasket += (product.Price - product.DiscountAmount.Value) * item.Quantity;
                         }
                         else
                         {
-                            priceOfCart += product.Price * item.Quantity;
+                            priceOfBasket += product.Price * item.Quantity;
                         }
                     }
                 }
 
                 // Sepetteki kuponları kontrol et ve varsa indirimleri uygula
-                foreach (var cc in cart.CartCoupons)
+                foreach (var cc in basket.BasketCoupons)
                 {
                     var coupon = cc.Coupon;
                     if (coupon.DiscountPercentage != null)
                     {
-                        priceOfCart = priceOfCart - (priceOfCart * coupon.DiscountPercentage.Value / 100);
+                        priceOfBasket = priceOfBasket - (priceOfBasket * coupon.DiscountPercentage.Value / 100);
                     }
                     else if (coupon.DiscountAmount != null)
                     {
-                        priceOfCart -= coupon.DiscountAmount.Value;
+                        priceOfBasket -= coupon.DiscountAmount.Value;
                     }
                 }
 
-                List<BasketItem> basketItems = cart.CartItems.Select(ci => new BasketItem
+                List<IyzipayBasketItem> iyzicoBasketItems = basket.BasketItems.Select(ci => new IyzipayBasketItem
                 {
                     Id = ci.Product.ProductId.ToString(),
                     Name = ci.Product.Name,
@@ -221,11 +222,11 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     ZipCode = "34732",
                 };
 
-                var cartItems = cart.CartItems.ToList();
+                var basketEntityItems = basket.BasketItems.ToList();
 
                 Sale sale = new Sale
                 {
-                    SaleItems = cartItems.Select(ci => new SaleItem
+                    SaleItems = basketEntityItems.Select(ci => new SaleItem
                     {
                         ProductId = ci.ProductId,
                         Quantity = ci.Quantity,
@@ -244,8 +245,8 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     AdressId = userAdress.AdressId,
                     SaleStatus = SaleStatus.NotApproved,
                     AppUserId = user?.Id,
-                    TempCartId = user == null ? Request.Cookies["tempUserId"] : null,
-                    TotalPrice = priceOfCart,
+                    TempBasketId = user == null ? Request.Cookies["tempUserId"] : null,
+                    TotalPrice = priceOfBasket,
                     InstallmentCount = 1, // Taksit sayısı
                     PaymentMethod = PaymentMethod.CreditCard // Ödeme yöntemi
                 };
@@ -257,17 +258,17 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 {
                     Locale = Locale.TR.ToString(),
                     ConversationId = sale.SaleId.ToString(), // bu kısımda veritabanında oluşturulan satış verisinin id si kullanılacak daha onaylanmadığı için SaleStatus = SaleStatus.NotApproved olacak 3d secure işleminden sonra onaylanacak başarısızsa SaleStatus = SaleStatus.Unsuccessful olacak
-                    Price = basketItems.Sum(basketItems => Convert.ToDecimal(basketItems.Price)).ToString(),
-                    PaidPrice = priceOfCart.ToString(),
+                    Price = iyzicoBasketItems.Sum(item => Convert.ToDecimal(item.Price)).ToString(),
+                    PaidPrice = priceOfBasket.ToString(),
                     Currency = Currency.TRY.ToString(),
                     Installment = 1,
-                    BasketId = user != null ? cart.CartId.ToString() : Request.Cookies["tempUserId"],
+                    BasketId = user != null ? basket.BasketId.ToString() : Request.Cookies["tempUserId"],
                     PaymentChannel = PaymentChannel.WEB.ToString(),
                     PaymentGroup = PaymentGroup.PRODUCT.ToString(),
                     CallbackUrl = "https://localhost:44321/User/Payment/IyzicoPaymentCallback",
                 };
 
-                request.BasketItems = basketItems;
+                request.BasketItems = iyzicoBasketItems;
 
                 request.PaymentCard = card;
 
@@ -283,15 +284,15 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 if (threedsInitialize.Status == "success")
                 {
                     // Redirect to the 3D Secure page
-                    // Clean the cart after successful payment
+                    // Clean the basket after successful payment
                     if (Request.Cookies["tempUserId"] != null)
                     {
                         var tempUserId = Request.Cookies["tempUserId"];
-                        CleanTheCart(tempUserId, 0, cart);
+                        CleanTheBasket(tempUserId, 0, basket);
                     }
                     else
                     {
-                        CleanTheCart(null, user.Id, cart);
+                        CleanTheBasket(null, user.Id, basket);
                     }
                     return Content(threedsInitialize.HtmlContent, "text/html");
                 }
@@ -314,10 +315,10 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             }
         }
 
-        private void CleanTheCart(string? tempUserId, int userId, Cart cart)
+        private void CleanTheBasket(string? tempUserId, int userId, Basket basket)
         {
-            var cartItems = cart.CartItems.ToList();
-            foreach (var item in cartItems)
+            var basketItems = basket.BasketItems.ToList();
+            foreach (var item in basketItems)
             {
                 var product = _productService.TGetById(item.ProductId);
                 if (product != null)
@@ -326,7 +327,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                     _productService.TUpdate(product);
                 }
 
-                _cartService.TDeleteCartItem(tempUserId, userId, item.ProductId, item.Size);
+                _basketService.TDeleteBasketItem(tempUserId, userId, item.ProductId, item.Size);
             }
         }
 
@@ -364,47 +365,47 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
 
-            Cart? cart;
+            Basket? basket;
             if (user != null)
-                cart = _cartService.TGetCart(null, user.Id);
+                basket = _basketService.TGetBasket(null, user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                basket = _basketService.TGetBasket(Request.Cookies["tempUserId"], 0);
 
-            //var priceOfCart = cart.CartItems.Sum(ci => ci.Product.Price);
-            decimal priceOfCart = 0;
+            //var priceOfBasket = basket.BasketItems.Sum(ci => ci.Product.Price);
+            decimal priceOfBasket = 0;
 
             // Ürünlerin fiyatlarını ve indirimlerini hesapla
-            foreach (var item in cart.CartItems)
+            foreach (var item in basket.BasketItems)
             {
                 var product = _productService.TGetById(item.ProductId);
                 if (product != null)
                 {
                     if (product.DiscountRate != null) // product.DiscountEndDate != null && product.DiscountEndDate > DateTime.Now && 
                     {
-                        priceOfCart += (product.Price - (product.Price * (product.DiscountRate ?? 0) / 100)) * item.Quantity;
+                        priceOfBasket += (product.Price - (product.Price * (product.DiscountRate ?? 0) / 100)) * item.Quantity;
                     }
                     else if (product.DiscountAmount != null) // product.DiscountEndDate != null && product.DiscountEndDate > DateTime.Now && 
                     {
-                        priceOfCart += (product.Price - product.DiscountAmount.Value) * item.Quantity;
+                        priceOfBasket += (product.Price - product.DiscountAmount.Value) * item.Quantity;
                     }
                     else
                     {
-                        priceOfCart += product.Price * item.Quantity;
+                        priceOfBasket += product.Price * item.Quantity;
                     }
                 }
             }
 
             // Sepetteki kuponları kontrol et ve indirimleri uygula
-            foreach (var cc in cart.CartCoupons)
+            foreach (var cc in basket.BasketCoupons)
             {
                 var coupon = cc.Coupon;
                 if (coupon.DiscountPercentage != null)
                 {
-                    priceOfCart = priceOfCart - (priceOfCart * coupon.DiscountPercentage.Value / 100);
+                    priceOfBasket = priceOfBasket - (priceOfBasket * coupon.DiscountPercentage.Value / 100);
                 }
                 else if (coupon.DiscountAmount != null)
                 {
-                    priceOfCart -= coupon.DiscountAmount.Value;
+                    priceOfBasket -= coupon.DiscountAmount.Value;
                 }
             }
 
@@ -412,7 +413,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             request.Locale = Locale.TR.ToString();
             request.ConversationId = "123456789";
             request.BinNumber = binNumber.ToString();
-            request.Price = priceOfCart.ToString();
+            request.Price = priceOfBasket.ToString();
 
             InstallmentInfo installmentInfo = await InstallmentInfo.Retrieve(request, _iyzicoOptions);
 

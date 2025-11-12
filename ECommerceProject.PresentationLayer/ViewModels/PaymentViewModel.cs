@@ -5,7 +5,7 @@ namespace ECommerceProject.PresentationLayer.ViewModels
     public class PaymentViewModel
     {
         public List<Category>? Categories { get; set; }
-        public Cart? Cart { get; set; }
+        public Basket? Basket { get; set; }
         public List<Adress>? Adresses { get; set; }
     }
 }

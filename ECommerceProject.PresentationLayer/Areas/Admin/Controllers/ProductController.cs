@@ -165,7 +165,7 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
 
                 var nearestColor = ColorHelper.GetNearestColor(model.Color);
 
-                List<CartItem> cartItems = new List<CartItem>();
+                List<BasketItem> basketItems = new List<BasketItem>();
                 var product = new Product
                 {
                     Name = model.ProductName,
@@ -178,7 +178,7 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
                     CategoryId = model.CategoryId,
                     ProductVariants = productVariants,
                     ProductImages = productImages,
-                    CartItems = cartItems
+                    BasketItems = basketItems
                 };
                 _productService.TInsert(product);
                 return RedirectToAction("Index");

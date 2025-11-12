@@ -5,41 +5,41 @@
 namespace ECommerceProject.DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class mig_cart_tempuser_added : Migration
+    public partial class mig_basket_tempuser_added : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_AspNetUsers_Carts_CartId",
+                name: "FK_AspNetUsers_Baskets_BasketId",
                 table: "AspNetUsers");
 
             migrationBuilder.DropIndex(
-                name: "IX_AspNetUsers_CartId",
+                name: "IX_AspNetUsers_BasketId",
                 table: "AspNetUsers");
 
             migrationBuilder.AddColumn<int>(
                 name: "AppUserId",
-                table: "Carts",
+                table: "Baskets",
                 type: "int",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "TempUserId",
-                table: "Carts",
+                table: "Baskets",
                 type: "nvarchar(max)",
                 nullable: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Carts_AppUserId",
-                table: "Carts",
+                name: "IX_Baskets_AppUserId",
+                table: "Baskets",
                 column: "AppUserId",
                 unique: true,
                 filter: "[AppUserId] IS NOT NULL");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Carts_AspNetUsers_AppUserId",
-                table: "Carts",
+                name: "FK_Baskets_AspNetUsers_AppUserId",
+                table: "Baskets",
                 column: "AppUserId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
@@ -50,33 +50,33 @@ namespace ECommerceProject.DataAccessLayer.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Carts_AspNetUsers_AppUserId",
-                table: "Carts");
+                name: "FK_Baskets_AspNetUsers_AppUserId",
+                table: "Baskets");
 
             migrationBuilder.DropIndex(
-                name: "IX_Carts_AppUserId",
-                table: "Carts");
+                name: "IX_Baskets_AppUserId",
+                table: "Baskets");
 
             migrationBuilder.DropColumn(
                 name: "AppUserId",
-                table: "Carts");
+                table: "Baskets");
 
             migrationBuilder.DropColumn(
                 name: "TempUserId",
-                table: "Carts");
+                table: "Baskets");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_CartId",
+                name: "IX_AspNetUsers_BasketId",
                 table: "AspNetUsers",
-                column: "CartId",
+                column: "BasketId",
                 unique: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_AspNetUsers_Carts_CartId",
+                name: "FK_AspNetUsers_Baskets_BasketId",
                 table: "AspNetUsers",
-                column: "CartId",
-                principalTable: "Carts",
-                principalColumn: "CartId",
+                column: "BasketId",
+                principalTable: "Baskets",
+                principalColumn: "BasketId",
                 onDelete: ReferentialAction.Cascade);
         }
     }

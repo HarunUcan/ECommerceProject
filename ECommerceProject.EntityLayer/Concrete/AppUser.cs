@@ -13,7 +13,7 @@ namespace ECommerceProject.EntityLayer.Concrete
         public string Surname { get; set; }
         public ICollection<Sale> Sales { get; set; }
         public ICollection<Adress> Adresses { get; set; }
-        public int CartId { get; set; }
-        public Cart Cart { get; set; }
+        public int BasketId { get; set; }
+        public Basket Basket { get; set; }
     }
 }

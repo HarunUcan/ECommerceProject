@@ -10,13 +10,13 @@ namespace ECommerceProject.PresentationLayer.Areas.Admin.Controllers
     public class UserController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly ICartService _cartService;
+        private readonly IBasketService _basketService;
         private readonly IAppUserService _userService;
 
-        public UserController(UserManager<AppUser> userManager, ICartService cartService, IAppUserService userService)
+        public UserController(UserManager<AppUser> userManager, IBasketService basketService, IAppUserService userService)
         {
             _userManager = userManager;
-            _cartService = cartService;
+            _basketService = basketService;
             _userService = userService;
         }
 

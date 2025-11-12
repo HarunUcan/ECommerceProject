@@ -9,6 +9,6 @@ namespace ECommerceProject.PresentationLayer.ViewModels
         public List<Product>? FeaturedProducts { get; set; }
         public List<Category>? Categories { get; set; }
         public List<Product>? FeaturedCategoryProducts { get; set; }
-        public Cart? Cart { get; set; }
+        public Basket? Basket { get; set; }
     }
 }

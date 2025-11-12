@@ -60,7 +60,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
-                name: "TempCartId",
+                name: "TempBasketId",
                 table: "Sales",
                 type: "nvarchar(max)",
                 nullable: true);
@@ -120,7 +120,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                 table: "Sales");
 
             migrationBuilder.DropColumn(
-                name: "TempCartId",
+                name: "TempBasketId",
                 table: "Sales");
 
             migrationBuilder.DropColumn(

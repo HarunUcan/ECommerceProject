@@ -7,37 +7,37 @@ using Microsoft.AspNetCore.Mvc;
 namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 {
     [Area("User")]
-    public class CartController : Controller
+    public class BasketController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly ICartService _cartService;
+        private readonly IBasketService _basketService;
         private readonly ICategoryService _categoryService;
 
-        public CartController(ICategoryService categoryService, UserManager<AppUser> userManager, ICartService cartService)
+        public BasketController(ICategoryService categoryService, UserManager<AppUser> userManager, IBasketService basketService)
         {
             _categoryService = categoryService;
             _userManager = userManager;
-            _cartService = cartService;
+            _basketService = basketService;
         }
 
         public IActionResult Index()
         {
             var user = _userManager.GetUserAsync(User).Result;
-            Cart cart = null;
+            Basket basket = null;
             if (user != null)
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user.Id);
+                basket = _basketService.TGetBasket(Request.Cookies["tempUserId"], user.Id);
             else
-                cart = _cartService.TGetCart(Request.Cookies["tempUserId"], 0);
+                basket = _basketService.TGetBasket(Request.Cookies["tempUserId"], 0);
             var homeViewModel = new HomeViewModel
             {
                 Categories = _categoryService.TGetList(),
-                Cart = cart
+                Basket = basket
             };
             return View(homeViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToCartAsync(int productId, int quantity, string size)
+        public async Task<IActionResult> AddToBasketAsync(int productId, int quantity, string size)
         {
             var user = await _userManager.GetUserAsync(User);
 
@@ -45,7 +45,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             {
                 if (Enum.TryParse<ProductSize>(size, out var productSizeEnum))
                 {
-                    _cartService.TAddToCart(null, user.Id, productId, quantity, productSizeEnum);
+                    _basketService.TAddToBasket(null, user.Id, productId, quantity, productSizeEnum);
                 }
             }
 
@@ -56,31 +56,31 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 {
                     if (Enum.TryParse<ProductSize>(size, out var productSizeEnum))
                     {
-                        _cartService.TAddToCart(tempUserId, 0, productId, quantity, productSizeEnum);
+                        _basketService.TAddToBasket(tempUserId, 0, productId, quantity, productSizeEnum);
                     }
                 }
 
             }
-            return RedirectToAction("Index", "Cart");
+            return RedirectToAction("Index", "Basket");
         }
 
         [HttpGet]
-        public IActionResult DeleteProductFromCart(int productId, string size)
+        public IActionResult DeleteProductFromBasket(int productId, string size)
         {
             var user = _userManager.GetUserAsync(User).Result;
             if (user != null)
             {
-                _cartService.TDeleteCartItem(null, user.Id, productId, Enum.Parse<ProductSize>(size));
+                _basketService.TDeleteBasketItem(null, user.Id, productId, Enum.Parse<ProductSize>(size));
             }
             else
             {
                 var tempUserId = Request.Cookies["tempUserId"];
                 if (tempUserId != null)
                 {
-                    _cartService.TDeleteCartItem(tempUserId, 0, productId, Enum.Parse<ProductSize>(size));
+                    _basketService.TDeleteBasketItem(tempUserId, 0, productId, Enum.Parse<ProductSize>(size));
                 }
             }
-            return RedirectToAction("Index", "Cart");
+            return RedirectToAction("Index", "Basket");
         }
 
         [HttpPost]
@@ -93,7 +93,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             {
                 try
                 {
-                    isValid = await _cartService.TApplyCoupon(null, user.Id, couponCode);
+                    isValid = await _basketService.TApplyCoupon(null, user.Id, couponCode);
                 }
                 catch (Exception ex)
                 {
@@ -107,7 +107,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 {
                     try
                     {
-                        isValid = await _cartService.TApplyCoupon(tempUserId, 0, couponCode);
+                        isValid = await _basketService.TApplyCoupon(tempUserId, 0, couponCode);
                     }
                     catch (Exception ex)
                     {
@@ -120,28 +120,28 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             return View("Index", new HomeViewModel
             {
                 Categories = _categoryService.TGetList(),
-                Cart = _cartService.TGetCart(Request.Cookies["tempUserId"], user?.Id ?? 0)
+                Basket = _basketService.TGetBasket(Request.Cookies["tempUserId"], user?.Id ?? 0)
             });
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveCouponFromCart(string couponCode)
+        public async Task<IActionResult> RemoveCouponFromBasket(string couponCode)
         {
             var user = await _userManager.GetUserAsync(User);
 
             if (user != null)
             {
-                await _cartService.TRemoveCouponFromCart(null, user.Id, couponCode);
+                await _basketService.TRemoveCouponFromBasket(null, user.Id, couponCode);
             }
             else
             {
                 var tempUserId = Request.Cookies["tempUserId"];
                 if (tempUserId != null)
                 {
-                    await _cartService.TRemoveCouponFromCart(tempUserId, 0, couponCode);
+                    await _basketService.TRemoveCouponFromBasket(tempUserId, 0, couponCode);
                 }
             }
-            return RedirectToAction("Index", "Cart");
+            return RedirectToAction("Index", "Basket");
         }
     }
 }

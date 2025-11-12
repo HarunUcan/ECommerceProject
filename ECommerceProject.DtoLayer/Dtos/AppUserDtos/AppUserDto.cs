@@ -16,7 +16,7 @@ namespace ECommerceProject.DtoLayer.Dtos.AppUserDtos
         public string? PhoneNumber { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime? CreatedDate { get; set; }
-        public DateTime? CartUpdateDate { get; set; }
+        public DateTime? BasketUpdateDate { get; set; }
         public string? Role { get; set; }
     }
 }

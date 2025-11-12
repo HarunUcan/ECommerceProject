@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerceProject.DataAccessLayer.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250416200953_mig_cartcoupon_added")]
-    partial class mig_cartcoupon_added
+    [Migration("20250325215502_mig_basket_tempuser_added")]
+    partial class mig_basket_tempuser_added
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -100,7 +100,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("CartId")
+                    b.Property<int>("BasketId")
                         .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -168,16 +168,19 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Cart", b =>
+            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Basket", b =>
                 {
-                    b.Property<int>("CartId")
+                    b.Property<int>("BasketId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasketId"));
 
                     b.Property<int?>("AppUserId")
                         .HasColumnType("int");
+
+                    b.Property<string>("DiscountCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TempUserId")
                         .HasColumnType("nvarchar(max)");
@@ -185,42 +188,24 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("CartId");
+                    b.HasKey("BasketId");
 
                     b.HasIndex("AppUserId")
                         .IsUnique()
                         .HasFilter("[AppUserId] IS NOT NULL");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Baskets");
                 });
 
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.CartCoupon", b =>
+            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.BasketItem", b =>
                 {
-                    b.Property<int>("CartId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CouponId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CartCouponId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CartId", "CouponId");
-
-                    b.HasIndex("CouponId");
-
-                    b.ToTable("CartCoupons");
-                });
-
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.CartItem", b =>
-                {
-                    b.Property<int>("CartItemId")
+                    b.Property<int>("BasketItemId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasketItemId"));
 
-                    b.Property<int>("CartId")
+                    b.Property<int>("BasketId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
@@ -232,13 +217,13 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.Property<int>("Size")
                         .HasColumnType("int");
 
-                    b.HasKey("CartItemId");
+                    b.HasKey("BasketItemId");
 
-                    b.HasIndex("CartId");
+                    b.HasIndex("BasketId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("BasketItems");
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Category", b =>
@@ -633,50 +618,31 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.Navigation("AppUser");
                 });
 
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Cart", b =>
+            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Basket", b =>
                 {
                     b.HasOne("ECommerceProject.EntityLayer.Concrete.AppUser", "AppUser")
-                        .WithOne("Cart")
-                        .HasForeignKey("ECommerceProject.EntityLayer.Concrete.Cart", "AppUserId")
+                        .WithOne("Basket")
+                        .HasForeignKey("ECommerceProject.EntityLayer.Concrete.Basket", "AppUserId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("AppUser");
                 });
 
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.CartCoupon", b =>
+            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.BasketItem", b =>
                 {
-                    b.HasOne("ECommerceProject.EntityLayer.Concrete.Cart", "Cart")
-                        .WithMany("CartCoupons")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ECommerceProject.EntityLayer.Concrete.Coupon", "Coupon")
-                        .WithMany("CartCoupons")
-                        .HasForeignKey("CouponId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cart");
-
-                    b.Navigation("Coupon");
-                });
-
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.CartItem", b =>
-                {
-                    b.HasOne("ECommerceProject.EntityLayer.Concrete.Cart", "Cart")
-                        .WithMany("CartItems")
-                        .HasForeignKey("CartId")
+                    b.HasOne("ECommerceProject.EntityLayer.Concrete.Basket", "Basket")
+                        .WithMany("BasketItems")
+                        .HasForeignKey("BasketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ECommerceProject.EntityLayer.Concrete.Product", "Product")
-                        .WithMany("CartItems")
+                        .WithMany("BasketItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Cart");
+                    b.Navigation("Basket");
 
                     b.Navigation("Product");
                 });
@@ -839,17 +805,15 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                 {
                     b.Navigation("Adresses");
 
-                    b.Navigation("Cart")
+                    b.Navigation("Basket")
                         .IsRequired();
 
                     b.Navigation("Sales");
                 });
 
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Cart", b =>
+            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Basket", b =>
                 {
-                    b.Navigation("CartCoupons");
-
-                    b.Navigation("CartItems");
+                    b.Navigation("BasketItems");
                 });
 
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Category", b =>
@@ -859,14 +823,9 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                     b.Navigation("SubCategories");
                 });
 
-            modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Coupon", b =>
-                {
-                    b.Navigation("CartCoupons");
-                });
-
             modelBuilder.Entity("ECommerceProject.EntityLayer.Concrete.Product", b =>
                 {
-                    b.Navigation("CartItems");
+                    b.Navigation("BasketItems");
 
                     b.Navigation("ProductImages");
 

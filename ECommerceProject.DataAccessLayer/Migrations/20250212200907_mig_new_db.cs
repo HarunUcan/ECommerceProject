@@ -27,17 +27,17 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Carts",
+                name: "Baskets",
                 columns: table => new
                 {
-                    CartId = table.Column<int>(type: "int", nullable: false)
+                    BasketId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DiscountCode = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Carts", x => x.CartId);
+                    table.PrimaryKey("PK_Baskets", x => x.BasketId);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,7 +109,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CartId = table.Column<int>(type: "int", nullable: false),
+                    BasketId = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -129,10 +129,10 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Carts_CartId",
-                        column: x => x.CartId,
-                        principalTable: "Carts",
-                        principalColumn: "CartId",
+                        name: "FK_AspNetUsers_Baskets_BasketId",
+                        column: x => x.BasketId,
+                        principalTable: "Baskets",
+                        principalColumn: "BasketId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -330,27 +330,27 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CartItems",
+                name: "BasketItems",
                 columns: table => new
                 {
-                    CartItemId = table.Column<int>(type: "int", nullable: false)
+                    BasketItemId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Size = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    CartId = table.Column<int>(type: "int", nullable: false)
+                    BasketId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CartItems", x => x.CartItemId);
+                    table.PrimaryKey("PK_BasketItems", x => x.BasketItemId);
                     table.ForeignKey(
-                        name: "FK_CartItems_Carts_CartId",
-                        column: x => x.CartId,
-                        principalTable: "Carts",
-                        principalColumn: "CartId",
+                        name: "FK_BasketItems_Baskets_BasketId",
+                        column: x => x.BasketId,
+                        principalTable: "Baskets",
+                        principalColumn: "BasketId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CartItems_Products_ProductId",
+                        name: "FK_BasketItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId",
@@ -466,9 +466,9 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_CartId",
+                name: "IX_AspNetUsers_BasketId",
                 table: "AspNetUsers",
-                column: "CartId",
+                column: "BasketId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -479,13 +479,13 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartItems_CartId",
-                table: "CartItems",
-                column: "CartId");
+                name: "IX_BasketItems_BasketId",
+                table: "BasketItems",
+                column: "BasketId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartItems_ProductId",
-                table: "CartItems",
+                name: "IX_BasketItems_ProductId",
+                table: "BasketItems",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
@@ -558,7 +558,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CartItems");
+                name: "BasketItems");
 
             migrationBuilder.DropTable(
                 name: "Coupons");
@@ -594,7 +594,7 @@ namespace ECommerceProject.DataAccessLayer.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Carts");
+                name: "Baskets");
         }
     }
 }

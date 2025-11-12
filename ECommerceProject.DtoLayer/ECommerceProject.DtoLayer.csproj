@@ -21,8 +21,8 @@
 
   <ItemGroup>
     <Folder Include="Dtos\AppRoleDtos\" />
-    <Folder Include="Dtos\CartDtos\" />
-    <Folder Include="Dtos\CartItemDtos\" />
+    <Folder Include="Dtos\BasketDtos\" />
+    <Folder Include="Dtos\BasketItemDtos\" />
   </ItemGroup>
 
 </Project>
