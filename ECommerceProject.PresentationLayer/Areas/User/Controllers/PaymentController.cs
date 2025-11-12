@@ -7,6 +7,7 @@ using Iyzipay.Model;
 using Iyzipay.Request;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
 {
@@ -19,8 +20,16 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
         private readonly IAdressService _adressService;
         private readonly IProductService _productService;
         private readonly ISaleService _saleService;
+        private readonly Iyzipay.Options _iyzicoOptions;
 
-        public PaymentController(ICartService cartService, ICategoryService categoryService, UserManager<AppUser> userManager, IAdressService adressService, IProductService productService, ISaleService saleService)
+        public PaymentController(
+            ICartService cartService,
+            ICategoryService categoryService,
+            UserManager<AppUser> userManager,
+            IAdressService adressService,
+            IProductService productService,
+            ISaleService saleService,
+            IOptions<Iyzipay.Options> iyzicoOptions)
         {
             _userManager = userManager;
             _cartService = cartService;
@@ -28,14 +37,8 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             _adressService = adressService;
             _productService = productService;
             _saleService = saleService;
+            _iyzicoOptions = iyzicoOptions.Value;
         }
-
-        private readonly Options _options = new Options()
-        {
-            ApiKey = "sandbox-F6uw4W12sdhw4AxjzYVYITZbc43z1cwi",
-            SecretKey = "sandbox-2E5YPn8Qt8sI2DhL1WzBup4CF5EoKJDS",
-            BaseUrl = "https://sandbox-api.iyzipay.com"
-        };
 
         public IActionResult Index()
         {
@@ -275,7 +278,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
                 request.BillingAddress = billingAddress;
 
                 // Initialize the payment client
-                ThreedsInitialize threedsInitialize = await ThreedsInitialize.Create(request, _options);
+                ThreedsInitialize threedsInitialize = await ThreedsInitialize.Create(request, _iyzicoOptions);
 
                 if (threedsInitialize.Status == "success")
                 {
@@ -411,7 +414,7 @@ namespace ECommerceProject.PresentationLayer.Areas.User.Controllers
             request.BinNumber = binNumber.ToString();
             request.Price = priceOfCart.ToString();
 
-            InstallmentInfo installmentInfo = await InstallmentInfo.Retrieve(request, _options);
+            InstallmentInfo installmentInfo = await InstallmentInfo.Retrieve(request, _iyzicoOptions);
 
             if (installmentInfo.Status == "success")
             {

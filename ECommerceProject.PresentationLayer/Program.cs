@@ -6,9 +6,12 @@ using ECommerceProject.DataAccessLayer.EntityFramework;
 using ECommerceProject.EntityLayer.Concrete;
 using ECommerceProject.PresentationLayer.Middlewares;
 using ECommerceProject.PresentationLayer.Models;
+using ECommerceProject.PresentationLayer.Options;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Globalization;
 
 namespace ECommerceProject.PresentationLayer
@@ -26,7 +29,9 @@ namespace ECommerceProject.PresentationLayer
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
             builder.Services.AddDbContext<Context>();
+
             builder.Services.AddIdentity<AppUser, AppRole>(options =>
             {
                 options.Password.RequiredLength = 6;
@@ -35,6 +40,9 @@ namespace ECommerceProject.PresentationLayer
                 options.Password.RequireNonAlphanumeric = false;
                 options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
             }).AddEntityFrameworkStores<Context>().AddErrorDescriber<CustomIdentityValidator>().AddDefaultTokenProviders();
+
+            builder.Services.Configure<AdminAccountOptions>(builder.Configuration.GetSection("AdminAccount"));
+            builder.Services.Configure<Iyzipay.Options>(builder.Configuration.GetSection("Iyzico"));
 
             builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
             {
@@ -190,6 +198,7 @@ namespace ECommerceProject.PresentationLayer
                 var serviceProvider = scope.ServiceProvider;
                 var roleManager = serviceProvider.GetRequiredService<RoleManager<AppRole>>();
                 var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
+                var adminAccountOptions = serviceProvider.GetRequiredService<IOptions<AdminAccountOptions>>().Value;
 
                 // 1. Roller varsa oluþtur
                 foreach (var role in Enum.GetValues(typeof(UserRoles)))
@@ -202,25 +211,48 @@ namespace ECommerceProject.PresentationLayer
                 }
 
                 // 2. Admin kullanýcýyý oluþtur
-                string adminEmail = "admin@example.com";
-                string adminPassword = "Admin123!";
+                string? adminEmail = adminAccountOptions.Email;
+                string? adminPassword = adminAccountOptions.Password;
+                string? adminPasswordHash = adminAccountOptions.PasswordHash;
 
-                var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
-                if (existingAdmin == null)
+                if (!string.IsNullOrWhiteSpace(adminEmail))
                 {
-                    var adminUser = new AppUser
+                    var existingAdmin = await userManager.FindByEmailAsync(adminEmail);
+                    if (existingAdmin == null)
                     {
-                        Name = "Admin",
-                        Surname = "1",
-                        UserName = adminEmail,
-                        Email = adminEmail,
-                        EmailConfirmed = true
-                    };
+                        var adminUser = new AppUser
+                        {
+                            Name = "Admin",
+                            Surname = "1",
+                            UserName = adminEmail,
+                            Email = adminEmail,
+                            EmailConfirmed = true
+                        };
 
-                    var result = await userManager.CreateAsync(adminUser, adminPassword);
-                    if (result.Succeeded)
-                    {
-                        await userManager.AddToRoleAsync(adminUser, UserRoles.Admin.ToString());
+                        IdentityResult result;
+
+                        if (!string.IsNullOrWhiteSpace(adminPassword))
+                        {
+                            result = await userManager.CreateAsync(adminUser, adminPassword);
+                        }
+                        else if (!string.IsNullOrWhiteSpace(adminPasswordHash))
+                        {
+                            adminUser.PasswordHash = adminPasswordHash;
+                            result = await userManager.CreateAsync(adminUser);
+                        }
+                        else
+                        {
+                            result = IdentityResult.Failed(new IdentityError
+                            {
+                                Code = "AdminPasswordMissing",
+                                Description = "Admin password configuration is missing."
+                            });
+                        }
+
+                        if (result.Succeeded)
+                        {
+                            await userManager.AddToRoleAsync(adminUser, UserRoles.Admin.ToString());
+                        }
                     }
                 }
             }
